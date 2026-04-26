@@ -302,7 +302,7 @@ export interface LoginResponseDto {
   esOwner?: boolean;
   userId?: string;
   sucursalId?: string;
-  permisos?: string[];
+  permisos?: PermisoSistema[];
 
   // Caso 2: múltiples sucursales — requiere selección
   requiereSeleccion?: boolean;
@@ -347,6 +347,7 @@ export interface Usuario {
   telefono: string;
   rol: RolUsuario;
   estado: EstadoUsuario;
+  esOwner?: boolean;
   permisos: PermisoSistema[];
   horariosLaborales: HorarioLaboral[];
   serviciosIds: string[];

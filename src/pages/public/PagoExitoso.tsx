@@ -26,8 +26,8 @@ export function PagoExitoso() {
       } catch {
         // Fallback: consultar estado directamente en MP
         try {
-          const { data } = await pagosApi.verificarPago(externalRef);
-          setEstado(data.confirmado ? 'ok' : 'error');
+          const result = await pagosApi.verificarPago(externalRef);
+          setEstado(result.confirmado ? 'ok' : 'error');
         } catch {
           setEstado('error');
         }

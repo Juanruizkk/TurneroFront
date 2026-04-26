@@ -57,6 +57,7 @@ const CONCEPTO_LABELS: Record<ConceptoPagoTurno, string> = {
   PagoParcial: 'Pago parcial',
   PagoTotal:   'Pago total',
   SaldoFinal:  'Saldo final',
+  Ajuste:      'Ajuste',
 };
 
 const isIngreso = (tipo: TipoMovimientoCaja) =>
