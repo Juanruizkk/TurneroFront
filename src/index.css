@@ -1,0 +1,48 @@
+/* @import FONT IMPORTS — MUST BE ABOVE TAILWIND */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Nunito:wght@400;600&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --color-primary: #2F7D6B;
+  --color-primary-light: #4FA08C;
+  --color-primary-dark: #245E50;
+  --color-accent: #5B8DEF;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+  --color-background: #F5F8F6;
+  --color-surface: #FFFFFF;
+  --color-border: #D9E5DF;
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #4B5563;
+  --color-text-muted: #94A3B8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #4FA08C; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #2F7D6B; }
+
+/* Hide scrollbar for clean horizontal scrolling */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
