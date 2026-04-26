@@ -3,7 +3,7 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Build arg — injected at build time by docker-compose
-ARG VITE_API_URL
+ARG VITE_API_URL=https://api.metaturnos.com/api
 ENV VITE_API_URL=$VITE_API_URL
 
 # Install dependencies first (layer cache)
