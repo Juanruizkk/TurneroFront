@@ -229,14 +229,6 @@ export function Login() {
               </p>
             </div>
 
-            {/* Hint para desarrollo */}
-            <div className="mt-6 p-4 bg-surface rounded-card border border-border">
-              <p className="text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">Acceso de desarrollo</p>
-              <div className="space-y-1 text-xs text-text-muted font-mono">
-                <p><span className="text-text-secondary">Super Admin:</span> superadmin@turneroapp.com</p>
-                <p><span className="text-text-secondary">Password:</span> SuperAdmin2025!</p>
-              </div>
-            </div>
           </motion.div>
         )}
       </div>

@@ -526,7 +526,6 @@ export function AppointmentDetail() {
                     <section>
                       <div className="flex items-center gap-4 text-sm text-text-secondary">
                         <span>Origen: <span className="font-medium text-text-primary">{turno.origen}</span></span>
-                        <span>Token: <span className="font-mono text-xs">{turno.tokenGestion.slice(0, 12)}…</span></span>
                       </div>
                     </section>
                   </motion.div>

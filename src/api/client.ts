@@ -1,5 +1,19 @@
 const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
+const STATUS_MESSAGES: Record<number, string> = {
+  400: 'La solicitud contiene datos inválidos.',
+  401: 'No estás autenticado. Iniciá sesión nuevamente.',
+  403: 'No tenés permiso para realizar esta acción.',
+  404: 'El recurso solicitado no existe.',
+  405: 'Acción no permitida. Verificá la configuración.',
+  409: 'Conflicto con datos existentes.',
+  422: 'Los datos enviados no son válidos.',
+  429: 'Demasiadas solicitudes. Esperá un momento.',
+  500: 'Error interno del servidor. Intentá nuevamente.',
+  502: 'El servidor no está disponible. Intentá más tarde.',
+  503: 'Servicio temporalmente no disponible.',
+};
+
 class ApiError extends Error {
   constructor(
     message: string,
@@ -32,8 +46,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    const body = await response.json().catch(() => ({ message: `Error HTTP ${response.status}` }));
-    throw new ApiError(body.message ?? `Error HTTP ${response.status}`, response.status);
+    const body = await response.json().catch(() => ({}));
+    const fallback = STATUS_MESSAGES[response.status] ?? `Error HTTP ${response.status}`;
+    throw new ApiError(body.message ?? fallback, response.status);
   }
 
   if (response.status === 204) return undefined as T;
