@@ -9,6 +9,8 @@ export const turnosApi = {
 
   obtenerPorToken: (token: string) => api.get<Turno>(`/turnos/by-token/${token}`),
 
+  cancelarPorToken: (token: string) => api.post<Turno>(`/turnos/by-token/${token}/cancelar`, {}),
+
   crear: (dto: CrearTurnoDto) => api.post<Turno>('/turnos', dto),
 
   actualizar: (id: string, dto: ActualizarTurnoDto) =>

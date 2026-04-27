@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   SparklesIcon,
   CalendarIcon,
   ClockIcon,
   UserIcon,
   ScissorsIcon,
-  CheckCircleIcon,
   XCircleIcon,
   AlertCircleIcon,
   PhoneIcon,
+  AlertTriangleIcon,
 } from 'lucide-react';
 import { turnosApi } from '../../api/turnos';
 import { StatusBadge } from '../../components/ui/StatusBadge';
@@ -22,8 +22,9 @@ export function TurnoToken() {
   const [turno, setTurno] = useState<Turno | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [cancelando, setCancelando] = useState(false);
-  const [cancelado, setCancelado] = useState(false);
+  const [cancelando, setCancelando]         = useState(false);
+  const [cancelado, setCancelado]           = useState(false);
+  const [confirmando, setConfirmando]       = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -35,16 +36,13 @@ export function TurnoToken() {
   }, [token]);
 
   const handleCancelar = async () => {
-    if (!turno) return;
-    if (!confirm('¿Estás seguro de que querés cancelar este turno?')) return;
+    if (!token) return;
     setCancelando(true);
     try {
-      const actualizado = await turnosApi.actualizar(turno.id, {
-        estado: 'CanceladoCliente',
-        observaciones: 'Cancelado por el cliente vía enlace de gestión',
-      });
+      const actualizado = await turnosApi.cancelarPorToken(token);
       setTurno(actualizado);
       setCancelado(true);
+      setConfirmando(false);
     } catch {
       alert('No se pudo cancelar el turno. Intentá de nuevo o contactanos.');
     } finally {
@@ -174,13 +172,59 @@ export function TurnoToken() {
             {/* Acciones */}
             {puedeGestionar && (
               <div className="space-y-3">
-                <button
-                  onClick={handleCancelar}
-                  disabled={cancelando}
-                  className="w-full py-3 rounded-button border border-error/30 text-error font-medium hover:bg-error/10 transition-colors disabled:opacity-50"
-                >
-                  {cancelando ? 'Cancelando...' : 'Cancelar mi turno'}
-                </button>
+                <AnimatePresence mode="wait">
+                  {!confirmando ? (
+                    <motion.button
+                      key="btn-cancelar"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setConfirmando(true)}
+                      className="w-full py-3 rounded-button border border-error/30 text-error font-medium hover:bg-error/5 transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      <XCircleIcon className="w-4 h-4" />
+                      Cancelar mi turno
+                    </motion.button>
+                  ) : (
+                    <motion.div
+                      key="confirmar"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      className="rounded-card border border-error/30 bg-error/5 p-4 space-y-3"
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <AlertTriangleIcon className="w-4 h-4 text-error mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-error font-medium">
+                          ¿Confirmás la cancelación? Esta acción no se puede deshacer.
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setConfirmando(false)}
+                          disabled={cancelando}
+                          className="flex-1 py-2.5 rounded-button border border-border text-text-secondary text-sm font-medium hover:bg-surface transition-colors disabled:opacity-50"
+                        >
+                          Volver
+                        </button>
+                        <button
+                          onClick={handleCancelar}
+                          disabled={cancelando}
+                          className="flex-1 py-2.5 rounded-button bg-error text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                          {cancelando ? (
+                            <>
+                              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              Cancelando...
+                            </>
+                          ) : (
+                            'Sí, cancelar'
+                          )}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 <p className="text-xs text-text-muted text-center">
                   Para reprogramar, contactanos directamente.
                 </p>

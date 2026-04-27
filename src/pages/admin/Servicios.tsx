@@ -338,6 +338,7 @@ export function Servicios() {
                       onChange={(e) => {
                         setField('requiereSena', e.target.checked);
                         if (!e.target.checked) { setField('tipoSena', null); setField('valorSena', null); }
+                        else if (form.tipoSena === null) { setField('tipoSena', 'Fija'); }
                       }}
                       className="rounded accent-primary w-4 h-4"
                     />
@@ -364,7 +365,7 @@ export function Servicios() {
                         <input
                           type="number"
                           value={form.valorSena ?? ''}
-                          onChange={(e) => setField('valorSena', Number(e.target.value))}
+                          onChange={(e) => setField('valorSena', e.target.value === '' ? null : Number(e.target.value))}
                           className="w-full px-3 py-2 rounded-input border border-border bg-surface-background focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
                           placeholder={form.tipoSena === 'Porcentaje' ? '30' : '2000'}
                           min={0}
