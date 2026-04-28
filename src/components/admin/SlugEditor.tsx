@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { CheckCircleIcon, XCircleIcon, Loader2Icon, LinkIcon, SaveIcon, CheckIcon, ExternalLinkIcon } from 'lucide-react';
+import { CheckCircleIcon, XCircleIcon, Loader2Icon, LinkIcon, SaveIcon, CheckIcon, ExternalLinkIcon, CopyIcon } from 'lucide-react';
 import { ajustesApi } from '../../api/ajustes';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
@@ -81,6 +81,7 @@ export function SlugEditor({ sucursalId }: SlugEditorProps) {
   const [saving, setSaving]   = useState(false);
   const [saved, setSaved]     = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [copied, setCopied]   = useState(false);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -238,12 +239,30 @@ export function SlugEditor({ sucursalId }: SlugEditorProps) {
       <div className="flex items-center gap-2 px-3 py-2.5 bg-surface-background border border-border rounded-lg">
         <ExternalLinkIcon className="w-4 h-4 text-text-muted flex-shrink-0" />
         <span className="text-xs text-text-muted flex-shrink-0">URL pública:</span>
-        <span className="text-xs font-mono text-text-primary truncate">
+        <span className="text-xs font-mono text-text-primary truncate flex-1">
           <span className="text-text-muted">{PUBLIC_BASE}/s/</span>
           <span className={slug ? 'text-primary font-semibold' : 'text-text-muted italic'}>
             {slug || '…'}
           </span>
         </span>
+        {slug && (
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText(publicUrl);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            title="Copiar URL"
+            className="flex-shrink-0 text-text-muted hover:text-primary transition-colors"
+          >
+            {copied ? (
+              <CheckIcon className="w-4 h-4 text-green-500" />
+            ) : (
+              <CopyIcon className="w-4 h-4" />
+            )}
+          </button>
+        )}
       </div>
 
       {/* Error de guardado */}
