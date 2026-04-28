@@ -29,6 +29,7 @@ import { CrearSucursal } from './pages/superadmin/CrearSucursal';
 import { DetalleSucursal } from './pages/superadmin/DetalleSucursal';
 import { Planes } from './pages/superadmin/Planes';
 import { Suscripciones } from './pages/superadmin/Suscripciones';
+import { Herramientas } from './pages/superadmin/Herramientas';
 
 // Admin pages
 import { Dashboard } from './pages/admin/Dashboard';
@@ -99,6 +100,7 @@ export function App() {
           <Route path="/superadmin/sucursales/:id" element={<ProtectedRoute soloSuperAdmin><SuperAdminRoute><DetalleSucursal /></SuperAdminRoute></ProtectedRoute>} />
           <Route path="/superadmin/planes" element={<ProtectedRoute soloSuperAdmin><SuperAdminRoute><Planes /></SuperAdminRoute></ProtectedRoute>} />
           <Route path="/superadmin/suscripciones" element={<ProtectedRoute soloSuperAdmin><SuperAdminRoute><Suscripciones /></SuperAdminRoute></ProtectedRoute>} />
+          <Route path="/superadmin/herramientas" element={<ProtectedRoute soloSuperAdmin><SuperAdminRoute><Herramientas /></SuperAdminRoute></ProtectedRoute>} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/login" replace />} />

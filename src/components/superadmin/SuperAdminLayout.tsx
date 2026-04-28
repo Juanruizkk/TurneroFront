@@ -7,6 +7,7 @@ import {
   ShieldIcon,
   LogOutIcon,
   CreditCardIcon,
+  WrenchIcon,
 } from 'lucide-react';
 import logo from '../../assets/logo.png';
 
@@ -15,8 +16,9 @@ interface SuperAdminLayoutProps {
 }
 
 const navItems = [
-  { name: 'Sucursales', path: '/superadmin/sucursales', icon: BuildingIcon   },
-  { name: 'Planes',     path: '/superadmin/planes',     icon: CreditCardIcon },
+  { name: 'Sucursales',   path: '/superadmin/sucursales',   icon: BuildingIcon   },
+  { name: 'Planes',       path: '/superadmin/planes',       icon: CreditCardIcon },
+  { name: 'Herramientas', path: '/superadmin/herramientas', icon: WrenchIcon     },
 ];
 
 export function SuperAdminLayout({ children }: SuperAdminLayoutProps) {

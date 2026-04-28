@@ -55,4 +55,10 @@ export const suscripcionesAdminApi = {
 
   cambiarPlan: (sucursalId: string, dto: CambiarPlanSuperAdminDto) =>
     api.patch<SuscripcionSuperAdminItem>(`/superadmin/suscripciones/${sucursalId}/plan`, dto),
+
+  extenderVencimiento: (sucursalId: string) =>
+    api.post<SuscripcionSuperAdminItem>(`/superadmin/suscripciones/${sucursalId}/extender`, {}),
+
+  procesarPagoManual: (paymentId: string) =>
+    api.post<{ mensaje: string }>(`/suscripcion/procesar-pago/${paymentId}`, {}),
 };

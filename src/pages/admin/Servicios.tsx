@@ -87,6 +87,16 @@ export function Servicios() {
 
   const handleSave = async () => {
     if (!form.nombre || form.precio <= 0) return;
+    if (form.requiereSena && form.valorSena !== null && form.valorSena !== undefined) {
+      if (form.tipoSena === 'Fija' && form.valorSena > form.precio) {
+        addToast('error', `La seña fija ($${form.valorSena}) no puede ser mayor al precio del servicio ($${form.precio}).`);
+        return;
+      }
+      if (form.tipoSena === 'Porcentaje' && form.valorSena > 100) {
+        addToast('error', 'El porcentaje de la seña no puede superar el 100%.');
+        return;
+      }
+    }
     setSaving(true);
     try {
       if (editing) {

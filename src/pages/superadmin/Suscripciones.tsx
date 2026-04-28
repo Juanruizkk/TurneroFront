@@ -5,6 +5,7 @@ import {
   XIcon,
   ReceiptIcon,
   ChevronDownIcon,
+  CalendarPlusIcon,
 } from 'lucide-react';
 import { suscripcionesAdminApi, planesApi } from '../../api/superadmin';
 import { ToastContainer } from '../../components/ui/Toast';
@@ -45,6 +46,7 @@ export function Suscripciones() {
   const [target, setTarget]         = useState<SuscripcionSuperAdminItem | null>(null);
   const [planSeleccionado, setPlan] = useState('');
   const [saving, setSaving]         = useState(false);
+  const [extendiendo, setExtendiendo] = useState<string | null>(null);
 
   // Filtro de búsqueda
   const [busqueda, setBusqueda] = useState('');
@@ -87,6 +89,20 @@ export function Suscripciones() {
       addToast('error', 'No se pudo cambiar el plan.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const extenderVencimiento = async (item: SuscripcionSuperAdminItem) => {
+    if (!confirm(`¿Extender el vencimiento de "${item.sucursalNombre}" +30 días?`)) return;
+    setExtendiendo(item.sucursalId);
+    try {
+      const updated = await suscripcionesAdminApi.extenderVencimiento(item.sucursalId);
+      setItems((prev) => prev.map((i) => (i.sucursalId === updated.sucursalId ? updated : i)));
+      addToast('success', `Vencimiento de "${updated.sucursalNombre}" extendido hasta ${formatFechaCorta(updated.fechaVencimiento)}.`);
+    } catch {
+      addToast('error', 'No se pudo extender el vencimiento.');
+    } finally {
+      setExtendiendo(null);
     }
   };
 
@@ -206,13 +222,24 @@ export function Suscripciones() {
 
                     {/* Acciones */}
                     <td className="px-4 py-3 text-right">
-                      <button
-                        onClick={() => abrirModal(item)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary border border-border rounded-button hover:bg-surface-background transition-colors"
-                      >
-                        <ChevronDownIcon className="w-3 h-3" />
-                        Cambiar plan
-                      </button>
+                      <div className="inline-flex items-center gap-2">
+                        <button
+                          onClick={() => extenderVencimiento(item)}
+                          disabled={extendiendo === item.sucursalId}
+                          title="Extender +30 días"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-700 hover:text-green-800 border border-green-200 bg-green-50 hover:bg-green-100 rounded-button transition-colors disabled:opacity-50"
+                        >
+                          <CalendarPlusIcon className="w-3 h-3" />
+                          {extendiendo === item.sucursalId ? 'Extendiendo…' : '+30 días'}
+                        </button>
+                        <button
+                          onClick={() => abrirModal(item)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text-secondary hover:text-text-primary border border-border rounded-button hover:bg-surface-background transition-colors"
+                        >
+                          <ChevronDownIcon className="w-3 h-3" />
+                          Cambiar plan
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
