@@ -76,13 +76,17 @@ function isSameDay(iso: string, day: Date): boolean {
   );
 }
 
+function parseLocalMins(iso: string): number {
+  const timePart = (iso.split('T')[1] ?? '00:00').replace(/[Z+\-]\d.*/, '');
+  const [h = '0', m = '0'] = timePart.split(':');
+  return parseInt(h, 10) * 60 + parseInt(m, 10);
+}
+
 function positionOf(inicio: string, fin: string) {
-  const d = new Date(inicio);
-  const f = new Date(fin);
   const TOTAL_MINS = (END_HOUR - START_HOUR + 1) * 60;
 
-  const startMin = Math.max((d.getHours() - START_HOUR) * 60 + d.getMinutes(), 0);
-  const endMin   = Math.min((f.getHours() - START_HOUR) * 60 + f.getMinutes(), TOTAL_MINS);
+  const startMin = Math.max(parseLocalMins(inicio) - START_HOUR * 60, 0);
+  const endMin   = Math.min(parseLocalMins(fin)   - START_HOUR * 60, TOTAL_MINS);
 
   return {
     top:    startMin * PX_PER_MIN,
