@@ -12,7 +12,7 @@ import {
 import { pagosApi } from '../../api/pagos';
 import { publicoApi } from '../../api/publico';
 import { ApiError } from '../../api/client';
-import { formatMoneda, calcularMontoSena } from '../../types';
+import { formatMoneda, calcularMontoSena, formatFechaLarga, formatHora } from '../../types';
 import type { Servicio, Turno, SlotDisponible } from '../../types';
 
 interface BookingFlowProps {
@@ -726,9 +726,7 @@ export function BookingFlow(props: BookingFlowProps = {}) {
                     <li className="flex justify-between gap-4">
                       <span className="text-white/50 flex-shrink-0">Fecha y hora</span>
                       <span className="font-medium text-white text-right">
-                        {new Date(turnoCreado.fechaHoraInicio).toLocaleString('es-AR', {
-                          day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
-                        })}
+                        {formatFechaLarga(turnoCreado.fechaHoraInicio)}, {formatHora(turnoCreado.fechaHoraInicio)}
                       </span>
                     </li>
                     <li className="flex justify-between gap-4 border-t border-white/15 pt-3">

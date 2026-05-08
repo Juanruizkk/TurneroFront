@@ -604,28 +604,25 @@ export function getProfesionalColor(id: string): string {
   return PROF_COLORS[Math.abs(hash) % PROF_COLORS.length];
 }
 
-/** "lunes 14 de julio de 2025" */
+/** "lunes 14 de julio de 2025" — construye Date local desde partes del string ISO */
 export function formatFechaLarga(isoString: string): string {
-  return new Date(isoString).toLocaleDateString('es-AR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  const [y, m, d] = (isoString.split('T')[0]).split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('es-AR', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 
 /** "14/06/2025" */
 export function formatFechaCorta(isoString: string): string {
-  return new Date(isoString).toLocaleDateString('es-AR');
+  const [y, m, d] = (isoString.split('T')[0]).split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('es-AR');
 }
 
-/** "10:30" */
+/** "10:30" — extrae la hora del string ISO sin conversión de zona horaria */
 export function formatHora(isoString: string): string {
-  return new Date(isoString).toLocaleTimeString('es-AR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
+  const timePart = (isoString.split('T')[1] ?? '00:00').replace(/[Z+\-]\d.*/, '');
+  const [h = '00', m = '00'] = timePart.split(':');
+  return `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
 }
 
 /** Format currency: "$12.500" */

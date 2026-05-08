@@ -44,8 +44,9 @@ function duracionLabel(inicio: string, fin: string): string {
 }
 
 function horaCorta(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  const timePart = (iso.split('T')[1] ?? '00:00').replace(/[Z+\-]\d.*/, '');
+  const [h = '00', m = '00'] = timePart.split(':');
+  return `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
 }
 
 function getMondayOf(date: Date): Date {

@@ -19,7 +19,7 @@ import { turnosApi } from '../../api/turnos';
 import { cajaApi } from '../../api/caja';
 import { formatHora, formatMoneda, getProfesionalColor } from '../../types';
 import type { Turno, CajaInfo, MovimientoCaja, TipoMovimientoCaja, MedioPago, ConceptoPagoTurno } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth, tienePermiso } from '../../contexts/AuthContext';
 
 const TIPO_LABELS_MINI: Partial<Record<TipoMovimientoCaja, string>> = {
   IngresoManual: 'Ingreso',
@@ -155,8 +155,10 @@ export function Dashboard() {
         </button>
       </div>
 
-      {/* Onboarding checklist — solo visible hasta que esté completo o se cierre */}
-      <OnboardingChecklist sucursalId={sucursalId} />
+      {/* Onboarding checklist — solo visible para quienes pueden acceder a Ajustes */}
+      {(user?.esOwner || user?.rol === 'Administrativo' || tienePermiso(user, 'GestionarAjustes')) && (
+        <OnboardingChecklist sucursalId={sucursalId} />
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

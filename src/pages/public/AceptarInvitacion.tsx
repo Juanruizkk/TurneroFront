@@ -57,7 +57,7 @@ export function AceptarInvitacion() {
   }, [token]);
 
   const passwordsMatch = password && confirm && password === confirm;
-  const canSubmit      = passwordsMatch && password.length >= 6 && !saving;
+  const canSubmit      = passwordsMatch && password.length >= 8 && !saving;
 
   const handleSubmitConPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -268,7 +268,7 @@ export function AceptarInvitacion() {
                   type={showPass ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   className="w-full pl-10 pr-10 py-2.5 rounded-input border border-border bg-surface-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)}
