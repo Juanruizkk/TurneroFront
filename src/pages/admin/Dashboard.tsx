@@ -251,8 +251,8 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Mini Caja */}
-          <div className="bg-surface rounded-card border border-border shadow-sm p-6">
+          {/* Mini Caja — solo visible para quienes pueden cargar cobranzas */}
+          {tienePermiso(user, 'CargarCobranzas') && <div className="bg-surface rounded-card border border-border shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-heading font-bold text-lg text-text-primary flex items-center gap-2">
                 <WalletIcon className="w-5 h-5 text-primary" />
@@ -432,7 +432,7 @@ export function Dashboard() {
                 )}
               </>
             )}
-          </div>
+          </div>}
       {/* Por confirmar + No-shows — fila horizontal si hay datos */}
       {(pendientes.length > 0 || noShows.length > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
