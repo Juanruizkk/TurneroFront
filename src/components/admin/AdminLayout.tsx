@@ -167,7 +167,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-6 px-4">
+      <div className="flex-1 overflow-y-auto py-6 px-4 pb-safe-4">
         {navSections.map((section, idx) => (
           <div key={idx} className="mb-8">
             <h3 className="px-3 text-xs font-semibold text-text-muted tracking-wider mb-3">
@@ -238,7 +238,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   );
 
   return (
-    <div className="flex h-screen w-full bg-surface-background overflow-hidden">
+    <div className="flex h-dvh w-full bg-surface-background overflow-hidden">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -408,7 +408,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         )}
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-safe-8 md:pb-8 relative">{children}</main>
       </div>
     </div>
   );

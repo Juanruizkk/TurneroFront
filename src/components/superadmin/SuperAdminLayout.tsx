@@ -31,7 +31,7 @@ export function SuperAdminLayout({ children }: SuperAdminLayoutProps) {
       ?.name ?? 'Super Admin';
 
   return (
-    <div className="flex h-screen w-full bg-surface-background overflow-hidden">
+    <div className="flex h-dvh w-full bg-surface-background overflow-hidden">
       {/* Sidebar */}
       <aside className="w-[240px] bg-[#1E1E2E] flex flex-col flex-shrink-0 z-20">
 
@@ -108,7 +108,7 @@ export function SuperAdminLayout({ children }: SuperAdminLayoutProps) {
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-8 relative">{children}</main>
+        <main className="flex-1 overflow-y-auto p-8 pb-safe-8 relative">{children}</main>
       </div>
     </div>
   );
