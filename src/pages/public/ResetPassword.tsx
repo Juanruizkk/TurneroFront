@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LockIcon, EyeIcon, EyeOffIcon, SparklesIcon, AlertCircleIcon, CheckCircleIcon } from 'lucide-react';
 import { authApi } from '../../api/auth';
 
 export function ResetPassword() {
-  const [searchParams]          = useSearchParams();
-  const navigate                = useNavigate();
-  const token                   = searchParams.get('token') ?? '';
+  const navigate = useNavigate();
+  // El token viaja en el hash fragment (#token=...) para no quedar en logs de servidor ni en Referer
+  const token = new URLSearchParams(window.location.hash.slice(1)).get('token') ?? '';
 
   const [password, setPassword]     = useState('');
   const [confirmar, setConfirmar]   = useState('');
@@ -39,7 +39,7 @@ export function ResetPassword() {
       setTimeout(() => navigate('/login', { state: { passwordReseteado: true } }), 2000);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Ocurrió un error.';
-      if (msg.toLowerCase().includes('venció') || msg.toLowerCase().includes('expiró') || msg.toLowerCase().includes('válido')) {
+      if (msg.toLowerCase().includes('venció') || msg.toLowerCase().includes('expiró')) {
         setTokenExpirado(true);
       } else {
         setError(msg);

@@ -30,6 +30,8 @@ export type LoginResult =
 export function tienePermiso(user: SessionUser | null, permiso: PermisoSistema): boolean {
   if (!user) return false;
   if (user.esSuperAdmin || user.esOwner || user.rol === 'Administrativo') return true;
+  // El rol Caja tiene acceso implícito a cobranzas sin necesitar el permiso explícito
+  if (permiso === 'CargarCobranzas' && user.rol === 'Caja') return true;
   return (user.permisos ?? []).includes(permiso);
 }
 

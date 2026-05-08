@@ -22,6 +22,7 @@ import {
   XIcon,
   AlertTriangleIcon,
   CreditCardIcon,
+  BookOpenIcon,
 } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import { useSignalR, type TurnoNotificacion } from '../../hooks/useSignalR';
@@ -178,6 +179,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 if (item.path === '/admin/usuarios')    return esAdmin;
                 if (item.path === '/admin/ajustes')     return esAdmin || tienePermiso(user, 'GestionarAjustes');
                 if (item.path === '/admin/suscripcion') return user?.esOwner ?? false;
+                if (item.path === '/admin/caja')        return tienePermiso(user, 'CargarCobranzas');
                 return true;
               }).map((item) => {
                 const isActive = location.pathname === item.path ||
@@ -210,6 +212,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </ul>
           </div>
         ))}
+      </div>
+
+      <div className="px-4 pb-3">
+        <a
+          href="/manual.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-3 py-2 rounded-button text-text-secondary hover:bg-primary-light/10 hover:text-primary transition-colors text-sm"
+        >
+          <BookOpenIcon className="w-5 h-5" />
+          <span>Manual de usuario</span>
+        </a>
       </div>
 
       <div className="p-4 border-t border-border">
