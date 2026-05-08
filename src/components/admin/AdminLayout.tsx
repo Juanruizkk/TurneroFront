@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, tienePermiso } from '../../contexts/AuthContext';
 import { publicoApi } from '../../api/publico';
 import { suscripcionApi } from '../../api/suscripcion';
+import { notificacionesApi } from '../../api/notificaciones';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboardIcon,
@@ -87,12 +88,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
 
   const agregarNotificacion = useCallback((tipo: 'nuevo' | 'cancelado', turno: TurnoNotificacion) => {
+    let mensaje = tipo === 'nuevo'
+      ? `Nuevo turno: ${turno.clienteNombre} — ${turno.servicioNombre}`
+      : `Turno cancelado: ${turno.clienteNombre} — ${turno.servicioNombre}`;
+    if (tipo === 'nuevo' && turno.observaciones) {
+      mensaje += ' · Tiene un mensaje del cliente';
+    }
     const nueva: Notificacion = {
       id: `${Date.now()}-${turno.id}`,
       tipo,
-      mensaje: tipo === 'nuevo'
-        ? `Nuevo turno: ${turno.clienteNombre} — ${turno.servicioNombre}`
-        : `Turno cancelado: ${turno.clienteNombre} — ${turno.servicioNombre}`,
+      mensaje,
       hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
       leida: false,
     };
@@ -104,6 +109,29 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     onNuevoTurno:    (turno) => agregarNotificacion('nuevo', turno),
     onTurnoCancelado:(turno) => agregarNotificacion('cancelado', turno),
   });
+
+  // Cargar notificaciones persistidas al montar (las que llegaron con la pestaña cerrada)
+  useEffect(() => {
+    if (!user?.token) return;
+    notificacionesApi.getNoLeidas()
+      .then((persistidas) => {
+        if (persistidas.length === 0) return;
+        const convertidas = persistidas.map((n) => ({
+          id: n.id,
+          tipo: n.tipo,
+          mensaje: n.mensaje,
+          hora: new Date(n.fechaCreacion).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+          leida: n.leida,
+        }));
+        // Agregar al frente del estado actual; deduplicar por id
+        setNotificaciones((prev) => {
+          const idsExistentes = new Set(prev.map((x) => x.id));
+          const nuevas = convertidas.filter((n) => !idsExistentes.has(n.id));
+          return [...nuevas, ...prev].slice(0, 50);
+        });
+      })
+      .catch(() => {}); // no-crítico
+  }, [user?.token]);
 
   // Cerrar dropdown al hacer click fuera
   useEffect(() => {
@@ -264,9 +292,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <button
                 className="relative p-2 text-text-secondary hover:text-primary transition-colors"
                 onClick={() => {
-                  setBellOpen((o) => !o);
-                  if (!bellOpen) {
+                  const abriendo = !bellOpen;
+                  setBellOpen(abriendo);
+                  if (abriendo) {
                     setNotificaciones((prev) => prev.map((n) => ({ ...n, leida: true })));
+                    notificacionesApi.marcarLeidas().catch(() => {}); // persistir en DB (no-crítico)
                   }
                 }}
                 aria-label="Notificaciones"
@@ -327,7 +357,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     </div>
                     {notificaciones.length > 0 && (
                       <button
-                        onClick={() => setNotificaciones([])}
+                        onClick={() => {
+                          setNotificaciones([]);
+                          notificacionesApi.limpiar().catch(() => {}); // eliminar de DB (no-crítico)
+                        }}
                         className="w-full py-2.5 text-xs text-text-muted hover:text-text-primary transition-colors border-t border-border"
                       >
                         Limpiar todo

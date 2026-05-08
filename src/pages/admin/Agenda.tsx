@@ -12,7 +12,7 @@ import { useSignalR, type TurnoNotificacion } from '../../hooks/useSignalR';
 import { NuevoTurnoDrawer } from '../../components/admin/NuevoTurnoDrawer';
 
 
-const START_HOUR = 8;
+const START_HOUR = 7;
 const END_HOUR   = 20;
 const PX_PER_MIN = 1.6;
 const GRID_H     = (END_HOUR - START_HOUR + 1) * 60 * PX_PER_MIN; // px
@@ -144,19 +144,27 @@ function TimeAxis({ hours }: { hours: number[] }) {
   return (
     <div
       className="w-16 flex-shrink-0 border-r border-border bg-surface-background relative z-10 select-none"
+      style={{ height: `${GRID_H}px` }}
     >
-      {hours.map((h) => (
-        <div
-          key={h}
-          className="relative text-right pr-2"
-          style={{ height: `${60 * PX_PER_MIN}px` }}
-        >
+      {hours.map((h, i) => (
+        <React.Fragment key={h}>
+          {/* Hour label — clamped so first (08:00) is never clipped */}
           <span
-            className="absolute -top-2.5 right-2 text-[10px] font-medium text-text-muted bg-surface-background px-0.5"
+            className="absolute right-2 text-[10px] font-medium text-text-muted bg-surface-background px-0.5 leading-none"
+            style={{ top: `${Math.max(2, i * 60 * PX_PER_MIN - 6)}px` }}
           >
             {h.toString().padStart(2, '0')}:00
           </span>
-        </div>
+          {/* Half-hour label */}
+          {h < END_HOUR && (
+            <span
+              className="absolute right-2 text-[9px] text-text-muted/40 bg-surface-background px-0.5 leading-none"
+              style={{ top: `${(i + 0.5) * 60 * PX_PER_MIN - 5}px` }}
+            >
+              :30
+            </span>
+          )}
+        </React.Fragment>
       ))}
     </div>
   );
@@ -168,11 +176,12 @@ function GridLines({ hours }: { hours: number[] }) {
   return (
     <div className="absolute inset-0 pointer-events-none z-0">
       {hours.map((h) => (
-        <div
-          key={h}
-          className="border-t border-border/40 w-full"
-          style={{ height: `${60 * PX_PER_MIN}px` }}
-        />
+        <React.Fragment key={h}>
+          {/* Solid hour line */}
+          <div className="border-t border-border/50 w-full" style={{ height: `${30 * PX_PER_MIN}px` }} />
+          {/* Dashed half-hour line */}
+          <div className="border-t border-dashed border-border/25 w-full" style={{ height: `${30 * PX_PER_MIN}px` }} />
+        </React.Fragment>
       ))}
     </div>
   );
@@ -190,51 +199,72 @@ interface DailyCardProps {
 }
 
 function DailyCard({ turno, top, height, lane, totalLanes, onClick }: DailyCardProps) {
-  const color      = getProfesionalColor(turno.profesionalId);
-  const isPast     = new Date(turno.fechaHoraInicio) < new Date();
-  const isGhost    = ESTADOS_GHOST.has(turno.estado);
-  const isTiny     = height < 36;
-  const isShort    = height < 60;
-  const dur        = duracionLabel(turno.fechaHoraInicio, turno.fechaHoraFin);
+  const color   = getProfesionalColor(turno.profesionalId);
+  const isPast  = new Date(turno.fechaHoraInicio) < new Date();
+  const isGhost = ESTADOS_GHOST.has(turno.estado);
+  const isTiny  = height < 32;
+  const isShort = height < 58;
+  const dur     = duracionLabel(turno.fechaHoraInicio, turno.fechaHoraFin);
 
-  const GAP  = 3;
-  const colW = totalLanes > 1 ? `calc(${100 / totalLanes}% - ${GAP}px)` : 'calc(100% - 12px)';
-  const colL = totalLanes > 1 ? `calc(${(100 / totalLanes) * lane}% + ${GAP / 2}px)` : '6px';
+  const GAP  = 4;
+  const colW = totalLanes > 1 ? `calc(${100 / totalLanes}% - ${GAP}px)` : 'calc(100% - 10px)';
+  const colL = totalLanes > 1 ? `calc(${(100 / totalLanes) * lane}% + ${GAP / 2}px)` : '5px';
 
-  const bg        = isGhost ? 'linear-gradient(135deg, #d1d5db 0%, #e5e7eb 100%)' : `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`;
-  const shadow    = isGhost ? '0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.06)' : `0 1px 4px ${color}55, 0 0 0 1px ${color}33`;
-  const textColor = isGhost ? '#6b7280' : 'white';
-  const opacity   = isGhost ? 0.55 : isPast ? 0.55 : 1;
+  const accent  = isGhost ? '#9ca3af' : color;
+  const bg      = isGhost ? 'rgba(229,231,235,0.6)' : `${color}28`;
+  const text    = isGhost ? '#6b7280' : '#1c1917';
+  const subText = isGhost ? '#9ca3af' : `${color}dd`;
+  const timeText = isGhost ? '#9ca3af' : `${color}aa`;
+  const opacity  = isPast ? 0.65 : 1;
 
   return (
     <div
       onClick={onClick}
       className="absolute rounded-lg overflow-hidden cursor-pointer select-none transition-all duration-150
-        hover:brightness-105 hover:shadow-lg hover:-translate-y-px active:scale-[0.99]"
-      style={{ top: `${top}px`, height: `${height}px`, left: colL, width: colW, background: bg, boxShadow: shadow, opacity, zIndex: lane + 1 }}
+        hover:shadow-md hover:-translate-y-px active:scale-[0.99]"
+      style={{
+        top: `${top}px`,
+        height: `${height}px`,
+        left: colL,
+        width: colW,
+        backgroundColor: bg,
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: `${accent}30`,
+        borderLeftWidth: '3px',
+        borderLeftColor: accent,
+        opacity,
+        zIndex: lane + 1,
+      }}
     >
-      <div className="h-full flex flex-col px-2.5 py-1.5 gap-0.5">
+      <div className="h-full flex flex-col px-2 py-1 gap-px">
         {isTiny ? (
-          <span className="text-[9px] font-semibold truncate leading-none" style={{ color: textColor, textDecoration: isGhost ? 'line-through' : undefined }}>
-            {turno.clienteNombre}
+          <span
+            className="text-[9px] font-semibold truncate leading-none"
+            style={{ color: text, textDecoration: isGhost ? 'line-through' : undefined }}
+          >
+            {horaCorta(turno.fechaHoraInicio)} · {turno.clienteNombre}
           </span>
         ) : (
           <>
             <span
-              className="font-bold truncate leading-tight"
-              style={{ fontSize: isShort ? '10px' : '11px', fontFamily: '"DM Sans", sans-serif', color: textColor, textDecoration: isGhost ? 'line-through' : undefined }}
+              className="font-bold truncate leading-snug"
+              style={{ fontSize: isShort ? '10px' : '11px', fontFamily: '"DM Sans", sans-serif', color: text, textDecoration: isGhost ? 'line-through' : undefined }}
             >
               {turno.servicioNombre}
             </span>
             {!isShort && (
-              <span className="text-[10px] truncate leading-tight" style={{ color: isGhost ? '#9ca3af' : 'rgba(255,255,255,0.8)' }}>
+              <span className="text-[10px] truncate leading-tight font-medium" style={{ color: subText }}>
                 {turno.clienteNombre}
               </span>
             )}
-            <span className="text-[9px] font-medium mt-auto leading-none tabular-nums" style={{ color: isGhost ? '#9ca3af' : 'rgba(255,255,255,0.7)' }}>
+            <span
+              className="text-[9px] mt-auto leading-none tabular-nums"
+              style={{ color: timeText }}
+            >
               {isShort
                 ? `${turno.clienteNombre} · ${dur}`
-                : `${horaCorta(turno.fechaHoraInicio)} – ${horaCorta(turno.fechaHoraFin)} · ${dur}`
+                : `${horaCorta(turno.fechaHoraInicio)}–${horaCorta(turno.fechaHoraFin)} · ${dur}`
               }
             </span>
           </>
@@ -256,41 +286,62 @@ interface WeeklyCardProps {
 }
 
 function WeeklyCard({ turno, top, height, lane, totalLanes, onClick }: WeeklyCardProps) {
-  const color      = getProfesionalColor(turno.profesionalId);
-  const isPast     = new Date(turno.fechaHoraInicio) < new Date();
-  const isGhost    = ESTADOS_GHOST.has(turno.estado);
-  const isTiny     = height < 30;
-  const dur        = duracionLabel(turno.fechaHoraInicio, turno.fechaHoraFin);
+  const color   = getProfesionalColor(turno.profesionalId);
+  const isPast  = new Date(turno.fechaHoraInicio) < new Date();
+  const isGhost = ESTADOS_GHOST.has(turno.estado);
+  const isTiny  = height < 28;
+  const dur     = duracionLabel(turno.fechaHoraInicio, turno.fechaHoraFin);
 
-  const laneW = totalLanes > 1 ? `${100 / totalLanes}%` : 'calc(100% - 6px)';
-  const laneL = totalLanes > 1 ? `${(100 / totalLanes) * lane}%` : '3px';
+  const GAP   = 3;
+  const laneW = totalLanes > 1 ? `calc(${100 / totalLanes}% - ${GAP}px)` : 'calc(100% - 6px)';
+  const laneL = totalLanes > 1 ? `calc(${(100 / totalLanes) * lane}% + ${GAP / 2}px)` : '3px';
 
-  const bg        = isGhost ? 'linear-gradient(135deg, #d1d5db 0%, #e5e7eb 100%)' : `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`;
-  const shadow    = isGhost ? '0 1px 2px rgba(0,0,0,0.07)' : `0 1px 3px ${color}44`;
-  const textColor = isGhost ? '#6b7280' : 'white';
-  const opacity   = isGhost ? 0.55 : isPast ? 0.5 : 1;
+  const accent  = isGhost ? '#9ca3af' : color;
+  const bg      = isGhost ? 'rgba(229,231,235,0.6)' : `${color}28`;
+  const text    = isGhost ? '#6b7280' : '#1c1917';
+  const subText = isGhost ? '#9ca3af' : `${color}cc`;
+  const opacity = isPast ? 0.65 : 1;
 
   return (
     <div
       onClick={onClick}
       className="absolute rounded-md overflow-hidden cursor-pointer select-none transition-all duration-150
-        hover:brightness-105 hover:shadow-md hover:-translate-y-px active:scale-[0.99]"
-      style={{ top: `${top}px`, height: `${height}px`, left: laneL, width: laneW, background: bg, boxShadow: shadow, opacity, zIndex: lane + 1, paddingLeft: totalLanes > 1 ? '2px' : '0px' }}
+        hover:shadow-md hover:-translate-y-px active:scale-[0.99]"
+      style={{
+        top: `${top}px`,
+        height: `${height}px`,
+        left: laneL,
+        width: laneW,
+        backgroundColor: bg,
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: `${accent}30`,
+        borderLeftWidth: '2px',
+        borderLeftColor: accent,
+        opacity,
+        zIndex: lane + 1,
+      }}
     >
       <div className="h-full flex flex-col px-1.5 py-1 gap-px">
         {isTiny ? (
-          <span className="text-[8px] font-semibold truncate leading-none" style={{ color: textColor, textDecoration: isGhost ? 'line-through' : undefined }}>
-            {turno.clienteNombre}
+          <span
+            className="text-[8px] font-semibold truncate leading-none"
+            style={{ color: text, textDecoration: isGhost ? 'line-through' : undefined }}
+          >
+            {horaCorta(turno.fechaHoraInicio)} {turno.clienteNombre}
           </span>
         ) : (
           <>
-            <span className="font-bold text-[9px] truncate leading-tight" style={{ fontFamily: '"DM Sans", sans-serif', color: textColor, textDecoration: isGhost ? 'line-through' : undefined }}>
+            <span
+              className="font-bold text-[9px] truncate leading-tight"
+              style={{ fontFamily: '"DM Sans", sans-serif', color: text, textDecoration: isGhost ? 'line-through' : undefined }}
+            >
               {turno.servicioNombre}
             </span>
-            <span className="text-[8px] truncate leading-tight" style={{ color: isGhost ? '#9ca3af' : 'rgba(255,255,255,0.75)' }}>
+            <span className="text-[8px] truncate leading-tight" style={{ color: subText }}>
               {turno.clienteNombre}
             </span>
-            <span className="text-[8px] mt-auto tabular-nums leading-none" style={{ color: isGhost ? '#9ca3af' : 'rgba(255,255,255,0.6)' }}>
+            <span className="text-[8px] mt-auto tabular-nums leading-none" style={{ color: `${accent}88` }}>
               {horaCorta(turno.fechaHoraInicio)} · {dur}
             </span>
           </>
@@ -899,36 +950,36 @@ export function Agenda() {
           <div className="flex rounded-button border border-border overflow-hidden">
             <button
               onClick={() => setView('daily')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors touch-manipulation min-h-[32px] ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium transition-colors touch-manipulation min-h-[32px] ${
                 view === 'daily'
                   ? 'bg-primary text-white'
                   : 'bg-surface text-text-secondary hover:bg-surface-background'
               }`}
             >
               <CalendarDaysIcon className="w-3.5 h-3.5" />
-              Día
+              <span className="hidden sm:inline">Día</span>
             </button>
             <button
               onClick={() => setView('weekly')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
                 view === 'weekly'
                   ? 'bg-primary text-white'
                   : 'bg-surface text-text-secondary hover:bg-surface-background'
               }`}
             >
               <CalendarIcon className="w-3.5 h-3.5" />
-              Semana
+              <span className="hidden sm:inline">Semana</span>
             </button>
             <button
               onClick={() => setView('monthly')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
                 view === 'monthly'
                   ? 'bg-primary text-white'
                   : 'bg-surface text-text-secondary hover:bg-surface-background'
               }`}
             >
               <CalendarRangeIcon className="w-3.5 h-3.5" />
-              Mes
+              <span className="hidden sm:inline">Mes</span>
             </button>
           </div>
 
@@ -953,10 +1004,10 @@ export function Agenda() {
           {puedeAgendar && (
             <button
               onClick={() => setShowNuevoTurno(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-button transition-colors shadow-sm touch-manipulation min-h-[32px]"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-button transition-colors shadow-sm touch-manipulation min-h-[32px]"
             >
               <PlusIcon className="w-4 h-4" />
-              Nuevo turno
+              <span className="hidden sm:inline">Nuevo turno</span>
             </button>
           )}
         </div>

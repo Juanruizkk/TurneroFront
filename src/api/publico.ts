@@ -26,9 +26,12 @@ export const publicoApi = {
   reservarBySlug: (slug: string, dto: ReservarTurnoDto) =>
     api.post<Turno>(`/publico/${slug}/reservar`, dto),
 
-  // Legacy (para BookingFlow y Landing con VITE_SUCURSAL_ID)
+  // Legacy (para BookingFlow con VITE_SUCURSAL_ID — endpoints públicos por ID)
   perfil: (sucursalId: string) =>
     api.get<PerfilPublico>(`/publico/perfil?sucursalId=${sucursalId}`),
+
+  serviciosBySucursalId: (sucursalId: string) =>
+    api.get<Servicio[]>(`/publico/servicios?sucursalId=${sucursalId}`),
 
   slots: (sucursalId: string, fecha: string, servicioId: string) =>
     api.get<SlotDisponible[]>(

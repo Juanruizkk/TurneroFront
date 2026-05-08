@@ -42,6 +42,7 @@ const defaultForm = (): AjustesSucursal => ({
   rubros: [],
   moneda: 'ARS',
   direccion: '',
+  googleMapsUrl: '',
   telefono: '',
   email: '',
   horariosAtencion: defaultHorarios(),
@@ -535,6 +536,18 @@ export function Ajustes() {
                     value={form.direccion}
                     onChange={(e) => set('direccion', e.target.value)}
                     placeholder="Calle 123, Ciudad, Provincia"
+                  />
+                </div>
+              </Field>
+
+              <Field label="Link de Google Maps" hint="Opcional — el cliente podrá abrir la ubicación directamente desde la página de reservas.">
+                <div className="relative">
+                  <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                  <input
+                    className={`${inputCls} pl-9`}
+                    value={form.googleMapsUrl ?? ''}
+                    onChange={(e) => set('googleMapsUrl', e.target.value)}
+                    placeholder="https://maps.app.goo.gl/..."
                   />
                 </div>
               </Field>

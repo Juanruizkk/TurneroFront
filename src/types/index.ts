@@ -19,7 +19,7 @@ export type ConceptoPagoTurno = 'Sena' | 'PagoParcial' | 'PagoTotal' | 'SaldoFin
 
 export type TipoSena = 'Fija' | 'Porcentaje';
 
-export type ModalidadPrestacion = 'Presencial' | 'Maquina' | 'Tratamiento' | 'Otro';
+export type ModalidadPrestacion = 'Presencial' | 'Maquina' | 'Tratamiento' | 'Otro' | 'Domicilio' | 'Online';
 
 export type TipoServicio = 'Regular' | 'Variable';
 
@@ -95,6 +95,7 @@ export interface AjustesSucursal {
   rubros: string[];
   moneda: string;
   direccion: string;
+  googleMapsUrl?: string;
   telefono: string;
   email: string;
   horariosAtencion: HorariosAtencion;
@@ -122,6 +123,7 @@ export interface PerfilPublico {
   rubros: string[];
   moneda: string;
   direccion: string;
+  googleMapsUrl?: string;
   telefono: string;
   email: string;
   diasMaximosReservaFutura: number;

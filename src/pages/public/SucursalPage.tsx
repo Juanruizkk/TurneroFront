@@ -141,9 +141,9 @@ export function SucursalPage() {
   const isOpenToday = todayHorario?.abierto;
 
   const contactItems = [
-    { icon: MapPinIcon, label: 'Dirección', value: perfil.direccion },
-    { icon: PhoneIcon,  label: 'Teléfono',  value: perfil.telefono },
-    { icon: MailIcon,   label: 'Email',     value: perfil.email },
+    { icon: MapPinIcon, label: 'Dirección', value: perfil.direccion, href: perfil.googleMapsUrl },
+    { icon: PhoneIcon,  label: 'Teléfono',  value: perfil.telefono,  href: perfil.telefono ? `tel:${perfil.telefono}` : undefined },
+    { icon: MailIcon,   label: 'Email',     value: perfil.email,     href: perfil.email ? `mailto:${perfil.email}` : undefined },
   ].filter((i) => i.value);
 
   const diasAbiertos = DIAS_SEMANA.filter((dia) => perfil.horariosAtencion[dia]?.abierto);
@@ -214,14 +214,25 @@ export function SucursalPage() {
           <GlassCard>
             <GlassLabel>Información de contacto</GlassLabel>
             <ul className="space-y-3">
-              {contactItems.map(({ icon: Icon, label, value }) => (
+              {contactItems.map(({ icon: Icon, label, value, href }) => (
                 <li key={label} className="flex items-start gap-2.5">
                   <div className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Icon className="w-3.5 h-3.5 text-white/80" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-[10px] uppercase tracking-wide text-white/45 font-semibold mb-0.5">{label}</p>
-                    <p className="text-sm text-white/90 break-words">{value}</p>
+                    {href ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-white/90 break-words underline underline-offset-2 decoration-white/30 hover:decoration-white/70 transition-colors"
+                      >
+                        {value}
+                      </a>
+                    ) : (
+                      <p className="text-sm text-white/90 break-words">{value}</p>
+                    )}
                   </div>
                 </li>
               ))}

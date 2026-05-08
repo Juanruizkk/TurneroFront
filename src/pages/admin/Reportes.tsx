@@ -6,7 +6,7 @@ import {
 import {
   CalendarIcon, TrendingUpIcon, UsersIcon, ScissorsIcon,
   CheckCircleIcon, XCircleIcon, AlertCircleIcon, ClockIcon,
-  CreditCardIcon, BanknoteIcon, FileTextIcon, TableIcon,
+  CreditCardIcon, BanknoteIcon, FileTextIcon, TableIcon, RefreshCwIcon,
 } from 'lucide-react';
 import { reportesApi, type ReporteResumen } from '../../api/reportes';
 import { publicoApi } from '../../api/publico';
@@ -438,6 +438,17 @@ export function Reportes() {
             </div>
           </div>
 
+          {/* Actualizar */}
+          <button
+            onClick={cargar}
+            disabled={loading}
+            title="Actualizar datos"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border bg-surface text-sm font-medium text-text-secondary hover:text-text-primary hover:border-primary/40 transition-colors disabled:opacity-50"
+          >
+            <RefreshCwIcon className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Actualizar</span>
+          </button>
+
           {/* Exportar */}
           <button
             onClick={exportarPDF}
@@ -484,7 +495,7 @@ export function Reportes() {
             <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
               <CalendarIcon className="w-4 h-4" /> Turnos
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
               <StatCard label="Total"       value={turnos.total}         icon={CalendarIcon}    color="bg-primary/10 text-primary" />
               <StatCard label="Completados" value={turnos.completados}   icon={CheckCircleIcon} color="bg-green-100 text-green-600" />
               <StatCard label="Cancelados"  value={turnos.cancelados}    icon={XCircleIcon}     color="bg-red-100 text-red-500" />
@@ -614,7 +625,7 @@ export function Reportes() {
             <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
               <UsersIcon className="w-4 h-4" /> Clientes
             </h2>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <StatCard label="Únicos en período" value={clientes.totalUnicos}      icon={UsersIcon}       color="bg-primary/10 text-primary" />
               <StatCard label="Nuevos"             value={clientes.totalNuevos}      icon={CheckCircleIcon} color="bg-green-100 text-green-600" />
               <StatCard label="Recurrentes"        value={clientes.totalRecurrentes} icon={TrendingUpIcon}  color="bg-blue-100 text-blue-500" />

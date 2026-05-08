@@ -265,7 +265,7 @@ export function Clientes() {
                         <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs flex-shrink-0">
                           {c.nombre.charAt(0).toUpperCase()}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <button
                               onClick={() => setFichaCliente(c)}
@@ -287,9 +287,11 @@ export function Clientes() {
                             )}
                           </div>
                           {c.ultimaVisita && (
-                            <span className="text-xs text-text-muted flex items-center gap-1 mt-0.5">
-                              <CalendarIcon className="w-3 h-3" />
-                              Última visita: {new Date(c.ultimaVisita).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            <span className="hidden sm:flex items-center gap-1 mt-0.5 text-xs text-text-muted">
+                              <CalendarIcon className="w-3 h-3 flex-shrink-0" />
+                              <span className="truncate">
+                                {new Date(c.ultimaVisita).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                              </span>
                             </span>
                           )}
                         </div>

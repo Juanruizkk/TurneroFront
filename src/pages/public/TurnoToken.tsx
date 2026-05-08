@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  SparklesIcon,
   CalendarIcon,
   ClockIcon,
   UserIcon,
@@ -12,6 +11,7 @@ import {
   PhoneIcon,
   AlertTriangleIcon,
 } from 'lucide-react';
+import logo from '../../assets/logo.png';
 import { turnosApi } from '../../api/turnos';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { formatFechaLarga, formatHora, formatMoneda } from '../../types';
@@ -65,9 +65,8 @@ export function TurnoToken() {
     <div className="min-h-screen bg-surface-background flex flex-col font-body">
       {/* Header */}
       <header className="bg-surface border-b border-border py-4 px-6 sticky top-0 z-50">
-        <div className="max-w-lg mx-auto flex items-center gap-2 text-primary font-heading font-bold text-xl">
-          <SparklesIcon className="w-5 h-5" />
-          Belleza Studio
+        <div className="max-w-lg mx-auto flex items-center">
+          <img src={logo} alt="MetaTurnos" className="h-9 w-auto object-contain" />
         </div>
       </header>
 

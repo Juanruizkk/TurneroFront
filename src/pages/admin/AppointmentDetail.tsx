@@ -512,10 +512,10 @@ export function AppointmentDetail() {
                       </div>
                     </section>
 
-                    {/* Observaciones */}
+                    {/* Mensaje del cliente */}
                     {turno.observaciones && (
                       <section>
-                        <h3 className="text-lg font-heading font-bold text-text-primary mb-4">Observaciones</h3>
+                        <h3 className="text-lg font-heading font-bold text-text-primary mb-4">Mensaje del cliente</h3>
                         <div className="bg-warning/10 rounded-card p-5 border border-warning/20 text-text-primary">
                           {turno.observaciones}
                         </div>

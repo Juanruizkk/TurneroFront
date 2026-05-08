@@ -311,9 +311,9 @@ export function Servicios() {
                       onChange={(e) => setField('modalidadPrestacion', e.target.value as ModalidadPrestacion)}
                       className="w-full px-3 py-2 rounded-input border border-border bg-surface-background focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
                     >
-                      {['Presencial', 'Maquina', 'Tratamiento', 'Otro'].map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
+                      <option value="Presencial">Presencial</option>
+                      <option value="Domicilio">A domicilio</option>
+                      <option value="Online">Online</option>
                     </select>
                   </div>
                 </div>

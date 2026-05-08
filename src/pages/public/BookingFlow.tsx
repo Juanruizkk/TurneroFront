@@ -9,7 +9,6 @@ import {
   CreditCardIcon,
   SparklesIcon,
 } from 'lucide-react';
-import { serviciosApi } from '../../api/servicios';
 import { pagosApi } from '../../api/pagos';
 import { publicoApi } from '../../api/publico';
 import { ApiError } from '../../api/client';
@@ -58,7 +57,7 @@ export function BookingFlow(props: BookingFlowProps = {}) {
   });
 
   // Client data
-  const [clientData, setClientData] = useState({ nombre: '', apellido: '', telefono: '', email: '' });
+  const [clientData, setClientData] = useState({ nombre: '', apellido: '', telefono: '', email: '', mensajeCliente: '' });
 
   // Result
   const [turnoCreado, setTurnoCreado] = useState<Turno | null>(null);
@@ -82,7 +81,7 @@ export function BookingFlow(props: BookingFlowProps = {}) {
     const serviciosPromise = effectiveSlug
       ? publicoApi.serviciosBySlug(effectiveSlug)
       : SUCURSAL_ID
-        ? serviciosApi.listar(SUCURSAL_ID)
+        ? publicoApi.serviciosBySucursalId(SUCURSAL_ID)
         : Promise.resolve([] as import('../../types').Servicio[]);
 
     serviciosPromise
@@ -161,7 +160,7 @@ export function BookingFlow(props: BookingFlowProps = {}) {
       servicioId:      selectedServicio.id,
       profesionalId:   selectedProfId,
       fechaHoraInicio,
-      observaciones:   undefined,
+      observaciones:   clientData.mensajeCliente.trim() || undefined,
     };
 
     // Usar endpoint público: resuelve cliente y crea turno server-side (sin auth)
@@ -601,6 +600,22 @@ export function BookingFlow(props: BookingFlowProps = {}) {
                     />
                   </div>
                 ))}
+
+                {selectedServicio?.modalidadPrestacion === 'Domicilio' && (
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-1.5">
+                      Dirección o indicaciones para llegar <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      value={clientData.mensajeCliente}
+                      onChange={(e) => setClientData({ ...clientData, mensajeCliente: e.target.value })}
+                      maxLength={500}
+                      rows={3}
+                      placeholder="Ej: Av. Corrientes 1234, 3° piso, depto B. Timbre apellido García."
+                      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/35 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-all text-base resize-none"
+                    />
+                  </div>
+                )}
               </div>
 
               {errorMsg && (
@@ -609,7 +624,8 @@ export function BookingFlow(props: BookingFlowProps = {}) {
 
               <div className="mt-6 sm:mt-8 flex">
                 <button
-                  disabled={!clientData.nombre || !clientData.telefono || submitting}
+                  disabled={!clientData.nombre || !clientData.telefono || submitting ||
+                    (selectedServicio?.modalidadPrestacion === 'Domicilio' && !clientData.mensajeCliente.trim())}
                   onClick={señaRequerida ? nextStep : handleConfirmar}
                   className="w-full sm:w-auto sm:ml-auto bg-primary hover:bg-primary-dark disabled:opacity-40 disabled:cursor-not-allowed text-white px-8 py-3.5 sm:py-3 rounded-button font-medium transition-colors shadow-lg shadow-primary/25"
                 >
