@@ -518,14 +518,14 @@ function WeeklyGrid({ weekDays, turnos, hours, isTimeVisible, currentTimeMins, t
   return (
     <div className="flex flex-col flex-1 overflow-auto">
       {/* Sticky day headers */}
-      <div className="flex sticky top-0 z-20 bg-surface border-b border-border shadow-sm flex-shrink-0">
+      <div className="flex sticky top-0 z-20 bg-surface border-b border-border shadow-sm flex-shrink-0 min-w-max">
         <div className="w-16 flex-shrink-0 border-r border-border bg-surface-background" />
         {byDay.map(({ day, turnos: dayTurnos }) => {
           const isToday = isSameDay(day.toISOString(), today);
           return (
             <div
               key={day.toISOString()}
-              className="flex-1 min-w-[100px] py-2 px-2 border-r border-border flex flex-col items-center gap-0.5"
+              className="w-[100px] shrink-0 py-2 px-2 border-r border-border flex flex-col items-center gap-0.5"
             >
               <span
                 className="text-[10px] font-medium uppercase tracking-wide"
@@ -552,10 +552,10 @@ function WeeklyGrid({ weekDays, turnos, hours, isTimeVisible, currentTimeMins, t
       </div>
 
       {/* Grid body */}
-      <div className="flex relative" style={{ minHeight: `${GRID_H}px` }}>
+      <div className="flex relative min-w-max" style={{ minHeight: `${GRID_H}px` }}>
         <TimeAxis hours={hours} />
 
-        <div className="flex flex-1 relative">
+        <div className="flex relative" style={{ width: `${7 * 100}px` }}>
           <GridLines hours={hours} />
 
           {/* Current time line (spans all day columns) */}
@@ -579,7 +579,7 @@ function WeeklyGrid({ weekDays, turnos, hours, isTimeVisible, currentTimeMins, t
             return (
               <div
                 key={day.toISOString()}
-                className="flex-1 min-w-[100px] border-r border-border relative"
+                className="w-[100px] shrink-0 border-r border-border relative"
                 style={{
                   minHeight: `${GRID_H}px`,
                   background: isToday ? 'rgba(180,105,123,0.025)' : undefined,
