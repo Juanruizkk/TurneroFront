@@ -134,11 +134,12 @@
     }
 
     .cover-logo {
-      width: 72px;
-      height: 72px;
+      display: block;
+      width: 88px;
+      height: 88px;
       object-fit: contain;
-      margin-bottom: 1.25rem;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+      margin: 0 auto 1.5rem;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,0.28));
     }
 
     .cover-badge {
@@ -151,17 +152,17 @@
       font-weight: 700;
       letter-spacing: 0.09em;
       text-transform: uppercase;
-      margin-bottom: 1.1rem;
+      margin-bottom: 0.75rem;
       color: rgba(255,255,255,0.92);
     }
 
     .cover h1 {
       font-family: 'Outfit', system-ui, sans-serif;
-      font-size: 3rem;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      margin-bottom: 0.85rem;
-      line-height: 1.05;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0;
+      line-height: 1.1;
       color: #ffffff;
     }
 
@@ -688,17 +689,9 @@
 
     <!-- Cover -->
     <div class="cover">
-      <img src="/logo.png" alt="MetaTurnos" class="cover-logo">
+      <img src="logo.png" alt="MetaTurnos" class="cover-logo">
       <div class="cover-badge">Manual de usuario</div>
       <h1>MetaTurnos</h1>
-      <p>Guia completa para gestionar tu negocio: configuracion, agenda, equipo, pagos y reportes.</p>
-      <div>
-        <div class="cover-read-time">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Tiempo estimado de lectura: 30 min
-        </div>
-      </div>
-      <div class="cover-meta">Dirigido al propietario y administrador de la sucursal</div>
     </div>
 
     <div class="content">
@@ -762,7 +755,7 @@
 
         <p>En <strong>Menu lateral &rarr; Ajustes</strong> encontras seis secciones accesibles desde el menu lateral izquierdo de la pantalla. La primera es el perfil del negocio, que contiene la informacion que veran tus clientes en tu pagina publica.</p>
 
-        <img class="screenshot" src="capturas/03_ajustes_perfil_negocio.png" alt="Seccion Perfil del negocio en Ajustes">
+        <img class="screenshot" src="capturas/Ajustes_Perfil.jpg" alt="Seccion Perfil del negocio en Ajustes">
 
         <table class="config-table">
           <thead>
@@ -805,7 +798,7 @@
 
         <p>Estos datos aparecen en tu perfil publico para que los clientes sepan donde encontrarte y como comunicarse.</p>
 
-        <img class="screenshot" src="capturas/04_ajustes_contacto_ubicacion.png" alt="Seccion Contacto y ubicacion en Ajustes">
+        <img class="screenshot" src="capturas/Ajustes_Contacto.jpg" alt="Seccion Contacto y ubicacion en Ajustes">
 
         <table class="config-table">
           <thead>
@@ -838,7 +831,7 @@
 
         <p>Define los dias y franjas horarias en que tu negocio acepta turnos. Los clientes solo podran reservar dentro de estos horarios.</p>
 
-        <img class="screenshot" src="capturas/05_ajustes_horarios_atencion.png" alt="Seccion Horarios de atencion en Ajustes">
+        <img class="screenshot" src="capturas/Ajuste_Horarios.png" alt="Seccion Horarios de atencion en Ajustes">
 
         <h3>Como configurar cada dia</h3>
         <p>Para cada dia de la semana (Lunes a Domingo) hay un renglon con:</p>
@@ -871,7 +864,7 @@
 
         <p>Parametros que controlan como se comporta el sistema de reservas para tus clientes.</p>
 
-        <img class="screenshot" src="capturas/06_ajustes_configuracion_reservas.png" alt="Seccion Configuracion de reservas en Ajustes">
+        <img class="screenshot" src="capturas/ConfigReservas.png" alt="Seccion Configuracion de reservas en Ajustes">
 
         <table class="config-table">
           <thead>
@@ -951,6 +944,8 @@
 
         <p>El <strong>slug</strong> es el identificador unico de tu negocio en la URL. Por defecto se genera automaticamente a partir del nombre del negocio, pero podes personalizarlo.</p>
 
+        <img class="screenshot" src="capturas/Ajustes_URL.png" alt="Seccion URL publica con campo de slug editable">
+
         <h3>Cambiar el slug</h3>
         <div class="steps">
           <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Edita el campo de slug</strong><p>El slug solo puede contener letras minusculas, numeros y guiones (sin espacios ni caracteres especiales).</p></div></div>
@@ -977,7 +972,7 @@
 
         <p>Conecta tu cuenta de Mercado Pago para habilitar el cobro de senas online. Cuando este activado, tus clientes podran pagar la sena al momento de confirmar una reserva desde el booking publico.</p>
 
-        <img class="screenshot" src="capturas/08_ajustes_mercado_pago.png" alt="Seccion Pagos en Ajustes con boton de conexion Mercado Pago">
+        <img class="screenshot" src="capturas/ConexionMP.png" alt="Seccion Pagos en Ajustes con boton de conexion Mercado Pago">
 
         <h3>Como conectar tu cuenta</h3>
         <div class="steps">
@@ -986,6 +981,8 @@
           <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Autoriza los permisos</strong><p>Mercado Pago pedira permiso para que MetaTurnos cree cobros en nombre de tu cuenta.</p></div></div>
           <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Volveras automaticamente a Ajustes</strong><p>Aparecera el mensaje "Mercado Pago conectado exitosamente" en verde.</p></div></div>
         </div>
+
+        <img class="screenshot" src="capturas/AutorizacionMP.png" alt="Pantalla de autorizacion de Mercado Pago">
 
         <div class="callout info">
           <span class="callout-icon">&#8505;</span>
@@ -1006,7 +1003,7 @@
 
         <p>La agenda es el corazon del panel. Desde aca podras ver todos los turnos programados, navegar entre fechas y crear nuevos turnos. Accedes desde <strong>Menu lateral &rarr; Agenda</strong>.</p>
 
-        <img class="screenshot" src="capturas/02_agenda_turnos.png" alt="Agenda en vista diaria con varios profesionales">
+        <img class="screenshot" src="capturas/Vista_turnos.png" alt="Agenda en vista diaria con varios profesionales">
 
         <h3>Modos de vista</h3>
         <p>En la barra superior derecha podes cambiar entre tres modos:</p>
@@ -1064,7 +1061,7 @@
 
         <p>Haciendo clic en cualquier turno de la agenda se abre su pagina de detalle. Esta pagina tiene cinco pestanas:</p>
 
-        <img class="screenshot" src="capturas/14_detalle_turno.png" alt="Detalle de turno con las 5 pestanas">
+        <img class="screenshot" src="capturas/Vista_drawer_turno.png" alt="Detalle de turno con las pestanas">
 
         <h3>Pestana Informacion</h3>
         <p>Muestra todos los datos del turno:</p>
@@ -1112,10 +1109,7 @@
           <span class="badge badge-prechazado"><span class="badge-dot badge-dot-prechazado"></span>Pago rechazado</span>
         </div>
 
-        <div class="screenshot">
-          <svg class="screenshot-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          [Captura: etiquetas de estado en el detalle de un turno]
-        </div>
+        <img class="screenshot" src="capturas/Vista_drawer_turno.png" alt="Etiquetas de estado en el detalle de un turno">
 
         <table class="config-table">
           <thead><tr><th>Estado</th><th>Significado</th><th>Siguiente paso</th></tr></thead>
@@ -1177,7 +1171,7 @@
 
         <p>La pestana <strong>Pagos</strong> en el detalle del turno muestra todos los movimientos de cobro asociados y permite registrar nuevos pagos presenciales.</p>
 
-        <img class="screenshot" src="capturas/15_turno_pagos.png" alt="Pestana Pagos con historial y boton Registrar pago">
+        <img class="screenshot" src="capturas/Turno_pagos.png" alt="Pestana Pagos con historial y boton Registrar pago">
 
         <h3>Registrar un pago presencial</h3>
         <div class="steps">
@@ -1219,7 +1213,7 @@
           <li>Los comentarios no son visibles para el cliente.</li>
         </ul>
 
-        <img class="screenshot" src="capturas/16_turno_comentarios.png" alt="Pestana Comentarios con lista de notas internas">
+        <img class="screenshot" src="capturas/turnos_comentarios.png" alt="Pestana Comentarios con lista de notas internas">
       </section>
 
       <!-- ══════════════════════════════════════════════════════════════════ -->
@@ -1245,7 +1239,7 @@
         <h3>Eliminar un adjunto</h3>
         <p>Cada adjunto tiene un boton de papelera. Al eliminarlo se borra tanto del registro como de Cloudinary (no se puede recuperar).</p>
 
-        <img class="screenshot" src="capturas/17_turno_adjuntos.png" alt="Pestana Adjuntos con imagenes subidas">
+        <img class="screenshot" src="capturas/turno_adjunto.png" alt="Pestana Adjuntos con imagenes subidas">
       </section>
 
       <!-- ══════════════════════════════════════════════════════════════════ -->
@@ -1261,7 +1255,7 @@
 
         <p>Los servicios son lo que tus clientes pueden reservar. Desde <strong>Menu lateral &rarr; Servicios</strong> podras crear, editar, activar y desactivar servicios.</p>
 
-        <img class="screenshot" src="capturas/09_servicios_senas.png" alt="Listado de servicios y senas">
+        <img class="screenshot" src="capturas/Servicios.png" alt="Listado de servicios y senas">
 
         <h3>Crear o editar un servicio</h3>
         <p>Haz clic en <strong>+ Nuevo servicio</strong> o en el icono de lapiz de un servicio existente. Se abre un modal con los siguientes campos:</p>
@@ -1342,7 +1336,7 @@
 
         <p>Desde <strong>Menu lateral &rarr; Equipo</strong> podras agregar, editar y gestionar a todos los integrantes de tu negocio. Solo los usuarios con rol Owner o Administrativo pueden ver y modificar esta seccion.</p>
 
-        <img class="screenshot" src="capturas/10_equipo_usuarios_roles.png" alt="Listado de usuarios del equipo con roles y estado">
+        <img class="screenshot" src="capturas/equipo.png" alt="Listado de usuarios del equipo con roles y estado">
 
         <h3>Roles disponibles</h3>
 
@@ -1468,10 +1462,7 @@
           <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Guarda la disponibilidad</strong><p>Los cambios se aplican inmediatamente al booking publico.</p></div></div>
         </div>
 
-        <div class="screenshot">
-          <svg class="screenshot-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          [Captura: drawer de disponibilidad de un profesional]
-        </div>
+        <img class="screenshot" src="capturas/disponibilidad_profecional.png" alt="Drawer de disponibilidad de un profesional">
 
         <div class="callout tip">
           <span class="callout-icon">&#9998;</span>
@@ -1492,7 +1483,7 @@
 
         <p>Desde <strong>Menu lateral &rarr; Reportes</strong> accedes a estadisticas del negocio por rango de fechas. Esta funcion esta disponible para los planes <strong>Pro</strong> y <strong>Enterprise</strong>.</p>
 
-        <img class="screenshot" src="capturas/11_reportes.png" alt="Pantalla de reportes con graficos e indicadores">
+        <img class="screenshot" src="capturas/reportes.png" alt="Pantalla de reportes con graficos e indicadores">
 
         <h3>Filtro de fechas</h3>
         <p>En la parte superior hay dos selectores de fecha: <strong>Desde</strong> y <strong>Hasta</strong>. Por defecto muestran el mes actual. Los reportes se actualizan automaticamente al cambiar las fechas.</p>
@@ -1582,7 +1573,7 @@
 
         <p>Desde <strong>Menu lateral &rarr; Suscripcion</strong> podras ver el estado de tu plan, cambiar de plan y consultar el historial de pagos. <strong>Solo el propietario (Owner) puede acceder a esta seccion.</strong></p>
 
-        <img class="screenshot" src="capturas/12_suscripcion.png" alt="Pagina de suscripcion con plan actual y planes disponibles">
+        <img class="screenshot" src="capturas/Suscripcion.png" alt="Pagina de suscripcion con plan actual y planes disponibles">
 
         <h3>Estado actual</h3>
         <p>La tarjeta principal muestra:</p>
@@ -1627,7 +1618,7 @@
 
         <p>Tu pagina publica (<code>metaturnos.com/tu-slug</code>) es donde tus clientes pueden ver tu negocio y reservar turnos sin necesidad de tener una cuenta.</p>
 
-        <img class="screenshot" src="capturas/18_booking_pagina_publica.png" alt="Pagina publica del negocio con logo, imagen de fondo y servicios">
+        <img class="screenshot" src="capturas/pagina_reservas.png" alt="Pagina publica del negocio con logo, imagen de fondo y servicios">
 
         <h3>Proceso de reserva paso a paso</h3>
 
@@ -1676,7 +1667,7 @@
           </div>
         </div>
 
-        <img class="screenshot" src="capturas/23_booking_confirmacion.png" alt="Pantalla de confirmacion del turno al cliente">
+        <img class="screenshot" src="capturas/Turno_exitoso.png" alt="Pantalla de confirmacion del turno al cliente">
 
         <div class="callout tip">
           <span class="callout-icon">&#9998;</span>

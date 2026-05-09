@@ -60,6 +60,11 @@ const TODOS_LOS_PERMISOS: PermisoSistema[] = [
 
 const ROLES: RolUsuario[] = ['Administrativo', 'Profesional', 'Caja'];
 
+// Permisos que cada rol tiene de forma implícita (sin necesitar asignación explícita)
+const PERMISOS_IMPLICITOS: Partial<Record<RolUsuario, PermisoSistema[]>> = {
+  Caja: ['CargarCobranzas'],
+};
+
 function getInitials(nombre: string, apellido: string) {
   return `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
 }
@@ -185,17 +190,22 @@ export function Usuarios() {
     setSaving(true);
     try {
       if (editing) {
-        const dto: ActualizarUsuarioDto = {
+        const dtoPersonal: ActualizarUsuarioDto = {
           nombre:       form.nombre,
           apellido:     form.apellido,
           email:        form.email,
           telefono:     form.telefono,
-          passwordHash: editing.nombreCompleto, // campo requerido por el DTO; se reemplaza por hashing real
+          passwordHash: '',
           rol:          form.rol,
           estado:       form.estado,
           permisos:     form.permisos,
         };
-        const updated = await usuariosApi.actualizar(editing.id, dto);
+        await usuariosApi.actualizar(editing.id, dtoPersonal);
+        const updated = await usuariosApi.actualizarRolEstadoPermisos(editing.id, {
+          rol:     form.rol,
+          estado:  form.estado,
+          permisos: form.permisos,
+        });
         setUsuarios((prev) => prev.map((u) => (u.id === editing.id ? updated : u)));
         addToast('success', 'Usuario actualizado.');
       } else {
@@ -386,21 +396,40 @@ export function Usuarios() {
 
                       {/* Permisos */}
                       <td className="px-6 py-4 hidden lg:table-cell">
-                        {u.permisos.length === 0 ? (
-                          <span className="text-text-muted text-xs">Sin permisos extra</span>
-                        ) : (
-                          <div className="flex flex-wrap gap-1">
-                            {u.permisos.map((p) => (
-                              <span
-                                key={p}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-background border border-border rounded-full text-xs text-text-secondary"
-                              >
-                                <ShieldCheckIcon className="w-3 h-3 text-primary" />
-                                {PERMISO_LABELS[p]}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+                        {(u.esOwner || u.rol === 'Administrativo') ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary/8 border border-primary/20 rounded-full text-xs text-primary font-medium">
+                            <ShieldCheckIcon className="w-3 h-3" />
+                            Acceso completo
+                          </span>
+                        ) : (() => {
+                          const implicitos = (PERMISOS_IMPLICITOS[u.rol] ?? []).filter(p => !u.permisos.includes(p));
+                          const todos = [...implicitos, ...u.permisos];
+                          return todos.length === 0 ? (
+                            <span className="text-text-muted text-xs">Sin permisos extra</span>
+                          ) : (
+                            <div className="flex flex-wrap gap-1">
+                              {implicitos.map((p) => (
+                                <span
+                                  key={p}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-xs text-amber-700"
+                                  title="Heredado por rol"
+                                >
+                                  <ShieldCheckIcon className="w-3 h-3" />
+                                  {PERMISO_LABELS[p]}
+                                </span>
+                              ))}
+                              {u.permisos.map((p) => (
+                                <span
+                                  key={p}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-background border border-border rounded-full text-xs text-text-secondary"
+                                >
+                                  <ShieldCheckIcon className="w-3 h-3 text-primary" />
+                                  {PERMISO_LABELS[p]}
+                                </span>
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       {/* Estado */}
@@ -601,32 +630,44 @@ export function Usuarios() {
                   <p className="text-xs text-text-muted mb-3">
                     Otorgá acceso a funciones específicas independientemente del rol.
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {TODOS_LOS_PERMISOS.map((p) => {
-                      const activo = form.permisos.includes(p);
-                      return (
-                        <button
-                          key={p}
-                          type="button"
-                          onClick={() => togglePermiso(p)}
-                          className={`flex items-center gap-2 px-3 py-2.5 rounded-input border text-sm transition-all text-left ${
-                            activo
-                              ? 'border-primary bg-primary/5 text-primary font-medium'
-                              : 'border-border bg-surface-background text-text-secondary hover:border-primary/40'
-                          }`}
-                        >
-                          <div
-                            className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
-                              activo ? 'bg-primary border-primary' : 'border-border'
+                  {form.rol === 'Administrativo' ? (
+                    <div className="flex items-center gap-2 px-3 py-2.5 rounded-input border border-primary/30 bg-primary/5 text-sm text-primary">
+                      <ShieldCheckIcon className="w-4 h-4 flex-shrink-0" />
+                      Acceso completo — este rol hereda todos los permisos automáticamente.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {TODOS_LOS_PERMISOS.map((p) => {
+                        const implicito = PERMISOS_IMPLICITOS[form.rol]?.includes(p) ?? false;
+                        const activo = implicito || form.permisos.includes(p);
+                        return (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => !implicito && togglePermiso(p)}
+                            disabled={implicito}
+                            className={`flex items-center gap-2 px-3 py-2.5 rounded-input border text-sm transition-all text-left ${
+                              implicito
+                                ? 'border-amber-200 bg-amber-50 text-amber-700 cursor-default'
+                                : activo
+                                  ? 'border-primary bg-primary/5 text-primary font-medium'
+                                  : 'border-border bg-surface-background text-text-secondary hover:border-primary/40'
                             }`}
                           >
-                            {activo && <CheckIcon className="w-3 h-3 text-white" />}
-                          </div>
-                          {PERMISO_LABELS[p]}
-                        </button>
-                      );
-                    })}
-                  </div>
+                            <div
+                              className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${
+                                implicito ? 'bg-amber-400 border-amber-400' : activo ? 'bg-primary border-primary' : 'border-border'
+                              }`}
+                            >
+                              {activo && <CheckIcon className="w-3 h-3 text-white" />}
+                            </div>
+                            <span className="flex-1">{PERMISO_LABELS[p]}</span>
+                            {implicito && <span className="text-[10px] text-amber-600 font-medium">por rol</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </section>
               </div>
 

@@ -171,10 +171,14 @@ export function BookingFlow(props: BookingFlowProps = {}) {
   };
 
   const handle409 = () => {
-    if (!selectedDate || !selectedServicio || !SUCURSAL_ID) return;
+    if (!selectedDate || !selectedServicio) return;
+    if (!effectiveSlug && !SUCURSAL_ID) return;
     const d = selectedDate;
     const fecha = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    publicoApi.slots(SUCURSAL_ID, fecha, selectedServicio.id).then(setSlots).catch(() => setSlots([]));
+    const slotsPromise = effectiveSlug
+      ? publicoApi.slotsBySlug(effectiveSlug, fecha, selectedServicio.id)
+      : publicoApi.slots(SUCURSAL_ID!, fecha, selectedServicio.id);
+    slotsPromise.then(setSlots).catch(() => setSlots([]));
     setSelectedTime('');
     setSelectedProfId('');
     setFilterProfId('');
