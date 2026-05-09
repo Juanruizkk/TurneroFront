@@ -11,7 +11,6 @@ import {
   MailIcon,
   MessageSquareIcon,
   PaperclipIcon,
-  HistoryIcon,
   CreditCardIcon,
   CheckCircleIcon,
   RotateCcwIcon,
@@ -54,14 +53,13 @@ function generarLinkWhatsApp(turno: Turno, plantilla: string): string {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-type Tab = 'info' | 'pagos' | 'comentarios' | 'adjuntos' | 'historial';
+type Tab = 'info' | 'pagos' | 'comentarios' | 'adjuntos';
 
 const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'info',        label: 'Información', icon: UserIcon },
   { id: 'pagos',       label: 'Pagos',        icon: CreditCardIcon },
   { id: 'comentarios', label: 'Comentarios',  icon: MessageSquareIcon },
   { id: 'adjuntos',    label: 'Adjuntos',     icon: PaperclipIcon },
-  { id: 'historial',   label: 'Historial',    icon: HistoryIcon },
 ];
 
 export function AppointmentDetail() {
@@ -809,24 +807,6 @@ export function AppointmentDetail() {
                   </motion.div>
                 )}
 
-                {activeTab === 'historial' && (
-                  <motion.div
-                    key="historial"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col items-center justify-center py-20 text-center"
-                  >
-                    <div className="w-16 h-16 bg-surface-background rounded-full flex items-center justify-center mb-4 text-text-muted">
-                      <HistoryIcon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-heading font-bold text-text-primary mb-2">
-                      Historial de cambios
-                    </h3>
-                    <p className="text-text-secondary max-w-sm">
-                      Esta sección estará disponible en la próxima versión del sistema.
-                    </p>
-                  </motion.div>
-                )}
               </AnimatePresence>
             </div>
           </>
