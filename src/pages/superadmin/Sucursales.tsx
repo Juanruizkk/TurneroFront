@@ -243,7 +243,7 @@ export function Sucursales() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: 'Total',    value: sucursales.length, cls: 'bg-blue-50 text-blue-700 border-blue-100'   },
           { label: 'Activas',  value: cActivas,          cls: 'bg-green-50 text-green-700 border-green-100' },
