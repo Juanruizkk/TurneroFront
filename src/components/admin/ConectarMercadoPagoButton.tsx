@@ -8,9 +8,10 @@ interface Props {
   yaConectado?: boolean;
   onConectado?: () => void;
   onDesconectado?: () => void;
+  newTab?: boolean;
 }
 
-export function ConectarMercadoPagoButton({ sucursalId, yaConectado = false, onConectado, onDesconectado }: Props) {
+export function ConectarMercadoPagoButton({ sucursalId, yaConectado = false, onConectado, onDesconectado, newTab = false }: Props) {
   const [connecting, setConnecting] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -22,7 +23,11 @@ export function ConectarMercadoPagoButton({ sucursalId, yaConectado = false, onC
     try {
       const { url } = await mercadopagoApi.obtenerUrlConexion(sucursalId);
       onConectado?.();
-      window.location.href = url;
+      if (newTab) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } else {
+        window.location.href = url;
+      }
     } catch {
       setError('No se pudo iniciar la conexión con Mercado Pago. Intentá de nuevo.');
       setConnecting(false);

@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual de Usuario — MetaTurnos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #2F7D6B;
+      --primary-light: #E8F4F1;
+      --accent:        #B4697B;
+      --text:          #1A1A2E;
+      --text-muted:    #6B7280;
+      --border:        #E5E7EB;
+      --surface:       #FFFFFF;
+      --surface-bg:    #F9FAFB;
+      --warning:       #D97706;
+      --error:         #DC2626;
+      --success:       #16A34A;
+      --radius:        8px;
+      --sidebar-w:     260px;
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--surface-bg);
+      line-height: 1.65;
+    }
+
+    /* ── Layout ── */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      overflow-y: auto;
+      padding: 0 0 2rem;
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      padding: 1.5rem 1.25rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .sidebar-logo {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.03em;
+    }
+
+    .sidebar-subtitle {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sidebar nav { padding: 0.75rem 0; }
+
+    .nav-section {
+      padding: 0.5rem 1.25rem 0.25rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 0.45rem 1.25rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+      border-left: 2px solid transparent;
+    }
+
+    .sidebar a:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+      border-left-color: var(--primary);
+    }
+
+    /* ── Main content ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 0;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: linear-gradient(140deg, #1e6b5a 0%, #2F7D6B 45%, #1a5c4d 100%);
+      color: white;
+      padding: 4.5rem 3rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 120%, rgba(255,255,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cover-logo {
+      display: block;
+      width: 88px;
+      height: 88px;
+      object-fit: contain;
+      margin: 0 auto 1.5rem;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,0.28));
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 100px;
+      padding: 0.3rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .cover h1 {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0;
+      line-height: 1.1;
+      color: #ffffff;
+    }
+
+    .cover p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.97);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .cover-read-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.78);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 100px;
+      padding: 0.3rem 0.85rem;
+    }
+
+    .cover-read-time svg {
+      width: 13px;
+      height: 13px;
+      stroke: rgba(255,255,255,0.78);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .cover-meta {
+      margin-top: 1.75rem;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Content area ── */
+    .content {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 2.5rem 2.5rem 4rem;
+    }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 3.5rem;
+      scroll-margin-top: 1.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .section-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--primary-light);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-icon svg {
+      width: 1.2rem;
+      height: 1.2rem;
+      stroke: var(--primary);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 1.75rem 0 0.75rem;
+    }
+
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 1em;
+      background: var(--primary);
+      border-radius: 2px;
+      margin-right: 0.5rem;
+      vertical-align: text-bottom;
+    }
+
+    p { margin-bottom: 0.85rem; color: #374151; }
+
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    li { margin-bottom: 0.35rem; color: #374151; font-size: 0.93rem; }
+
+    strong { color: var(--text); font-weight: 600; }
+
+    /* ── Screenshot placeholder ── */
+    .screenshot {
+      background: var(--surface-bg);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 1rem;
+      text-align: center;
+      margin: 1.25rem 0;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    .screenshot-icon {
+      display: block;
+      width: 2rem;
+      height: 2rem;
+      margin: 0 auto 0.5rem;
+      stroke: #9CA3AF;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    img.screenshot {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      margin: 1.25rem 0;
+      display: block;
+    }
+
+    /* ── Info / tip / warning boxes ── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 0.9rem 1.1rem;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+      border-left: 3px solid;
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-start;
+    }
+
+    .callout-icon { flex-shrink: 0; margin-top: 1px; font-size: 1rem; }
+
+    .callout.info    { background: #EFF6FF; border-color: #3B82F6; color: #1E40AF; }
+    .callout.tip     { background: var(--primary-light); border-color: var(--primary); color: #1a5c4d; }
+    .callout.warning { background: #FFFBEB; border-color: var(--warning); color: #92400E; }
+    .callout.danger  { background: #FEF2F2; border-color: var(--error); color: #991B1B; }
+
+    /* ── State badges ── */
+    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0 1rem; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-pendiente    { background: #FFF7ED; color: #C2410C; border-color: #FED7AA; }
+    .badge-dot-pendiente { background: #F97316; }
+
+    .badge-confirmado   { background: #F0FDF4; color: #15803D; border-color: #BBF7D0; }
+    .badge-dot-confirmado { background: #22C55E; }
+
+    .badge-completado   { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
+    .badge-dot-completado { background: #3B82F6; }
+
+    .badge-cancelado    { background: #FEF2F2; color: #B91C1C; border-color: #FECACA; }
+    .badge-dot-cancelado { background: #EF4444; }
+
+    .badge-noshow       { background: #F5F3FF; color: #6D28D9; border-color: #DDD6FE; }
+    .badge-dot-noshow   { background: #8B5CF6; }
+
+    .badge-ppago        { background: #FFFBEB; color: #B45309; border-color: #FDE68A; }
+    .badge-dot-ppago    { background: #F59E0B; }
+
+    .badge-prechazado   { background: #FEF2F2; color: #9F1239; border-color: #FECDD3; }
+    .badge-dot-prechazado { background: #F43F5E; }
+
+    /* ── Role badges ── */
+    .role-admin { background: #F3E8FF; color: #7E22CE; }
+    .role-prof  { background: #EFF6FF; color: #1D4ED8; }
+    .role-caja  { background: #FFFBEB; color: #92400E; }
+
+    /* ── Feature grid ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+    }
+
+    .feature-card strong {
+      display: block;
+      font-size: 0.88rem;
+      margin-bottom: 0.35rem;
+      color: var(--primary);
+    }
+
+    .feature-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* ── Config table ── */
+    .config-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.87rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .config-table th {
+      text-align: left;
+      padding: 0.65rem 1rem;
+      background: var(--surface-bg);
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .config-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: #374151;
+    }
+
+    .config-table tr:last-child td { border-bottom: none; }
+    .config-table tr:nth-child(even) td { background: #FAFAFA; }
+
+    .config-table td:first-child { font-weight: 500; color: var(--text); }
+
+    /* ── Steps ── */
+    .steps { counter-reset: step; margin: 1rem 0; }
+
+    .step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      counter-increment: step;
+      width: 1.8rem;
+      height: 1.8rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content { flex: 1; }
+    .step-content p { margin: 0; font-size: 0.9rem; }
+    .step-content strong { display: block; margin-bottom: 0.2rem; font-size: 0.92rem; }
+
+    /* ── Permission matrix ── */
+    .perm-matrix {
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .perm-matrix table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .perm-matrix th {
+      padding: 0.6rem 0.85rem;
+      background: var(--surface-bg);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .perm-matrix th:first-child { text-align: left; }
+
+    .perm-matrix td {
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .perm-matrix td:first-child { text-align: left; font-weight: 500; }
+    .perm-matrix tr:last-child td { border-bottom: none; }
+    .perm-matrix tr:nth-child(even) td { background: #FAFAFA; }
+
+    .perm-yes { color: var(--success); font-weight: 700; font-size: 1rem; }
+    .perm-no  { color: #D1D5DB; font-size: 1rem; }
+    .perm-opt { color: var(--warning); font-size: 0.75rem; font-weight: 700; }
+
+    /* ── Print ── */
+    @media print {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .callout { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .section { page-break-inside: avoid; }
+    }
+
+    /* ── Mobile nav ── */
+    .mobile-topbar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 150;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .mobile-menu-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.65rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 160;
+    }
+
+    .sidebar-close-row {
+      display: none;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.3rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      border-radius: 4px;
+      line-height: 1;
+    }
+
+    .sidebar-close-btn:hover { background: var(--surface-bg); color: var(--text); }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .mobile-topbar { display: flex; }
+      .sidebar-close-row { display: flex; }
+      .sidebar {
+        left: -280px;
+        transition: left 0.25s ease;
+        box-shadow: none;
+        width: 260px;
+        z-index: 200;
+      }
+      .sidebar.open {
+        left: 0;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.18);
+      }
+      .main { margin-left: 0; overflow-x: hidden; }
+      .cover { padding: 2.5rem 1.5rem; }
+      .cover h1 { font-size: 1.75rem; }
+      .content {
+        padding: 1.5rem 1.5rem 3rem;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+      .config-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .config-table th:first-child, .config-table td:first-child { min-width: 140px; }
+      .config-table th:not(:first-child), .config-table td:not(:first-child) { min-width: 200px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      h3 { font-size: 0.98rem; }
+      img { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="mobile-overlay" id="navOverlay" onclick="closeNav()"></div>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-close-row">
+      <div class="sidebar-logo" style="font-size:0.95rem;">MetaTurnos</div>
+      <button class="sidebar-close-btn" onclick="closeNav()" aria-label="Cerrar menú">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="sidebar-header">
+      <div class="sidebar-logo">MetaTurnos</div>
+      <div class="sidebar-subtitle">Manual de usuario</div>
+    </div>
+    <nav>
+      <div class="nav-section">Introduccion</div>
+      <a href="#inicio">Bienvenida</a>
+
+      <div class="nav-section">Configuracion</div>
+      <a href="#ajustes-perfil">Perfil del negocio</a>
+      <a href="#ajustes-contacto">Contacto y ubicacion</a>
+      <a href="#ajustes-horarios">Horarios de atencion</a>
+      <a href="#ajustes-reservas">Configuracion de reservas</a>
+      <a href="#ajustes-url">URL publica</a>
+      <a href="#ajustes-mp">Mercado Pago</a>
+
+      <div class="nav-section">Agenda</div>
+      <a href="#agenda">Vista de turnos</a>
+      <a href="#turno-detalle">Detalle del turno</a>
+      <a href="#turno-estados">Estados de los turnos</a>
+      <a href="#turno-pagos">Pagos</a>
+      <a href="#turno-comentarios">Comentarios</a>
+      <a href="#turno-adjuntos">Adjuntos</a>
+
+      <div class="nav-section">Catalogo</div>
+      <a href="#servicios">Servicios y senas</a>
+
+      <div class="nav-section">Equipo</div>
+      <a href="#equipo">Usuarios y roles</a>
+      <a href="#permisos">Permisos</a>
+      <a href="#disponibilidad">Disponibilidad</a>
+
+      <div class="nav-section">Analisis</div>
+      <a href="#reportes">Reportes</a>
+
+      <div class="nav-section">Cuenta</div>
+      <a href="#notificaciones">Notificaciones</a>
+      <a href="#suscripcion">Suscripcion</a>
+
+      <div class="nav-section">Clientes</div>
+      <a href="#booking">Booking flow</a>
+      <a href="#instalar-app">Instalar la app</a>
+    </nav>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- Mobile top bar -->
+    <div class="mobile-topbar">
+      <button class="mobile-menu-btn" onclick="openNav()" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Menú
+      </button>
+      <span style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:var(--primary);letter-spacing:-0.02em;">MetaTurnos</span>
+    </div>
+
+    <!-- Cover -->
+    <div class="cover">
+      <img src="logo.png" alt="MetaTurnos" class="cover-logo">
+      <div class="cover-badge">Manual de usuario</div>
+      <h1>MetaTurnos</h1>
+    </div>
+
+    <div class="content">
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 1. BIENVENIDA -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="inicio">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h2>Bienvenida a MetaTurnos</h2>
+        </div>
+
+        <p>MetaTurnos es un sistema de gestion de turnos pensado para negocios de servicios. Desde un solo panel podras manejar tu agenda, tu equipo, los pagos y la comunicacion con tus clientes.</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <strong>Agenda visual</strong>
+            <p>Vista diaria, semanal y mensual con actualizacion en tiempo real.</p>
+          </div>
+          <div class="feature-card">
+            <strong>Pagos integrados</strong>
+            <p>Cobros presenciales y senas online via Mercado Pago.</p>
+          </div>
+          <div class="feature-card">
+            <strong>Equipo y permisos</strong>
+            <p>Roles diferenciados para cada integrante del staff.</p>
+          </div>
+          <div class="feature-card">
+            <strong>Perfil publico</strong>
+            <p>URL personalizada para que tus clientes reserven online.</p>
+          </div>
+          <div class="feature-card">
+            <strong>Reportes</strong>
+            <p>Estadisticas de turnos, ingresos y clientes exportables a PDF y Excel.</p>
+          </div>
+          <div class="feature-card">
+            <strong>Notificaciones</strong>
+            <p>Recordatorios por email y WhatsApp con mensajes personalizados.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <span class="callout-icon">&#9998;</span>
+          <div>El panel de administracion esta en <strong>metaturnos.com/admin</strong>. Ingresas con tu email y contrasena de propietario.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 2. AJUSTES — PERFIL -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="ajustes-perfil">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h2>Ajustes — Perfil del negocio</h2>
+        </div>
+
+        <p>En <strong>Menu lateral &rarr; Ajustes</strong> encontras seis secciones accesibles desde el menu lateral izquierdo de la pantalla. La primera es el perfil del negocio, que contiene la informacion que veran tus clientes en tu pagina publica.</p>
+
+        <img class="screenshot" src="capturas/Ajustes_Perfil.jpg" alt="Seccion Perfil del negocio en Ajustes">
+
+        <table class="config-table">
+          <thead>
+            <tr><th>Campo</th><th>Descripcion</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Nombre del negocio</td><td>Nombre principal que aparece en el perfil publico, correos y reportes.</td></tr>
+            <tr><td>Slogan</td><td>Frase corta debajo del nombre (opcional).</td></tr>
+            <tr><td>Logo</td><td>Imagen cuadrada recomendada. Se muestra en el perfil publico y en los turnos. Formatos aceptados: JPG, PNG, WEBP.</td></tr>
+            <tr><td>Imagen de fondo</td><td>Banner de la cabecera del perfil publico. Resolucion recomendada: 1200 x 400 px.</td></tr>
+            <tr><td>Moneda</td><td>Moneda en que se expresan los precios (ARS, USD, etc.). Se aplica a toda la plataforma.</td></tr>
+            <tr><td>Rubros</td><td>Categorias de servicios que ofreces (estetica, salud, educacion, etc.). Podes elegir varios.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Subir logo o imagen de fondo</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Hace clic en el area de carga</strong><p>Aparece un boton con texto "Subir logo" o "Subir imagen de fondo".</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Selecciona el archivo</strong><p>Se abre el explorador de archivos. Elegis la imagen desde tu computadora o celular.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Espera la carga</strong><p>La imagen se sube a Cloudinary automaticamente y aparece una previsualizacion.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Guarda los cambios</strong><p>Presiona el boton <strong>Guardar cambios</strong> en la parte superior o inferior de la pagina.</p></div></div>
+        </div>
+
+        <div class="callout warning">
+          <span class="callout-icon">&#9888;</span>
+          <div>No olvides presionar <strong>Guardar cambios</strong> despues de modificar cualquier campo. Los cambios no se guardan automaticamente.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 3. AJUSTES — CONTACTO -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="ajustes-contacto">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h2>Ajustes — Contacto y ubicacion</h2>
+        </div>
+
+        <p>Estos datos aparecen en tu perfil publico para que los clientes sepan donde encontrarte y como comunicarse.</p>
+
+        <img class="screenshot" src="capturas/Ajustes_Contacto.jpg" alt="Seccion Contacto y ubicacion en Ajustes">
+
+        <table class="config-table">
+          <thead>
+            <tr><th>Campo</th><th>Descripcion</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Direccion</td><td>Domicilio del local. Ej: Av. Corrientes 1234, CABA.</td></tr>
+            <tr><td>Telefono</td><td>Numero de contacto. Incluir codigo de pais si corresponde. Ej: +54 11 1234-5678.</td></tr>
+            <tr><td>Email de contacto</td><td>Correo que se muestra en el perfil publico (puede ser distinto al email de tu cuenta).</td></tr>
+            <tr><td>URL de Google Maps</td><td>Enlace directo al local en Google Maps. Cuando esta configurado, aparece un boton "Como llegar" en tu perfil publico que lleva al cliente directamente al mapa. Para obtenerlo, buscas tu negocio en Google Maps, haces clic en "Compartir" y copias el enlace.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <span class="callout-icon">&#9998;</span>
+          <div>El boton "Como llegar" solo aparece en el perfil publico si completaste el campo <strong>URL de Google Maps</strong>. Si el campo esta vacio, el boton no se muestra.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 4. AJUSTES — HORARIOS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="ajustes-horarios">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h2>Ajustes — Horarios de atencion</h2>
+        </div>
+
+        <p>Define los dias y franjas horarias en que tu negocio acepta turnos. Los clientes solo podran reservar dentro de estos horarios.</p>
+
+        <img class="screenshot" src="capturas/Ajuste_Horarios.png" alt="Seccion Horarios de atencion en Ajustes">
+
+        <h3>Como configurar cada dia</h3>
+        <p>Para cada dia de la semana (Lunes a Domingo) hay un renglon con:</p>
+        <ul>
+          <li><strong>Interruptor:</strong> activa o desactiva ese dia. Si esta desactivado aparece la etiqueta <em>Cerrado</em> y no se ofreceran turnos ese dia.</li>
+          <li><strong>Franjas horarias:</strong> cuando el dia esta activado, podes definir una o mas franjas con hora de apertura y cierre. Esto permite, por ejemplo, atender manana y tarde con un bloque al mediodia.</li>
+          <li><strong>Agregar franja:</strong> boton que aparece en la esquina derecha del dia activo. Agrega una franja adicional con valores predeterminados (15:00 - 19:00) que podes modificar.</li>
+          <li><strong>Eliminar franja:</strong> boton "x" a la derecha de cada franja. Solo aparece si hay mas de una franja en ese dia.</li>
+        </ul>
+
+        <div class="callout tip">
+          <span class="callout-icon">&#9998;</span>
+          <div>Los horarios del negocio son el marco general. Cada profesional tiene ademas su propia disponibilidad semanal que podes configurar en la seccion <strong>Equipo</strong>.</div>
+        </div>
+
+        <h3>Horario de atencion de cada profesional</h3>
+        <p>El horario del negocio define el rango disponible para todo el equipo. Pero cada profesional puede tener su propio calendario: dias que trabaja, horarios de entrada/salida y hasta bloques intermedios. Esto se configura en <strong>Menu lateral &rarr; Equipo &rarr; icono Calendario</strong> del profesional (ver seccion <a href="#disponibilidad">Disponibilidad</a>).</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 5. AJUSTES — CONFIGURACION DE RESERVAS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="ajustes-reservas">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          </div>
+          <h2>Ajustes — Configuracion de reservas</h2>
+        </div>
+
+        <p>Parametros que controlan como se comporta el sistema de reservas para tus clientes.</p>
+
+        <img class="screenshot" src="capturas/ConfigReservas.png" alt="Seccion Configuracion de reservas en Ajustes">
+
+        <table class="config-table">
+          <thead>
+            <tr><th>Parametro</th><th>Descripcion</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Anticipacion minima para reservar</td>
+              <td>Tiempo minimo que debe pasar entre el momento de la reserva y el turno. Ej: con 1 hora, si son las 10:00 el cliente no puede reservar para las 10:30. Se puede expresar en minutos u horas.</td>
+            </tr>
+            <tr>
+              <td>Dias maximos reserva futura</td>
+              <td>Hasta cuantos dias en el futuro puede reservar un cliente. Ej: 30 dias = solo puede reservar dentro de los proximos 30 dias. Maximo: 365 dias.</td>
+            </tr>
+            <tr>
+              <td>Buffer entre turnos</td>
+              <td>Tiempo libre que se deja automaticamente entre un turno y el siguiente del mismo profesional. Util para preparacion, limpieza o descanso. Ej: 10 minutos.</td>
+            </tr>
+            <tr>
+              <td>Permite cancelacion por cliente</td>
+              <td>Si esta activado, el cliente puede cancelar su turno desde su link de gestion. Si esta desactivado, solo el staff puede cancelar.</td>
+            </tr>
+            <tr>
+              <td>Horas minimas para cancelar</td>
+              <td>(Solo visible si se permite cancelacion) Cuantas horas antes del turno puede cancelar el cliente. Ej: 24 hs = no puede cancelar si faltan menos de 24 horas.</td>
+            </tr>
+            <tr>
+              <td>Modo de confirmacion de turnos</td>
+              <td>
+                <strong>Automatico:</strong> el turno queda Confirmado al instante.<br>
+                <strong>Manual:</strong> el turno queda en estado Pendiente hasta que el staff lo confirme desde la agenda.
+              </td>
+            </tr>
+            <tr>
+              <td>Recordatorio por email</td>
+              <td>Cuando esta activado, el sistema envia automaticamente un email de recordatorio al cliente antes de su turno.</td>
+            </tr>
+            <tr>
+              <td>Recordatorio por WhatsApp</td>
+              <td>Cuando esta activado, habilita los botones de envio manual de WhatsApp desde el detalle del turno (ver seccion <a href="#turno-detalle">Detalle del turno</a>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Plantillas de WhatsApp</h3>
+        <p>Al activar el recordatorio por WhatsApp, aparecen dos campos de texto para personalizar los mensajes:</p>
+        <ul>
+          <li><strong>Mensaje 24 horas antes:</strong> se usa para el recordatorio del dia previo.</li>
+          <li><strong>Mensaje 3 horas antes:</strong> se usa para el recordatorio del mismo dia.</li>
+        </ul>
+        <p>Dentro del texto podes insertar variables dinamicas que el sistema reemplaza automaticamente:</p>
+        <table class="config-table">
+          <thead><tr><th>Variable</th><th>Se reemplaza por</th></tr></thead>
+          <tbody>
+            <tr><td><code>{{ClienteNombre}}</code></td><td>Nombre del cliente del turno.</td></tr>
+            <tr><td><code>{{Servicio}}</code></td><td>Nombre del servicio reservado.</td></tr>
+            <tr><td><code>{{Fecha}}</code></td><td>Fecha del turno en formato largo (ej: lunes 15 de junio).</td></tr>
+            <tr><td><code>{{Hora}}</code></td><td>Hora de inicio del turno (ej: 14:30).</td></tr>
+          </tbody>
+        </table>
+        <p>Para insertar una variable, podes escribirla directamente o hacer clic en los botones de variables que aparecen debajo de cada campo de texto (la variable se inserta en la posicion del cursor).</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 6. AJUSTES — URL PUBLICA -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="ajustes-url">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <h2>Ajustes — URL publica</h2>
+        </div>
+
+        <p>Tu negocio tiene una pagina publica donde tus clientes pueden ver tus servicios y reservar turnos. La URL tiene el formato:</p>
+        <p style="background:var(--surface-bg);border:1px solid var(--border);border-radius:6px;padding:0.6rem 1rem;font-family:monospace;font-size:0.9rem;">metaturnos.com/<strong>tu-slug</strong></p>
+
+        <p>El <strong>slug</strong> es el identificador unico de tu negocio en la URL. Por defecto se genera automaticamente a partir del nombre del negocio, pero podes personalizarlo.</p>
+
+        <img class="screenshot" src="capturas/Ajustes_URL.png" alt="Seccion URL publica con campo de slug editable">
+
+        <h3>Cambiar el slug</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Edita el campo de slug</strong><p>El slug solo puede contener letras minusculas, numeros y guiones (sin espacios ni caracteres especiales).</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>El sistema verifica disponibilidad</strong><p>Si el slug ya esta en uso por otro negocio, se mostrara un aviso de error.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Guarda los cambios</strong><p>Una vez guardado, la URL anterior deja de funcionar. Asegurate de comunicar el nuevo link a tus clientes.</p></div></div>
+        </div>
+
+        <div class="callout warning">
+          <span class="callout-icon">&#9888;</span>
+          <div>Si cambias el slug, los links anteriores que hayas compartido (en redes, tarjetas, etc.) dejan de funcionar. Actualiza todos tus materiales de marketing con el nuevo link.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 7. AJUSTES — MERCADO PAGO -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="ajustes-mp">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </div>
+          <h2>Ajustes — Conexion a Mercado Pago</h2>
+        </div>
+
+        <p>Conecta tu cuenta de Mercado Pago para habilitar el cobro de senas online. Cuando este activado, tus clientes podran pagar la sena al momento de confirmar una reserva desde el booking publico.</p>
+
+        <img class="screenshot" src="capturas/ConexionMP.png" alt="Seccion Pagos en Ajustes con boton de conexion Mercado Pago">
+
+        <h3>Como conectar tu cuenta</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Haz clic en "Conectar con Mercado Pago"</strong><p>Seras redirigido al sitio oficial de Mercado Pago para autorizar la conexion.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Inicia sesion en Mercado Pago</strong><p>Usa la cuenta del negocio (la asociada al email de metaturnos). Esta cuenta recibira los pagos de las senas.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Autoriza los permisos</strong><p>Mercado Pago pedira permiso para que MetaTurnos cree cobros en nombre de tu cuenta.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Volveras automaticamente a Ajustes</strong><p>Aparecera el mensaje "Mercado Pago conectado exitosamente" en verde.</p></div></div>
+        </div>
+
+        <img class="screenshot" src="capturas/AutorizacionMP.png" alt="Pantalla de autorizacion de Mercado Pago">
+
+        <div class="callout info">
+          <span class="callout-icon">&#8505;</span>
+          <div>Para desconectar la cuenta, haz clic en el boton "Desconectar" que aparece cuando ya esta conectado. Esto no cancela los pagos ya procesados.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 8. AGENDA -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="agenda">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h2>Agenda — Vista de turnos</h2>
+        </div>
+
+        <p>La agenda es el corazon del panel. Desde aca podras ver todos los turnos programados, navegar entre fechas y crear nuevos turnos. Accedes desde <strong>Menu lateral &rarr; Agenda</strong>.</p>
+
+        <img class="screenshot" src="capturas/Vista_turnos.png" alt="Agenda en vista diaria con varios profesionales">
+
+        <h3>Modos de vista</h3>
+        <p>En la barra superior derecha podes cambiar entre tres modos:</p>
+
+        <table class="config-table">
+          <thead><tr><th>Vista</th><th>Descripcion</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Dia</strong></td>
+              <td>Grilla vertical con un eje de tiempo (08:00 a 20:00). Cada profesional tiene su propia columna. Los turnos aparecen como bloques coloreados posicionados segun hora de inicio y duracion. Si dos turnos del mismo profesional se superponen, se muestran uno al lado del otro.</td>
+            </tr>
+            <tr>
+              <td><strong>Semana</strong></td>
+              <td>Los 7 dias de la semana como columnas con la misma grilla vertical. Incluye un filtro de profesional en la barra superior para ver solo los turnos de uno en particular.</td>
+            </tr>
+            <tr>
+              <td><strong>Mes</strong></td>
+              <td>Vista de calendario mensual. Cada dia muestra hasta 3 chips con nombre del cliente y hora. Si hay mas, aparece un "+N mas" que lleva al dia en vista diaria.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Navegacion de fechas</h3>
+        <ul>
+          <li>Las flechas <strong>&larr; &rarr;</strong> avanzan o retroceden un dia, semana o mes segun la vista activa.</li>
+          <li>El boton <strong>Hoy</strong> regresa al dia actual.</li>
+          <li>En vista mensual, hacer clic en el numero de un dia abre ese dia en vista diaria.</li>
+        </ul>
+
+        <h3>Linea de tiempo actual</h3>
+        <p>En la vista diaria y semanal, una linea roja horizontal indica la hora actual. La agenda hace scroll automatico hasta esa linea al cargar.</p>
+
+        <h3>Turnos cancelados o con ausencia</h3>
+        <p>Los turnos en estado <em>Cancelado</em> o <em>No Show</em> se ocultan por defecto para no recargar la vista. El boton <strong>Ver cancelados / Ocultar cancelados</strong> en la barra superior permite mostrarlos u ocultarlos. Cuando estan visibles, aparecen en gris con texto tachado y con menor opacidad.</p>
+
+        <h3>Crear nuevo turno</h3>
+        <p>El boton verde <strong>+ Nuevo turno</strong> (esquina superior derecha) abre un panel lateral donde podes cargar un turno manualmente seleccionando: cliente, servicio, profesional, fecha y hora de inicio. La fecha se pre-completa con el dia que estes viendo.</p>
+
+        <div class="callout info">
+          <span class="callout-icon">&#8505;</span>
+          <div>Los profesionales con rol "Profesional" solo ven su propia agenda ("Mi agenda"). Los roles Administrativo y Owner ven toda la agenda.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 9. DETALLE DEL TURNO -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="turno-detalle">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h2>Detalle del turno</h2>
+        </div>
+
+        <p>Haciendo clic en cualquier turno de la agenda se abre su pagina de detalle. Esta pagina tiene cinco pestanas:</p>
+
+        <img class="screenshot" src="capturas/Vista_drawer_turno.png" alt="Detalle de turno con las pestanas">
+
+        <h3>Pestana Informacion</h3>
+        <p>Muestra todos los datos del turno:</p>
+        <ul>
+          <li>Nombre del cliente, telefono (si tenes permiso para verlo) y email.</li>
+          <li>Servicio, profesional, fecha, hora de inicio y fin, y duracion.</li>
+          <li>Estado actual con su etiqueta de color.</li>
+          <li>Origen del turno (<em>Staff</em> si lo cargo el equipo, <em>Booking</em> si lo reservo el cliente online).</li>
+          <li>Observaciones del turno.</li>
+          <li>Total cobrado y monto de la sena (si aplica).</li>
+        </ul>
+
+        <h3>Acciones principales</h3>
+        <p>En la parte superior del detalle, segun el estado del turno, aparecen botones de accion:</p>
+        <ul>
+          <li><strong>Confirmar:</strong> pasa el turno de Pendiente a Confirmado.</li>
+          <li><strong>Completar:</strong> marca el turno como realizado (Completado).</li>
+          <li><strong>Cancelar:</strong> cancela el turno como cancelado por el staff.</li>
+          <li><strong>No Show:</strong> registra que el cliente no se presento.</li>
+          <li><strong>Registrar pago:</strong> abre el modal de pago (requiere sesion de caja abierta).</li>
+          <li><strong>WhatsApp:</strong> despliega un menu con dos opciones de recordatorio (24 hs y 3 hs). Hace clic para abrir WhatsApp con el mensaje pre-cargado.</li>
+        </ul>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 10. ESTADOS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="turno-estados">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h2>Estados de los turnos</h2>
+        </div>
+
+        <p>Cada turno pasa por distintos estados a lo largo de su ciclo de vida. El estado actual se muestra con una etiqueta de color en la agenda y en el detalle del turno.</p>
+
+        <div class="badges">
+          <span class="badge badge-pendiente"><span class="badge-dot badge-dot-pendiente"></span>Pendiente</span>
+          <span class="badge badge-ppago"><span class="badge-dot badge-dot-ppago"></span>Pendiente de pago</span>
+          <span class="badge badge-confirmado"><span class="badge-dot badge-dot-confirmado"></span>Confirmado</span>
+          <span class="badge badge-completado"><span class="badge-dot badge-dot-completado"></span>Completado</span>
+          <span class="badge badge-cancelado"><span class="badge-dot badge-dot-cancelado"></span>Cancelado</span>
+          <span class="badge badge-noshow"><span class="badge-dot badge-dot-noshow"></span>No Show</span>
+          <span class="badge badge-prechazado"><span class="badge-dot badge-dot-prechazado"></span>Pago rechazado</span>
+        </div>
+
+        <img class="screenshot" src="capturas/Vista_drawer_turno.png" alt="Etiquetas de estado en el detalle de un turno">
+
+        <table class="config-table">
+          <thead><tr><th>Estado</th><th>Significado</th><th>Siguiente paso</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Pendiente</td>
+              <td>El turno fue creado pero aun no fue confirmado. Sucede cuando el modo de confirmacion esta en Manual.</td>
+              <td>El staff lo confirma o lo cancela.</td>
+            </tr>
+            <tr>
+              <td>Pendiente de pago</td>
+              <td>El cliente reservo online y necesita pagar la sena para confirmar el turno.</td>
+              <td>El sistema lo confirma automaticamente cuando se acredita el pago.</td>
+            </tr>
+            <tr>
+              <td>Confirmado</td>
+              <td>El turno esta activo y va a realizarse en la fecha y hora indicada.</td>
+              <td>Al realizarse se marca como Completado; si no asiste, como No Show.</td>
+            </tr>
+            <tr>
+              <td>Completado</td>
+              <td>El turno fue realizado correctamente.</td>
+              <td>Estado final. Se puede registrar el pago desde la pestana Pagos.</td>
+            </tr>
+            <tr>
+              <td>Cancelado (staff)</td>
+              <td>El turno fue cancelado por alguien del equipo.</td>
+              <td>Estado final. Aparece en gris tachado en la agenda si estan visibles los cancelados.</td>
+            </tr>
+            <tr>
+              <td>Cancelado (cliente)</td>
+              <td>El cliente cancelo el turno desde su link de gestion personal.</td>
+              <td>Estado final. Igual que el anterior visualmente.</td>
+            </tr>
+            <tr>
+              <td>No Show</td>
+              <td>El cliente no se presento al turno.</td>
+              <td>Estado final. Se registra para que aparezca en los reportes y en el historial del cliente.</td>
+            </tr>
+            <tr>
+              <td>Pago rechazado</td>
+              <td>El cliente intento pagar la sena online pero el pago fue rechazado por Mercado Pago.</td>
+              <td>El turno se cancela automaticamente. El cliente puede intentar reservar nuevamente.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 11. PAGOS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="turno-pagos">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h2>Pagos del turno</h2>
+        </div>
+
+        <p>La pestana <strong>Pagos</strong> en el detalle del turno muestra todos los movimientos de cobro asociados y permite registrar nuevos pagos presenciales.</p>
+
+        <img class="screenshot" src="capturas/Turno_pagos.png" alt="Pestana Pagos con historial y boton Registrar pago">
+
+        <h3>Registrar un pago presencial</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Abre la sesion de caja</strong><p>Para registrar un pago debe haber una sesion de caja abierta. Si no hay sesion activa, el boton estara deshabilitado con una advertencia.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Haz clic en "Registrar pago"</strong><p>Se abre un modal con los campos del pago.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Completa los datos</strong><p>
+            <ul>
+              <li><strong>Concepto:</strong> Pago total, Pago parcial, Sena o Ajuste.</li>
+              <li><strong>Medio de pago:</strong> Efectivo o Mercado Pago.</li>
+              <li><strong>Monto:</strong> se pre-completa con el saldo pendiente del turno.</li>
+              <li><strong>Observaciones:</strong> nota interna opcional.</li>
+            </ul>
+          </p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Confirma el pago</strong><p>El movimiento queda registrado en la caja y el total cobrado del turno se actualiza inmediatamente.</p></div></div>
+        </div>
+
+        <div class="callout info">
+          <span class="callout-icon">&#8505;</span>
+          <div>Los pagos online de senas via Mercado Pago se registran automaticamente. No es necesario cargarlos manualmente.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 12. COMENTARIOS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="turno-comentarios">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h2>Comentarios del turno</h2>
+        </div>
+
+        <p>La pestana <strong>Comentarios</strong> es un espacio de notas internas del equipo, visible solo para el staff. Es util para dejar indicaciones clinicas, preferencias del cliente o cualquier informacion relevante.</p>
+
+        <ul>
+          <li>Cada comentario muestra quien lo escribio y la fecha/hora.</li>
+          <li>Para agregar uno, escribi en el campo de texto y presiona <strong>Enviar</strong>.</li>
+          <li>Los comentarios no son visibles para el cliente.</li>
+        </ul>
+
+        <img class="screenshot" src="capturas/turnos_comentarios.png" alt="Pestana Comentarios con lista de notas internas">
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 13. ADJUNTOS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="turno-adjuntos">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </div>
+          <h2>Adjuntos del turno</h2>
+        </div>
+
+        <p>La pestana <strong>Adjuntos</strong> permite subir y visualizar archivos asociados a un turno: imagenes de antes/despues, documentos de consentimiento, resultados de estudios, etc.</p>
+
+        <h3>Subir un archivo</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Haz clic en el area de carga</strong><p>O arrastra el archivo directamente al area punteada.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Selecciona el archivo</strong><p>Formatos aceptados: imagenes (JPG, PNG, WEBP) y documentos (PDF). El archivo se sube a Cloudinary.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Visualiza el adjunto</strong><p>Las imagenes se muestran como miniaturas. Los PDFs muestran un icono de archivo con su nombre. Haciendo clic se abre en una nueva pestana.</p></div></div>
+        </div>
+
+        <h3>Eliminar un adjunto</h3>
+        <p>Cada adjunto tiene un boton de papelera. Al eliminarlo se borra tanto del registro como de Cloudinary (no se puede recuperar).</p>
+
+        <img class="screenshot" src="capturas/turno_adjunto.png" alt="Pestana Adjuntos con imagenes subidas">
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 14. SERVICIOS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="servicios">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          </div>
+          <h2>Servicios y senas</h2>
+        </div>
+
+        <p>Los servicios son lo que tus clientes pueden reservar. Desde <strong>Menu lateral &rarr; Servicios</strong> podras crear, editar, activar y desactivar servicios.</p>
+
+        <img class="screenshot" src="capturas/Servicios.png" alt="Listado de servicios y senas">
+
+        <h3>Crear o editar un servicio</h3>
+        <p>Haz clic en <strong>+ Nuevo servicio</strong> o en el icono de lapiz de un servicio existente. Se abre un modal con los siguientes campos:</p>
+
+        <table class="config-table">
+          <thead><tr><th>Campo</th><th>Descripcion</th></tr></thead>
+          <tbody>
+            <tr><td>Nombre *</td><td>Nombre del servicio tal como lo vera el cliente. Ej: "Corte de cabello".</td></tr>
+            <tr><td>Descripcion</td><td>Descripcion detallada del servicio (opcional). Visible en el perfil publico.</td></tr>
+            <tr><td>Precio *</td><td>Precio del servicio en la moneda configurada en Ajustes.</td></tr>
+            <tr><td>Modalidad</td><td>Tipo de prestacion del servicio. Las opciones disponibles son: <strong>Presencial</strong> (el cliente asiste al local), <strong>A domicilio</strong> (el profesional se desplaza al cliente) y <strong>Online</strong> (atencion remota por videollamada u otro medio).</td></tr>
+            <tr>
+              <td>Duracion cliente (min)</td>
+              <td>Tiempo que dura el servicio desde la perspectiva del cliente. Es el que se muestra en el booking publico.</td>
+            </tr>
+            <tr>
+              <td>Duracion agenda (min)</td>
+              <td>Tiempo que bloquea en la agenda del profesional. Puede ser mayor a la duracion del cliente para incluir tiempo de preparacion o limpieza post-turno.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Senas</h3>
+        <p>Si el servicio requiere un pago anticipado (sena) para confirmar la reserva, activa la opcion <strong>Requiere sena</strong> y configura:</p>
+
+        <table class="config-table">
+          <thead><tr><th>Tipo de sena</th><th>Descripcion</th><th>Ejemplo</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Fija ($)</td>
+              <td>El cliente paga un monto fijo sin importar el precio del servicio.</td>
+              <td>Sena de $2.000 para un servicio de $10.000.</td>
+            </tr>
+            <tr>
+              <td>Porcentaje (%)</td>
+              <td>El cliente paga un porcentaje del precio del servicio.</td>
+              <td>30% de sena = $3.000 para un servicio de $10.000.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <span class="callout-icon">&#8505;</span>
+          <div>Para que el cobro de senas funcione online, tu cuenta de Mercado Pago debe estar conectada en Ajustes. Si MP no esta conectado, el turno queda como Pendiente de pago y no se acepta el pago.</div>
+        </div>
+
+        <h3>Servicios a domicilio — mensaje del cliente</h3>
+        <p>Cuando un servicio tiene la modalidad <strong>A domicilio</strong>, el proceso de reserva cambia levemente para que el cliente pueda indicar donde debe ir el profesional.</p>
+
+        <p>En el paso de confirmacion del booking publico aparece un campo de texto obligatorio con el titulo <em>"Direccion o indicaciones para llegar"</em>. El cliente debe completarlo antes de poder finalizar la reserva.</p>
+
+        <div class="callout info">
+          <span class="callout-icon">&#8505;</span>
+          <div>El campo es <strong>obligatorio</strong> para servicios a domicilio: el cliente no puede confirmar la reserva si lo deja vacio.</div>
+        </div>
+
+        <p>Una vez que el turno se crea, el mensaje del cliente llega al profesional por tres vias:</p>
+        <ul>
+          <li><strong>Campanita (notificacion en tiempo real):</strong> al recibir un nuevo turno a domicilio, la notificacion muestra el texto "Tiene un mensaje del cliente" debajo del nombre y servicio.</li>
+          <li><strong>Email al staff:</strong> el correo de nuevo turno incluye las indicaciones en el cuerpo del mensaje, debajo de los datos del turno.</li>
+          <li><strong>Detalle del turno:</strong> en la pestana <strong>Informacion</strong> del turno, la seccion "Observaciones" muestra el mensaje completo que dejo el cliente.</li>
+        </ul>
+
+        <h3>Desactivar y reactivar un servicio</h3>
+        <p>Desactivar un servicio lo quita del booking publico y del selector de nuevos turnos. Los turnos ya agendados para ese servicio no se ven afectados. Para desactivarlo, haz clic en el icono de papelera. Para reactivarlo, haz clic en el icono de tilde verde que aparece en los servicios inactivos.</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 15. EQUIPO -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="equipo">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h2>Equipo — Usuarios y roles</h2>
+        </div>
+
+        <p>Desde <strong>Menu lateral &rarr; Equipo</strong> podras agregar, editar y gestionar a todos los integrantes de tu negocio. Solo los usuarios con rol Owner o Administrativo pueden ver y modificar esta seccion.</p>
+
+        <img class="screenshot" src="capturas/equipo.png" alt="Listado de usuarios del equipo con roles y estado">
+
+        <h3>Roles disponibles</h3>
+
+        <div class="badges">
+          <span class="badge role-admin">Administrativo</span>
+          <span class="badge role-prof">Profesional</span>
+          <span class="badge role-caja">Caja</span>
+        </div>
+
+        <table class="config-table">
+          <thead><tr><th>Rol</th><th>Descripcion</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Administrativo</td>
+              <td>Acceso completo al panel: puede ver y editar toda la agenda, gestionar el equipo, ajustes y reportes. Es el segundo nivel de autoridad despues del Owner.</td>
+            </tr>
+            <tr>
+              <td>Profesional</td>
+              <td>Ve solo su propia agenda ("Mi agenda"). Puede consultar el detalle de sus turnos. No tiene acceso a la configuracion del negocio ni al equipo.</td>
+            </tr>
+            <tr>
+              <td>Caja</td>
+              <td>Acceso enfocado en la gestion de pagos y caja. Puede registrar cobros y ver el estado de la caja.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Estados de usuario</h3>
+        <table class="config-table">
+          <thead><tr><th>Estado</th><th>Descripcion</th></tr></thead>
+          <tbody>
+            <tr><td>Activo</td><td>El usuario puede iniciar sesion y usar el sistema normalmente.</td></tr>
+            <tr><td>Invitacion pendiente</td><td>Se creo el usuario y se le envio el email de invitacion, pero todavia no completo el registro (no establecio su contrasena).</td></tr>
+            <tr><td>Inactivo</td><td>El usuario fue desactivado. No puede iniciar sesion pero su historial se conserva.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Agregar un nuevo usuario</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Haz clic en "+ Nuevo usuario"</strong><p>Se abre el modal de creacion.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Completa los datos personales</strong><p>Nombre, apellido, email y telefono son obligatorios.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Selecciona el rol</strong><p>Administrativo, Profesional o Caja.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Asigna permisos adicionales (opcional)</strong><p>Ver seccion siguiente.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-content"><strong>Crea el usuario</strong><p>El sistema envia automaticamente un email de invitacion. El usuario elegira su contrasena al aceptar la invitacion. Mientras no lo haga, aparecera con estado "Invitacion pendiente".</p></div></div>
+        </div>
+
+        <h3>Reenviar invitacion</h3>
+        <p>Si el usuario no recibio el email o lo perdio, en la fila del usuario con estado "Invitacion pendiente" aparece el icono de sobre. Haciendo clic se reenvia la invitacion y se genera un nuevo link que tambien podes copiar al portapapeles con el icono de link que aparece a continuacion.</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 16. PERMISOS -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="permisos">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h2>Permisos adicionales</h2>
+        </div>
+
+        <p>Ademas del rol, cada usuario puede tener permisos granulares que habilitan funciones especificas independientemente del rol asignado. Esto permite, por ejemplo, que un Profesional pueda tambien agendar turnos para otros.</p>
+
+        <table class="config-table">
+          <thead><tr><th>Permiso</th><th>Descripcion</th></tr></thead>
+          <tbody>
+            <tr><td>Agendar turnos</td><td>Permite crear nuevos turnos desde la agenda.</td></tr>
+            <tr><td>Editar turnos</td><td>Permite modificar el estado, horario y profesional de un turno existente.</td></tr>
+            <tr><td>Cargar cobranzas</td><td>Permite registrar pagos en el detalle de un turno (requiere sesion de caja abierta).</td></tr>
+            <tr><td>Ver telefonos</td><td>Permite ver el telefono del cliente en el detalle del turno. Si no tiene este permiso, el campo aparece oculto.</td></tr>
+            <tr><td>Gestionar ajustes</td><td>Permite acceder y modificar la seccion de Ajustes del negocio.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Matriz de acceso por rol</h3>
+        <div class="perm-matrix">
+          <table>
+            <thead>
+              <tr>
+                <th>Funcion</th>
+                <th>Owner</th>
+                <th>Admin</th>
+                <th>Profesional</th>
+                <th>Caja</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Ver agenda completa</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Ver su propia agenda</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Crear turnos</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-opt">Permiso</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Editar turnos</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-opt">Permiso</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Registrar pagos</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-opt">Permiso</td><td class="perm-yes">&#10003;</td></tr>
+              <tr><td>Ver telefonos de clientes</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-opt">Permiso</td><td class="perm-opt">Permiso</td></tr>
+              <tr><td>Gestionar equipo</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Gestionar servicios</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Gestionar ajustes</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-opt">Permiso</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Ver reportes</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
+              <tr><td>Gestionar suscripcion</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;"><strong>Permiso</strong> = solo si tiene el permiso adicional habilitado.</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 17. DISPONIBILIDAD -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="disponibilidad">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h2>Disponibilidad de profesionales</h2>
+        </div>
+
+        <p>Cada profesional (y administrador) puede tener su propio horario semanal de trabajo, independientemente del horario general del negocio. El sistema solo ofrecera turnos en los slots donde el profesional este disponible.</p>
+
+        <h3>Como configurar la disponibilidad</h3>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Ve a Menu lateral &rarr; Equipo</strong><p>Busca al profesional en la lista.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Haz clic en el icono de calendario</strong><p>El icono de calendario aparece en la fila del profesional, a la derecha. Solo aparece para usuarios con rol Profesional o Administrativo.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Se abre el panel de disponibilidad</strong><p>Similar al horario del negocio, con dias de la semana y franjas horarias. Configura los dias y horarios en que ese profesional trabaja.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Guarda la disponibilidad</strong><p>Los cambios se aplican inmediatamente al booking publico.</p></div></div>
+        </div>
+
+        <img class="screenshot" src="capturas/disponibilidad_profecional.png" alt="Drawer de disponibilidad de un profesional">
+
+        <div class="callout tip">
+          <span class="callout-icon">&#9998;</span>
+          <div>Si un profesional tiene dias configurados que estan fuera del horario general del negocio, los clientes no podran reservar en esos dias extra. La disponibilidad efectiva es la interseccion entre el horario del negocio y el del profesional.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 18. REPORTES -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="reportes">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h2>Reportes</h2>
+        </div>
+
+        <p>Desde <strong>Menu lateral &rarr; Reportes</strong> accedes a estadisticas del negocio por rango de fechas. Esta funcion esta disponible para los planes <strong>Pro</strong> y <strong>Enterprise</strong>.</p>
+
+        <img class="screenshot" src="capturas/reportes.png" alt="Pantalla de reportes con graficos e indicadores">
+
+        <h3>Filtro de fechas</h3>
+        <p>En la parte superior hay dos selectores de fecha: <strong>Desde</strong> y <strong>Hasta</strong>. Por defecto muestran el mes actual. Los reportes se actualizan automaticamente al cambiar las fechas.</p>
+
+        <h3>Seccion Turnos</h3>
+        <p>Seis indicadores de resumen:</p>
+        <div class="feature-grid">
+          <div class="feature-card"><strong>Total</strong><p>Cantidad de turnos creados en el periodo.</p></div>
+          <div class="feature-card"><strong>Completados</strong><p>Turnos que se realizaron.</p></div>
+          <div class="feature-card"><strong>Cancelados</strong><p>Cancelados por el cliente o el staff.</p></div>
+          <div class="feature-card"><strong>No Show</strong><p>Clientes que no se presentaron.</p></div>
+          <div class="feature-card"><strong>Pendientes</strong><p>Turnos confirmados a futuro.</p></div>
+          <div class="feature-card"><strong>Pendiente de pago</strong><p>Reservas sin sena pagada.</p></div>
+        </div>
+
+        <h3>Seccion Ingresos</h3>
+        <ul>
+          <li><strong>Total cobrado:</strong> suma de todos los pagos registrados en el periodo.</li>
+          <li><strong>Grafico de barras:</strong> ingresos diarios de los ultimos 14 dias del rango seleccionado.</li>
+          <li><strong>Desglose por medio de pago:</strong> porcentaje y monto cobrado en Efectivo vs Mercado Pago.</li>
+        </ul>
+
+        <h3>Top servicios y top profesionales</h3>
+        <p>Ranking de los 6 servicios y profesionales con mas turnos en el periodo, mostrando cantidad de turnos e ingresos generados por cada uno.</p>
+
+        <h3>Seccion Clientes</h3>
+        <ul>
+          <li><strong>Unicos en el periodo:</strong> clientes distintos que tuvieron al menos un turno.</li>
+          <li><strong>Nuevos:</strong> clientes que aparecen por primera vez en el sistema.</li>
+          <li><strong>Recurrentes:</strong> clientes que ya habian tenido turnos antes del periodo analizado.</li>
+        </ul>
+
+        <h3>Exportar reportes</h3>
+        <p>Los botones <strong>PDF</strong> y <strong>Excel</strong> en la barra superior generan y descargan el reporte automaticamente.</p>
+        <ul>
+          <li><strong>PDF:</strong> documento de una o dos paginas con todos los indicadores, tabla de ingresos por dia y top de servicios y profesionales. Incluye el nombre del negocio y el rango de fechas en el encabezado.</li>
+          <li><strong>Excel:</strong> archivo con cuatro hojas: Resumen, Ingresos por dia, Top servicios y Top profesionales.</li>
+        </ul>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 19. NOTIFICACIONES -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="notificaciones">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h2>Notificaciones</h2>
+        </div>
+
+        <p>MetaTurnos notifica tanto al cliente como al staff en distintos momentos del ciclo de vida del turno.</p>
+
+        <h3>Notificaciones automaticas al cliente</h3>
+        <table class="config-table">
+          <thead><tr><th>Evento</th><th>Canal</th><th>Descripcion</th></tr></thead>
+          <tbody>
+            <tr><td>Turno creado</td><td>Email</td><td>Confirmacion de la reserva con todos los detalles del turno y un link de gestion personal (para cancelar o consultar).</td></tr>
+            <tr><td>Turno cancelado</td><td>Email</td><td>Aviso de cancelacion con motivo.</td></tr>
+            <tr><td>Recordatorio 24 hs antes</td><td>Email / WhatsApp*</td><td>Recordatorio automatico del proximo turno.</td></tr>
+            <tr><td>Recordatorio 3 hs antes</td><td>WhatsApp*</td><td>Recordatorio de ultimo momento.</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.8rem;color:var(--text-muted);">* Los recordatorios por email son automaticos si la opcion esta activada en Ajustes. Los de WhatsApp son manuales: el staff hace clic en el boton desde el detalle del turno.</p>
+
+        <h3>Notificaciones en tiempo real (panel admin)</h3>
+        <p>El panel se actualiza automaticamente via websockets (SignalR). Esto significa que si un cliente reserva un turno o cancela uno desde el booking publico, la agenda del staff se actualiza al instante sin necesidad de recargar la pagina.</p>
+
+        <h3>Link de gestion del cliente</h3>
+        <p>Cada turno tiene un link unico e intransferible que se envia al cliente por email. Con ese link el cliente puede:</p>
+        <ul>
+          <li>Ver los detalles de su turno.</li>
+          <li>Cancelar el turno (si la cancelacion por cliente esta habilitada y se respeta el plazo minimo).</li>
+        </ul>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 20. SUSCRIPCION -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="suscripcion">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h2>Suscripcion</h2>
+        </div>
+
+        <p>Desde <strong>Menu lateral &rarr; Suscripcion</strong> podras ver el estado de tu plan, cambiar de plan y consultar el historial de pagos. <strong>Solo el propietario (Owner) puede acceder a esta seccion.</strong></p>
+
+        <img class="screenshot" src="capturas/Suscripcion.png" alt="Pagina de suscripcion con plan actual y planes disponibles">
+
+        <h3>Estado actual</h3>
+        <p>La tarjeta principal muestra:</p>
+        <ul>
+          <li>Nombre del plan activo y su precio mensual.</li>
+          <li>Estado: <strong>Activa</strong>, <strong>Periodo de prueba</strong> o <strong>Vencida</strong>.</li>
+          <li>Fecha de vencimiento.</li>
+          <li>Barras de uso de <strong>usuarios</strong> y <strong>turnos del mes</strong> con colores que indican el nivel de ocupacion (verde, amarillo, rojo).</li>
+        </ul>
+
+        <h3>Alertas automaticas</h3>
+        <p>El sistema muestra alertas visibles en esta pantalla cuando:</p>
+        <ul>
+          <li>La suscripcion esta vencida.</li>
+          <li>El periodo de prueba vence en menos de 3 dias.</li>
+          <li>Se alcanzo el 90% del limite de usuarios o turnos.</li>
+          <li>Se supero el cupo del plan (se muestran los usuarios o turnos extras activos y se bloquean nuevos).</li>
+        </ul>
+
+        <h3>Cambiar de plan</h3>
+        <p>Debajo del estado actual se muestran todos los planes disponibles. El plan actual aparece marcado. Para cambiar, haz clic en <strong>Seleccionar este plan</strong> en la tarjeta deseada. Seras redirigido a Mercado Pago para completar el pago. Al volver, el nuevo plan se activa inmediatamente.</p>
+
+        <h3>Historial de pagos</h3>
+        <p>Al final de la pagina hay una tabla con todos los pagos de suscripcion: fecha, plan, monto e ID de pago de Mercado Pago.</p>
+
+        <div class="callout info">
+          <span class="callout-icon">&#8505;</span>
+          <div>Si tenes problemas de facturacion o necesitas asistencia tecnica, podes contactar a soporte desde el boton al pie de la pantalla de Suscripcion.</div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- 21. BOOKING FLOW -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <section class="section" id="booking">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h2>Booking flow — Vista publica del cliente</h2>
+        </div>
+
+        <p>Tu pagina publica (<code>metaturnos.com/tu-slug</code>) es donde tus clientes pueden ver tu negocio y reservar turnos sin necesidad de tener una cuenta.</p>
+
+        <img class="screenshot" src="capturas/pagina_reservas.png" alt="Pagina publica del negocio con logo, imagen de fondo y servicios">
+
+        <h3>Proceso de reserva paso a paso</h3>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Seleccion de servicio</strong>
+              <p>El cliente ve todos los servicios activos con nombre, descripcion, precio, duracion y modalidad. Puede filtrar por categoria. Selecciona uno para continuar.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Seleccion de profesional y fecha</strong>
+              <p>Si el negocio tiene varios profesionales, puede elegir uno o dejar "Cualquiera" para que el sistema asigne segun disponibilidad. Luego elige la fecha en un calendario que solo muestra los dias dentro del rango configurado y con disponibilidad del negocio.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Seleccion de horario</strong>
+              <p>Se muestran todos los slots disponibles para la fecha y profesional seleccionados, respetando el buffer entre turnos y la disponibilidad del profesional. Hace clic en el horario deseado.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Datos del cliente</strong>
+              <p>El cliente completa su nombre, apellido, telefono y email. Estos datos se guardan o actualizan en el registro de clientes del negocio.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Pago de la sena (si aplica)</strong>
+              <p>Si el servicio requiere sena y la cuenta de Mercado Pago esta conectada, se muestra el monto de la sena y el boton para pagar. El cliente es redirigido al checkout de Mercado Pago. Al completar el pago, el turno queda <strong>Confirmado</strong>. Si el pago falla, el turno queda cancelado con estado <em>Pago rechazado</em>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+              <strong>Confirmacion</strong>
+              <p>El cliente ve una pantalla de confirmacion con todos los detalles del turno. Tambien recibe un email con los datos y su link personal de gestion.</p>
+            </div>
+          </div>
+        </div>
+
+        <img class="screenshot" src="capturas/Turno_exitoso.png" alt="Pantalla de confirmacion del turno al cliente">
+
+        <div class="callout tip">
+          <span class="callout-icon">&#9998;</span>
+          <div>Comparte tu URL publica en redes sociales, en tu bio de Instagram, en tu tarjeta de presentacion o en tu sitio web. Los clientes no necesitan descargar ninguna app ni crear ninguna cuenta para reservar.</div>
+        </div>
+      </section>
+
+      <!-- ── Instalar la app ── -->
+      <section class="section" id="instalar-app">
+        <div class="section-header">
+          <div class="section-icon">📲</div>
+          <div>
+            <h2>Instalar MetaTurnos como app</h2>
+            <p class="section-subtitle">Acceso rapido desde tu pantalla de inicio, sin pasar por el navegador</p>
+          </div>
+        </div>
+
+        <p>MetaTurnos es una <strong>Progressive Web App (PWA)</strong>: funciona como una app nativa pero sin pasar por ninguna tienda. Podes instalarla en tu telefono o tablet y acceder directamente desde el icono en la pantalla de inicio, igual que cualquier otra app.</p>
+
+        <div class="tip" style="margin-top:1.25rem;">
+          <strong>Ventajas:</strong> abre mas rapido, ocupa minimo espacio y siempre esta actualizada. No necesitas actualizar nada manualmente.
+        </div>
+
+        <h3 style="margin-top:2rem;">En iPhone o iPad (Safari)</h3>
+        <p>Abri <strong>metaturnos.com</strong> en Safari (no en Chrome ni otro navegador) y segui estos pasos:</p>
+        <ol>
+          <li>Toca el boton <strong>Compartir</strong> (el icono de la cajita con la flecha hacia arriba, en la barra inferior de Safari).</li>
+          <li>Desliza hacia abajo en el menu y elige <strong>"Agregar a pantalla de inicio"</strong>.</li>
+          <li>Confirma tocando <strong>"Agregar"</strong> en la esquina superior derecha.</li>
+        </ol>
+        <p>El icono de MetaTurnos va a aparecer en tu pantalla de inicio como cualquier otra app.</p>
+
+        <h3 style="margin-top:2rem;">En Android (Chrome)</h3>
+        <p>Abri <strong>metaturnos.com</strong> en Chrome. En muchos casos Chrome te va a mostrar un banner automatico para instalar. Si no aparece:</p>
+        <ol>
+          <li>Toca el menu <strong>⋮</strong> (tres puntos) arriba a la derecha.</li>
+          <li>Elige <strong>"Agregar a pantalla de inicio"</strong> o <strong>"Instalar app"</strong>.</li>
+          <li>Confirma tocando <strong>"Agregar"</strong>.</li>
+        </ol>
+
+        <h3 style="margin-top:2rem;">En escritorio (Chrome o Edge)</h3>
+        <p>En la barra de direcciones del navegador vas a ver un icono de instalacion (una pantalla con una flecha). Hacele clic y confirma. MetaTurnos va a abrirse en su propia ventana, sin la barra del navegador.</p>
+
+        <div class="tip" style="margin-top:1.5rem;">
+          <strong>Nota:</strong> si ya estas usando MetaTurnos instalado como app, el boton "Instalar app" no va a aparecer en la landing — el sistema lo detecta automaticamente.
+        </div>
+      </section>
+
+      <!-- ── Footer ── -->
+      <div style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);text-align:center;font-size:0.8rem;color:var(--text-muted);">
+        MetaTurnos &mdash; Manual de usuario &mdash; metaturnos.com
+      </div>
+
+    </div><!-- /content -->
+  </main><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+  function openNav() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('navOverlay').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNav() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('navOverlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.sidebar a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      if (window.innerWidth <= 768) closeNav();
+    });
+  });
+</script>
+</body>
+</html>

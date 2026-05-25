@@ -38,7 +38,7 @@ import type {
   AbrirSesionDto,
   CerrarSesionDto,
 } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth, tienePermiso } from '../../contexts/AuthContext';
 
 const TIPOS: TipoMovimientoCaja[] = ['CobroTurno', 'Gasto', 'Retiro', 'Ajuste', 'IngresoManual'];
 const MEDIOS: MedioPago[] = ['Efectivo', 'MercadoPago'];
@@ -85,9 +85,17 @@ export function Caja() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toasts, addToast, dismiss } = useToast();
+
   const [caja, setCaja] = useState<CajaInfo | null>(null);
   const [movimientos, setMovimientos] = useState<MovimientoCaja[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!tienePermiso(user, 'CargarCobranzas')) navigate('/admin');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  if (!tienePermiso(user, 'CargarCobranzas')) return null;
 
   // Para cada movimiento de tipo CobroTurno calcula el acumulado cobrado en ese turno
   // hasta ese pago (no el totalCobrado actual del turno, sino el histórico).

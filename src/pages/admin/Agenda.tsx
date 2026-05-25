@@ -44,8 +44,9 @@ function duracionLabel(inicio: string, fin: string): string {
 }
 
 function horaCorta(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  const timePart = (iso.split('T')[1] ?? '00:00').replace(/[Z+\-]\d.*/, '');
+  const [h = '00', m = '00'] = timePart.split(':');
+  return `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
 }
 
 function getMondayOf(date: Date): Date {
@@ -75,13 +76,17 @@ function isSameDay(iso: string, day: Date): boolean {
   );
 }
 
+function parseLocalMins(iso: string): number {
+  const timePart = (iso.split('T')[1] ?? '00:00').replace(/[Z+\-]\d.*/, '');
+  const [h = '0', m = '0'] = timePart.split(':');
+  return parseInt(h, 10) * 60 + parseInt(m, 10);
+}
+
 function positionOf(inicio: string, fin: string) {
-  const d = new Date(inicio);
-  const f = new Date(fin);
   const TOTAL_MINS = (END_HOUR - START_HOUR + 1) * 60;
 
-  const startMin = Math.max((d.getHours() - START_HOUR) * 60 + d.getMinutes(), 0);
-  const endMin   = Math.min((f.getHours() - START_HOUR) * 60 + f.getMinutes(), TOTAL_MINS);
+  const startMin = Math.max(parseLocalMins(inicio) - START_HOUR * 60, 0);
+  const endMin   = Math.min(parseLocalMins(fin)   - START_HOUR * 60, TOTAL_MINS);
 
   return {
     top:    startMin * PX_PER_MIN,
@@ -513,14 +518,14 @@ function WeeklyGrid({ weekDays, turnos, hours, isTimeVisible, currentTimeMins, t
   return (
     <div className="flex flex-col flex-1 overflow-auto">
       {/* Sticky day headers */}
-      <div className="flex sticky top-0 z-20 bg-surface border-b border-border shadow-sm flex-shrink-0">
+      <div className="flex sticky top-0 z-20 bg-surface border-b border-border shadow-sm flex-shrink-0 min-w-max">
         <div className="w-16 flex-shrink-0 border-r border-border bg-surface-background" />
         {byDay.map(({ day, turnos: dayTurnos }) => {
           const isToday = isSameDay(day.toISOString(), today);
           return (
             <div
               key={day.toISOString()}
-              className="flex-1 min-w-[100px] py-2 px-2 border-r border-border flex flex-col items-center gap-0.5"
+              className="w-[100px] shrink-0 py-2 px-2 border-r border-border flex flex-col items-center gap-0.5"
             >
               <span
                 className="text-[10px] font-medium uppercase tracking-wide"
@@ -547,10 +552,10 @@ function WeeklyGrid({ weekDays, turnos, hours, isTimeVisible, currentTimeMins, t
       </div>
 
       {/* Grid body */}
-      <div className="flex relative" style={{ minHeight: `${GRID_H}px` }}>
+      <div className="flex relative min-w-max" style={{ minHeight: `${GRID_H}px` }}>
         <TimeAxis hours={hours} />
 
-        <div className="flex flex-1 relative">
+        <div className="flex relative" style={{ width: `${7 * 100}px` }}>
           <GridLines hours={hours} />
 
           {/* Current time line (spans all day columns) */}
@@ -574,7 +579,7 @@ function WeeklyGrid({ weekDays, turnos, hours, isTimeVisible, currentTimeMins, t
             return (
               <div
                 key={day.toISOString()}
-                className="flex-1 min-w-[100px] border-r border-border relative"
+                className="w-[100px] shrink-0 border-r border-border relative"
                 style={{
                   minHeight: `${GRID_H}px`,
                   background: isToday ? 'rgba(180,105,123,0.025)' : undefined,
@@ -911,105 +916,185 @@ export function Agenda() {
     <div className="flex flex-col h-full bg-surface rounded-card border border-border shadow-sm overflow-hidden">
 
       {/* ── Toolbar ── */}
-      <div className="border-b border-border flex flex-wrap items-center px-3 sm:px-5 bg-surface flex-shrink-0 gap-2 py-2 sm:py-0 sm:h-14">
-        {/* Date navigation */}
-        <div className="flex items-center gap-1 min-w-0 flex-1">
-          <button
-            onClick={prevPeriod}
-            className="p-1.5 rounded-md hover:bg-surface-background text-text-secondary transition-colors shrink-0 touch-manipulation min-h-[36px]"
-          >
-            <ChevronLeftIcon className="w-4 h-4" />
-          </button>
-          <span
-            className="font-heading font-bold text-text-primary text-xs sm:text-sm capitalize whitespace-nowrap truncate flex-1 text-center"
-          >
-            {view === 'daily' ? dailyLabel : view === 'weekly' ? `Sem. ${weekLabel}` : monthLabel}
-          </span>
-          <button
-            onClick={nextPeriod}
-            className="p-1.5 rounded-md hover:bg-surface-background text-text-secondary transition-colors shrink-0 touch-manipulation min-h-[36px]"
-          >
-            <ChevronRightIcon className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setCurrentDate(new Date())}
-            className="px-2.5 py-1 text-xs font-medium border border-border rounded-full text-text-secondary hover:bg-surface-background transition-colors shrink-0 touch-manipulation min-h-[28px]"
-          >
-            Hoy
-          </button>
-          {esProfesional && (
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0">
-              Mi agenda
-            </span>
-          )}
-        </div>
+      <div className="border-b border-border bg-surface flex-shrink-0">
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* View toggle */}
-          <div className="flex rounded-button border border-border overflow-hidden">
+        {/* ── Mobile: 2 filas ── */}
+        <div className="sm:hidden">
+          {/* Fila 1: navegación de fecha */}
+          <div className="flex items-center gap-1 px-3 h-11">
             <button
-              onClick={() => setView('daily')}
-              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium transition-colors touch-manipulation min-h-[32px] ${
-                view === 'daily'
-                  ? 'bg-primary text-white'
-                  : 'bg-surface text-text-secondary hover:bg-surface-background'
-              }`}
+              onClick={prevPeriod}
+              className="p-1.5 rounded-md hover:bg-surface-background text-text-secondary transition-colors shrink-0 touch-manipulation"
             >
-              <CalendarDaysIcon className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Día</span>
+              <ChevronLeftIcon className="w-4 h-4" />
+            </button>
+            <span className="font-heading font-bold text-text-primary text-sm capitalize whitespace-nowrap truncate flex-1 text-center">
+              {view === 'daily' ? dailyLabel : view === 'weekly' ? `Sem. ${weekLabel}` : monthLabel}
+            </span>
+            <button
+              onClick={nextPeriod}
+              className="p-1.5 rounded-md hover:bg-surface-background text-text-secondary transition-colors shrink-0 touch-manipulation"
+            >
+              <ChevronRightIcon className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setView('weekly')}
-              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
-                view === 'weekly'
-                  ? 'bg-primary text-white'
-                  : 'bg-surface text-text-secondary hover:bg-surface-background'
-              }`}
+              onClick={() => setCurrentDate(new Date())}
+              className="px-2.5 py-1 text-xs font-medium border border-border rounded-full text-text-secondary hover:bg-surface-background transition-colors shrink-0 touch-manipulation"
             >
-              <CalendarIcon className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Semana</span>
+              Hoy
             </button>
-            <button
-              onClick={() => setView('monthly')}
-              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
-                view === 'monthly'
-                  ? 'bg-primary text-white'
-                  : 'bg-surface text-text-secondary hover:bg-surface-background'
-              }`}
-            >
-              <CalendarRangeIcon className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Mes</span>
-            </button>
+            {esProfesional && (
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0">
+                Mi agenda
+              </span>
+            )}
           </div>
 
-          <button
-            onClick={() => setMostrarCancelados((v) => !v)}
-            title={mostrarCancelados ? 'Ocultar cancelados y ausentes' : 'Mostrar cancelados y ausentes'}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-button border transition-colors touch-manipulation min-h-[32px] ${
-              mostrarCancelados
-                ? 'bg-surface-background border-border text-text-secondary hover:bg-border/50'
-                : 'bg-surface border-border text-text-muted hover:text-text-secondary hover:bg-surface-background'
-            }`}
-          >
-            {mostrarCancelados
-              ? <EyeOffIcon className="w-3.5 h-3.5" />
-              : <EyeIcon className="w-3.5 h-3.5" />
-            }
-            <span className="hidden sm:inline">
-              {mostrarCancelados ? 'Ocultar cancelados' : 'Ver cancelados'}
-            </span>
-          </button>
+          {/* Fila 2: vistas + acciones */}
+          <div className="flex items-center justify-between px-3 pb-2 border-t border-border/40 pt-2 gap-2">
+            {/* View toggle */}
+            <div className="flex rounded-button border border-border overflow-hidden">
+              <button
+                onClick={() => setView('daily')}
+                className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium transition-colors touch-manipulation min-h-[32px] ${
+                  view === 'daily' ? 'bg-primary text-white' : 'bg-surface text-text-secondary hover:bg-surface-background'
+                }`}
+              >
+                <CalendarDaysIcon className="w-3.5 h-3.5" />
+                <span>Día</span>
+              </button>
+              <button
+                onClick={() => setView('weekly')}
+                className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
+                  view === 'weekly' ? 'bg-primary text-white' : 'bg-surface text-text-secondary hover:bg-surface-background'
+                }`}
+              >
+                <CalendarIcon className="w-3.5 h-3.5" />
+                <span>Sem.</span>
+              </button>
+              <button
+                onClick={() => setView('monthly')}
+                className={`flex items-center gap-1 px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
+                  view === 'monthly' ? 'bg-primary text-white' : 'bg-surface text-text-secondary hover:bg-surface-background'
+                }`}
+              >
+                <CalendarRangeIcon className="w-3.5 h-3.5" />
+                <span>Mes</span>
+              </button>
+            </div>
 
-          {puedeAgendar && (
+            {/* Eye + Plus */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setMostrarCancelados((v) => !v)}
+                title={mostrarCancelados ? 'Ocultar cancelados y ausentes' : 'Mostrar cancelados y ausentes'}
+                className={`p-2 rounded-button border transition-colors touch-manipulation min-h-[32px] min-w-[32px] flex items-center justify-center ${
+                  mostrarCancelados
+                    ? 'bg-surface-background border-border text-text-secondary'
+                    : 'bg-surface border-border text-text-muted hover:text-text-secondary hover:bg-surface-background'
+                }`}
+              >
+                {mostrarCancelados ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
+              </button>
+              {puedeAgendar && (
+                <button
+                  onClick={() => setShowNuevoTurno(true)}
+                  className="p-2 rounded-button text-white bg-primary hover:bg-primary-dark transition-colors shadow-sm touch-manipulation min-h-[32px] min-w-[32px] flex items-center justify-center"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Desktop: 1 fila ── */}
+        <div className="hidden sm:flex items-center px-5 h-14 gap-2">
+          {/* Date navigation */}
+          <div className="flex items-center gap-1 min-w-0 flex-1">
             <button
-              onClick={() => setShowNuevoTurno(true)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-button transition-colors shadow-sm touch-manipulation min-h-[32px]"
+              onClick={prevPeriod}
+              className="p-1.5 rounded-md hover:bg-surface-background text-text-secondary transition-colors shrink-0 touch-manipulation min-h-[36px]"
             >
-              <PlusIcon className="w-4 h-4" />
-              <span className="hidden sm:inline">Nuevo turno</span>
+              <ChevronLeftIcon className="w-4 h-4" />
             </button>
-          )}
+            <span className="font-heading font-bold text-text-primary text-sm capitalize whitespace-nowrap truncate flex-1 text-center">
+              {view === 'daily' ? dailyLabel : view === 'weekly' ? `Sem. ${weekLabel}` : monthLabel}
+            </span>
+            <button
+              onClick={nextPeriod}
+              className="p-1.5 rounded-md hover:bg-surface-background text-text-secondary transition-colors shrink-0 touch-manipulation min-h-[36px]"
+            >
+              <ChevronRightIcon className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setCurrentDate(new Date())}
+              className="px-2.5 py-1 text-xs font-medium border border-border rounded-full text-text-secondary hover:bg-surface-background transition-colors shrink-0 touch-manipulation min-h-[28px]"
+            >
+              Hoy
+            </button>
+            {esProfesional && (
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0">
+                Mi agenda
+              </span>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="flex rounded-button border border-border overflow-hidden">
+              <button
+                onClick={() => setView('daily')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors touch-manipulation min-h-[32px] ${
+                  view === 'daily' ? 'bg-primary text-white' : 'bg-surface text-text-secondary hover:bg-surface-background'
+                }`}
+              >
+                <CalendarDaysIcon className="w-3.5 h-3.5" />
+                Día
+              </button>
+              <button
+                onClick={() => setView('weekly')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
+                  view === 'weekly' ? 'bg-primary text-white' : 'bg-surface text-text-secondary hover:bg-surface-background'
+                }`}
+              >
+                <CalendarIcon className="w-3.5 h-3.5" />
+                Semana
+              </button>
+              <button
+                onClick={() => setView('monthly')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border-l border-border transition-colors touch-manipulation min-h-[32px] ${
+                  view === 'monthly' ? 'bg-primary text-white' : 'bg-surface text-text-secondary hover:bg-surface-background'
+                }`}
+              >
+                <CalendarRangeIcon className="w-3.5 h-3.5" />
+                Mes
+              </button>
+            </div>
+
+            <button
+              onClick={() => setMostrarCancelados((v) => !v)}
+              title={mostrarCancelados ? 'Ocultar cancelados y ausentes' : 'Mostrar cancelados y ausentes'}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-button border transition-colors touch-manipulation min-h-[32px] ${
+                mostrarCancelados
+                  ? 'bg-surface-background border-border text-text-secondary hover:bg-border/50'
+                  : 'bg-surface border-border text-text-muted hover:text-text-secondary hover:bg-surface-background'
+              }`}
+            >
+              {mostrarCancelados ? <EyeOffIcon className="w-3.5 h-3.5" /> : <EyeIcon className="w-3.5 h-3.5" />}
+              {mostrarCancelados ? 'Ocultar cancelados' : 'Ver cancelados'}
+            </button>
+
+            {puedeAgendar && (
+              <button
+                onClick={() => setShowNuevoTurno(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-button transition-colors shadow-sm touch-manipulation min-h-[32px]"
+              >
+                <PlusIcon className="w-4 h-4" />
+                Nuevo turno
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

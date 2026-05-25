@@ -11,7 +11,6 @@ import {
   MailIcon,
   MessageSquareIcon,
   PaperclipIcon,
-  HistoryIcon,
   CreditCardIcon,
   CheckCircleIcon,
   RotateCcwIcon,
@@ -54,21 +53,23 @@ function generarLinkWhatsApp(turno: Turno, plantilla: string): string {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-type Tab = 'info' | 'pagos' | 'comentarios' | 'adjuntos' | 'historial';
+type Tab = 'info' | 'pagos' | 'comentarios' | 'adjuntos';
 
 const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
   { id: 'info',        label: 'Información', icon: UserIcon },
   { id: 'pagos',       label: 'Pagos',        icon: CreditCardIcon },
   { id: 'comentarios', label: 'Comentarios',  icon: MessageSquareIcon },
   { id: 'adjuntos',    label: 'Adjuntos',     icon: PaperclipIcon },
-  { id: 'historial',   label: 'Historial',    icon: HistoryIcon },
 ];
 
 export function AppointmentDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const puedeVerTelefono = tienePermiso(user, 'VerTelefonoClientes');
+  const puedeVerTelefono    = tienePermiso(user, 'VerTelefonoClientes');
+  const puedeEditarTurnos   = tienePermiso(user, 'EditarTurnos');
+  const puedeCargarCobranzas = tienePermiso(user, 'CargarCobranzas');
+  const visibleTabs = tabs.filter((tab) => tab.id !== 'pagos' || puedeCargarCobranzas);
   const { ConfirmDialog, confirm } = useConfirmDialog();
 
   // ── Ajustes (plantillas WhatsApp) ─────────────────────────────────────────
@@ -347,7 +348,7 @@ export function AppointmentDetail() {
             </div>
 
             {/* Action Bar */}
-            {(turno.estado === 'Confirmado' || turno.estado === 'Pendiente') && (
+            {(turno.estado === 'Confirmado' || turno.estado === 'Pendiente') && puedeEditarTurnos && (
               <div className="px-4 sm:px-8 py-4 border-b border-border flex gap-3 flex-wrap items-center">
                 {turno.estado === 'Pendiente' && (
                   <button
@@ -441,7 +442,7 @@ export function AppointmentDetail() {
 
             {/* Tabs */}
             <div className="px-4 sm:px-8 border-b border-border flex gap-6 overflow-x-auto no-scrollbar">
-              {tabs.map((tab) => {
+              {visibleTabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
                 return (
@@ -567,13 +568,15 @@ export function AppointmentDetail() {
 
                     <div className="flex justify-between items-center">
                       <h3 className="text-lg font-heading font-bold text-text-primary">Historial de pagos</h3>
-                      <button
-                        onClick={handleAbrirPago}
-                        disabled={!cajaId}
-                        className="px-4 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-primary-dark transition-colors disabled:opacity-50"
-                      >
-                        + Registrar pago
-                      </button>
+                      {puedeCargarCobranzas && (
+                        <button
+                          onClick={handleAbrirPago}
+                          disabled={!cajaId}
+                          className="px-4 py-2 bg-primary text-white rounded-button text-sm font-medium hover:bg-primary-dark transition-colors disabled:opacity-50"
+                        >
+                          + Registrar pago
+                        </button>
+                      )}
                     </div>
 
                     <div className="border border-border rounded-card overflow-hidden">
@@ -804,24 +807,6 @@ export function AppointmentDetail() {
                   </motion.div>
                 )}
 
-                {activeTab === 'historial' && (
-                  <motion.div
-                    key="historial"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col items-center justify-center py-20 text-center"
-                  >
-                    <div className="w-16 h-16 bg-surface-background rounded-full flex items-center justify-center mb-4 text-text-muted">
-                      <HistoryIcon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-lg font-heading font-bold text-text-primary mb-2">
-                      Historial de cambios
-                    </h3>
-                    <p className="text-text-secondary max-w-sm">
-                      Esta sección estará disponible en la próxima versión del sistema.
-                    </p>
-                  </motion.div>
-                )}
               </AnimatePresence>
             </div>
           </>

@@ -131,6 +131,15 @@ function Navbar() {
               {l.label}
             </button>
           ))}
+          <div className="border-t border-border pt-3 mt-1">
+            <Link
+              to="/login"
+              onClick={() => setMobileOpen(false)}
+              className="block w-full text-center px-4 py-2.5 rounded-button text-sm font-semibold font-body text-primary border border-primary/30 hover:bg-primary/5 transition-colors"
+            >
+              Iniciar sesión
+            </Link>
+          </div>
         </div>
       )}
     </header>
@@ -326,8 +335,102 @@ function TiltCalendar() {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-function Hero() {
+// ─── Install Modal ────────────────────────────────────────────────────────────
+
+function InstallModal({ isIOS, onClose }: { isIOS: boolean; onClose: () => void }) {
   return (
+    <div
+      className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div
+        className="relative w-full sm:max-w-sm bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 pb-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5 sm:hidden" />
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <SmartphoneIcon size={20} className="text-primary" />
+            </div>
+            <div>
+              <h3 className="font-heading font-bold text-text-primary text-base">Instalar MetaTurnos</h3>
+              <p className="text-xs font-body text-text-muted">Acceso rápido desde tu pantalla de inicio</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface text-text-muted text-xl leading-none">×</button>
+        </div>
+        {isIOS ? (
+          <>
+            <p className="text-sm font-body text-text-secondary mb-4">Seguí estos pasos en Safari:</p>
+            <ol className="flex flex-col gap-3">
+              {[
+                { step: '1', text: 'Tocá el botón Compartir', icon: '⬆️' },
+                { step: '2', text: 'Deslizá y elegí "Agregar a pantalla de inicio"', icon: '➕' },
+                { step: '3', text: 'Confirmá tocando "Agregar"', icon: '✅' },
+              ].map(({ step, text, icon }) => (
+                <li key={step} className="flex items-center gap-3 p-3 rounded-xl bg-surface">
+                  <span className="text-xl">{icon}</span>
+                  <div>
+                    <span className="text-[10px] font-bold font-body text-text-muted uppercase tracking-wider">Paso {step}</span>
+                    <p className="text-sm font-body text-text-primary">{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <p className="text-xs font-body text-text-muted mt-4 text-center">Asegurate de usar Safari para que funcione</p>
+          </>
+        ) : (
+          <>
+            <p className="text-sm font-body text-text-secondary mb-4">Seguí estos pasos en Chrome:</p>
+            <ol className="flex flex-col gap-3">
+              {[
+                { step: '1', text: 'Tocá el menú ⋮ arriba a la derecha', icon: '⋮' },
+                { step: '2', text: 'Elegí "Agregar a pantalla de inicio"', icon: '➕' },
+                { step: '3', text: 'Confirmá tocando "Agregar"', icon: '✅' },
+              ].map(({ step, text, icon }) => (
+                <li key={step} className="flex items-center gap-3 p-3 rounded-xl bg-surface">
+                  <span className="text-xl w-6 text-center">{icon}</span>
+                  <div>
+                    <span className="text-[10px] font-bold font-body text-text-muted uppercase tracking-wider">Paso {step}</span>
+                    <p className="text-sm font-body text-text-primary">{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Hero() {
+  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [showInstallModal, setShowInstallModal] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const isIOS = /iphone|ipad|ipod/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
+
+  useEffect(() => {
+    setIsStandalone(window.matchMedia('(display-mode: standalone)').matches);
+    const handler = (e: Event) => { e.preventDefault(); setDeferredPrompt(e); };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      (deferredPrompt as any).prompt();
+      await (deferredPrompt as any).userChoice;
+      setDeferredPrompt(null);
+    } else {
+      setShowInstallModal(true);
+    }
+  };
+
+  return (
+    <>
     <section className="relative pt-28 pb-16 px-6 overflow-hidden bg-gradient-to-b from-[#F0F7F4] to-white">
       {/* Background pattern */}
       <div
@@ -381,6 +484,25 @@ function Hero() {
               </button>
             </div>
 
+            {/* Mobile-only: login + install app */}
+            {!isStandalone && (
+              <div className="flex sm:hidden gap-3">
+                <Link
+                  to="/login"
+                  className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-button text-sm font-semibold font-body text-primary border border-primary/30 bg-white hover:bg-primary/5 transition-colors"
+                >
+                  Iniciar sesión
+                </Link>
+                <button
+                  onClick={handleInstall}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-button text-sm font-semibold font-body text-text-secondary border border-border bg-white hover:bg-surface transition-colors"
+                >
+                  <SmartphoneIcon size={15} />
+                  Instalar app
+                </button>
+              </div>
+            )}
+
             <div className="flex items-center gap-6 pt-2">
               <div className="flex -space-x-2">
                 {['#2F7D6B', '#5B8DEF', '#8B5CF6', '#EC4899'].map((c, i) => (
@@ -409,6 +531,9 @@ function Hero() {
         </div>
       </div>
     </section>
+
+    {showInstallModal && <InstallModal isIOS={isIOS} onClose={() => setShowInstallModal(false)} />}
+    </>
   );
 }
 

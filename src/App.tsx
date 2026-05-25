@@ -42,6 +42,7 @@ import { Usuarios } from './pages/admin/Usuarios';
 import { Ajustes } from './pages/admin/Ajustes';
 import { Reportes } from './pages/admin/Reportes';
 import { SuscripcionPage } from './pages/admin/SuscripcionPage';
+import { OnboardingWizard } from './pages/admin/OnboardingWizard';
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   return <AdminLayout>{children}</AdminLayout>;
@@ -92,6 +93,7 @@ export function App() {
           <Route path="/admin/ajustes"   element={<ProtectedRoute><AdminRoute><Ajustes /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/reportes"     element={<ProtectedRoute><AdminRoute><Reportes /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/suscripcion" element={<ProtectedRoute><AdminRoute><SuscripcionPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/onboarding" element={<ProtectedRoute><OnboardingWizard /></ProtectedRoute>} />
 
           {/* ── Super Admin (requiere esSuperAdmin) ── */}
           <Route path="/superadmin" element={<ProtectedRoute soloSuperAdmin><SuperAdminRoute><SuperAdminDashboard /></SuperAdminRoute></ProtectedRoute>} />

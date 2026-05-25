@@ -14,7 +14,7 @@ import {
 import logo from '../../assets/logo.png';
 import { turnosApi } from '../../api/turnos';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { formatFechaLarga, formatHora, formatMoneda } from '../../types';
+import { formatFechaLarga, formatHora, formatMoneda, buildGoogleCalendarUrl } from '../../types';
 import type { Turno } from '../../types';
 
 export function TurnoToken() {
@@ -167,6 +167,19 @@ export function TurnoToken() {
                 </div>
               )}
             </div>
+
+            {/* Agregar a Google Calendar */}
+            {puedeGestionar && (
+              <a
+                href={buildGoogleCalendarUrl(turno)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mb-4 w-full flex items-center justify-center gap-2 border border-border bg-surface hover:bg-surface-hover text-text-primary px-4 py-3 rounded-button font-medium transition-colors text-sm"
+              >
+                <CalendarIcon className="w-4 h-4 flex-shrink-0 text-primary" />
+                Agregar a Google Calendar
+              </a>
+            )}
 
             {/* Acciones */}
             {puedeGestionar && (

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, tienePermiso } from '../../contexts/AuthContext';
 import { publicoApi } from '../../api/publico';
+import { turnosApi } from '../../api/turnos';
 import { suscripcionApi } from '../../api/suscripcion';
 import { notificacionesApi } from '../../api/notificaciones';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,6 +23,7 @@ import {
   XIcon,
   AlertTriangleIcon,
   CreditCardIcon,
+  BookOpenIcon,
 } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import { useSignalR, type TurnoNotificacion } from '../../hooks/useSignalR';
@@ -80,6 +82,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [sucursalNombre, setSucursalNombre] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [suscripcion, setSuscripcion] = useState<SuscripcionInfo | null>(null);
+  const [pendientesCount, setPendientesCount] = useState(0);
 
   // ── Notificaciones en tiempo real ────────────────────────────────────────
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
@@ -156,6 +159,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     }
   }, [user?.sucursalId]);
 
+  useEffect(() => {
+    const sucursalId = user?.sucursalId;
+    if (!sucursalId) return;
+    const fetchPendientes = () =>
+      turnosApi.listar(sucursalId)
+        .then((data) => setPendientesCount(data.filter((t) => t.estado === 'Pendiente').length))
+        .catch(() => {});
+    fetchPendientes();
+    const id = setInterval(fetchPendientes, 60_000);
+    return () => clearInterval(id);
+  }, [user?.sucursalId]);
+
   const currentPage =
     navSections.flatMap((s) => s.items).find((i) => location.pathname === i.path)?.name ?? 'Panel';
 
@@ -167,7 +182,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-6 px-4">
+      <div className="flex-1 overflow-y-auto py-6 px-4 pb-safe-4">
         {navSections.map((section, idx) => (
           <div key={idx} className="mb-8">
             <h3 className="px-3 text-xs font-semibold text-text-muted tracking-wider mb-3">
@@ -178,6 +193,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 if (item.path === '/admin/usuarios')    return esAdmin;
                 if (item.path === '/admin/ajustes')     return esAdmin || tienePermiso(user, 'GestionarAjustes');
                 if (item.path === '/admin/suscripcion') return user?.esOwner ?? false;
+                if (item.path === '/admin/caja')        return tienePermiso(user, 'CargarCobranzas');
                 return true;
               }).map((item) => {
                 const isActive = location.pathname === item.path ||
@@ -196,6 +212,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     >
                       <Icon className="w-5 h-5 relative z-10" />
                       <span className="relative z-10">{item.name}</span>
+                      {item.path === '/admin/turnos' && pendientesCount > 0 && (
+                        <span className="ml-auto min-w-[18px] h-[18px] px-1 bg-amber-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold leading-none relative z-10">
+                          {pendientesCount > 9 ? '9+' : pendientesCount}
+                        </span>
+                      )}
                       {isActive && (
                         <motion.div
                           layoutId="activeNav"
@@ -210,6 +231,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </ul>
           </div>
         ))}
+      </div>
+
+      <div className="px-4 pb-3">
+        <a
+          href="/manual.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-3 py-2 rounded-button text-text-secondary hover:bg-primary-light/10 hover:text-primary transition-colors text-sm"
+        >
+          <BookOpenIcon className="w-5 h-5" />
+          <span>Manual de usuario</span>
+        </a>
       </div>
 
       <div className="p-4 border-t border-border">
@@ -238,7 +271,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   );
 
   return (
-    <div className="flex h-screen w-full bg-surface-background overflow-hidden">
+    <div className="flex h-dvh w-full bg-surface-background overflow-hidden">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -408,7 +441,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         )}
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-safe-8 md:pb-8 relative">{children}</main>
       </div>
     </div>
   );

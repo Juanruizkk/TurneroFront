@@ -1,5 +1,11 @@
 import { api } from './client';
-import type { Usuario, CrearUsuarioDto, ActualizarUsuarioDto, HorarioLaboral } from '../types';
+import type { Usuario, CrearUsuarioDto, ActualizarUsuarioDto, HorarioLaboral, RolUsuario, EstadoUsuario, PermisoSistema } from '../types';
+
+export interface ActualizarRolEstadoPermisosDto {
+  rol: RolUsuario;
+  estado: EstadoUsuario;
+  permisos: PermisoSistema[];
+}
 
 export const usuariosApi = {
   listar: (sucursalId: string) =>
@@ -11,6 +17,9 @@ export const usuariosApi = {
 
   actualizar: (id: string, dto: ActualizarUsuarioDto) =>
     api.put<Usuario>(`/usuarios/${id}`, dto),
+
+  actualizarRolEstadoPermisos: (id: string, dto: ActualizarRolEstadoPermisosDto) =>
+    api.put<Usuario>(`/usuarios/${id}/rol-estado-permisos`, dto),
 
   eliminar: (id: string) => api.delete<void>(`/usuarios/${id}`),
 

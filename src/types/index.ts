@@ -181,6 +181,8 @@ export interface Servicio {
   modalidadPrestacion: ModalidadPrestacion;
   tipoServicio: TipoServicio;
   activo: boolean;
+  /** Días de la semana habilitados (0=Dom … 6=Sáb). Vacío = todos los días. */
+  diasDisponibles: number[];
 }
 
 export interface Cliente {
@@ -442,6 +444,8 @@ export interface CrearServicioDto {
   valorSena: number | null;
   modalidadPrestacion: ModalidadPrestacion;
   tipoServicio: TipoServicio;
+  /** Días habilitados (0=Dom … 6=Sáb). Vacío = todos los días. */
+  diasDisponibles: number[];
 }
 
 export interface CrearClienteDto {
@@ -604,33 +608,45 @@ export function getProfesionalColor(id: string): string {
   return PROF_COLORS[Math.abs(hash) % PROF_COLORS.length];
 }
 
-/** "lunes 14 de julio de 2025" */
+/** "lunes 14 de julio de 2025" — construye Date local desde partes del string ISO */
 export function formatFechaLarga(isoString: string): string {
-  return new Date(isoString).toLocaleDateString('es-AR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  const [y, m, d] = (isoString.split('T')[0]).split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('es-AR', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
 }
 
 /** "14/06/2025" */
 export function formatFechaCorta(isoString: string): string {
-  return new Date(isoString).toLocaleDateString('es-AR');
+  const [y, m, d] = (isoString.split('T')[0]).split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('es-AR');
 }
 
-/** "10:30" */
+/** "10:30" — extrae la hora del string ISO sin conversión de zona horaria */
 export function formatHora(isoString: string): string {
-  return new Date(isoString).toLocaleTimeString('es-AR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
+  const timePart = (isoString.split('T')[1] ?? '00:00').replace(/[Z+\-]\d.*/, '');
+  const [h = '00', m = '00'] = timePart.split(':');
+  return `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
 }
 
 /** Format currency: "$12.500" */
 export function formatMoneda(amount: number): string {
   return `$${amount.toLocaleString('es-AR', { minimumFractionDigits: 0 })}`;
+}
+
+/** Genera la URL para agregar un turno al Google Calendar del cliente */
+export function buildGoogleCalendarUrl(
+  turno: { servicioNombre: string; profesionalNombre: string; fechaHoraInicio: string; fechaHoraFin: string },
+  sucursalNombre?: string,
+): string {
+  const toGCal = (iso: string) => iso.replace(/[-:]/g, '').slice(0, 15);
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `Turno - ${turno.servicioNombre}${sucursalNombre ? ` en ${sucursalNombre}` : ''}`,
+    dates: `${toGCal(turno.fechaHoraInicio)}/${toGCal(turno.fechaHoraFin)}`,
+    details: `Profesional: ${turno.profesionalNombre}\nServicio: ${turno.servicioNombre}`,
+  });
+  return `https://calendar.google.com/calendar/render?${params}`;
 }
 
 /** Calculate seña amount from a Servicio */
