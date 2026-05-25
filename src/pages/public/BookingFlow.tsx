@@ -12,8 +12,17 @@ import {
 import { pagosApi } from '../../api/pagos';
 import { publicoApi } from '../../api/publico';
 import { ApiError } from '../../api/client';
-import { formatMoneda, calcularMontoSena, formatFechaLarga, formatHora } from '../../types';
-import type { Servicio, Turno, SlotDisponible } from '../../types';
+import { formatMoneda, calcularMontoSena, formatFechaLarga, formatHora, buildGoogleCalendarUrl } from '../../types';
+import type { Servicio, Turno, SlotDisponible, ModalidadPrestacion } from '../../types';
+
+const MODALIDAD_CONFIG: Record<ModalidadPrestacion, { label: string; className: string }> = {
+  Presencial:  { label: 'Presencial',  className: 'bg-sky-400/15 text-sky-300 border-sky-400/25' },
+  Online:      { label: 'Online',      className: 'bg-violet-400/15 text-violet-300 border-violet-400/25' },
+  Domicilio:   { label: 'A domicilio', className: 'bg-emerald-400/15 text-emerald-300 border-emerald-400/25' },
+  Maquina:     { label: 'Máquina',     className: 'bg-white/10 text-white/50 border-white/15' },
+  Tratamiento: { label: 'Tratamiento', className: 'bg-white/10 text-white/50 border-white/15' },
+  Otro:        { label: 'Otro',        className: 'bg-white/10 text-white/50 border-white/15' },
+};
 
 interface BookingFlowProps {
   onClose?: () => void;
@@ -73,8 +82,11 @@ export function BookingFlow(props: BookingFlowProps = {}) {
   };
 
   const isDiaAbierto = (date: Date) => {
-    if (Object.keys(horariosAbiertos).length === 0) return true;
-    return horariosAbiertos[DAY_NAMES_ES[date.getDay()]] !== false;
+    const diaSucursal = Object.keys(horariosAbiertos).length === 0
+      || horariosAbiertos[DAY_NAMES_ES[date.getDay()]] !== false;
+    const diaServicio = !selectedServicio?.diasDisponibles?.length
+      || selectedServicio.diasDisponibles.includes(date.getDay());
+    return diaSucursal && diaServicio;
   };
 
   useEffect(() => {
@@ -355,7 +367,17 @@ export function BookingFlow(props: BookingFlowProps = {}) {
                       }`}
                     >
                       <div className="flex justify-between items-start gap-3 mb-2">
-                        <h3 className="font-bold text-base sm:text-lg text-white leading-tight">{srv.nombre}</h3>
+                        <div className="flex items-center gap-2 flex-wrap min-w-0">
+                          <h3 className="font-bold text-base sm:text-lg text-white leading-tight">{srv.nombre}</h3>
+                          {(() => {
+                            const cfg = MODALIDAD_CONFIG[srv.modalidadPrestacion];
+                            return cfg ? (
+                              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border whitespace-nowrap ${cfg.className}`}>
+                                {cfg.label}
+                              </span>
+                            ) : null;
+                          })()}
+                        </div>
                         <span className="font-bold text-primary-light whitespace-nowrap flex-shrink-0">{formatMoneda(srv.precio)}</span>
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-sm text-white/60">
@@ -705,18 +727,32 @@ export function BookingFlow(props: BookingFlowProps = {}) {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-8 sm:py-10"
             >
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-green-400/15 text-green-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 border border-green-400/25">
-                <CheckCircleIcon className="w-10 h-10 sm:w-12 sm:h-12" />
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-heading font-bold text-white mb-2">¡Turno confirmado!</h2>
-              <p className="text-white/65 mb-6 sm:mb-8 text-base sm:text-lg">
-                Te esperamos, {clientData.nombre}.
-              </p>
+              {turnoCreado?.estado === 'Pendiente' ? (
+                <>
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-amber-400/15 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 border border-amber-400/25">
+                    <ClockIcon className="w-10 h-10 sm:w-12 sm:h-12" />
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-heading font-bold text-white mb-2">¡Solicitud enviada!</h2>
+                  <p className="text-white/65 mb-6 sm:mb-8 text-base sm:text-lg">
+                    Gracias, {clientData.nombre}. Te avisaremos cuando el equipo confirme tu turno.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-green-400/15 text-green-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 border border-green-400/25">
+                    <CheckCircleIcon className="w-10 h-10 sm:w-12 sm:h-12" />
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-heading font-bold text-white mb-2">¡Turno confirmado!</h2>
+                  <p className="text-white/65 mb-6 sm:mb-8 text-base sm:text-lg">
+                    Te esperamos, {clientData.nombre}.
+                  </p>
+                </>
+              )}
 
               {turnoCreado && (
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 p-5 sm:p-6 text-left max-w-md mx-auto mb-6 sm:mb-8">
                   <h3 className="font-bold text-white border-b border-white/15 pb-3 mb-4 text-sm sm:text-base">
-                    Resumen de tu reserva
+                    {turnoCreado.estado === 'Pendiente' ? 'Detalle de tu solicitud' : 'Resumen de tu reserva'}
                   </h3>
                   <ul className="space-y-3 sm:space-y-4 text-sm">
                     <li className="flex justify-between gap-4">
@@ -741,7 +777,18 @@ export function BookingFlow(props: BookingFlowProps = {}) {
                 </div>
               )}
 
-              <div className="max-w-md mx-auto">
+              <div className="max-w-md mx-auto space-y-3">
+                {turnoCreado && (
+                  <a
+                    href={buildGoogleCalendarUrl(turnoCreado)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 border border-white/20 bg-white/10 hover:bg-white/18 text-white px-6 py-3.5 rounded-button font-medium transition-colors"
+                  >
+                    <CalendarIcon className="w-4 h-4 flex-shrink-0" />
+                    Agregar a Google Calendar
+                  </a>
+                )}
                 <button
                   onClick={() => onClose ? onClose() : navigate('/')}
                   className="w-full bg-primary hover:bg-primary-dark text-white px-6 py-3.5 rounded-button font-medium transition-colors shadow-lg shadow-primary/25"

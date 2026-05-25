@@ -682,6 +682,7 @@ export function Ajustes() {
                       const v = Number(e.target.value);
                       set('minutosAnticipacionMinimaReserva', anticUnidad === 'horas' ? v * 60 : v);
                     }}
+                    onFocus={(e) => e.target.select()}
                     className="w-20 px-2 py-1.5 bg-surface border border-border rounded-lg text-sm text-text-primary text-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
                   <select
@@ -708,6 +709,7 @@ export function Ajustes() {
                     max={365}
                     value={form.diasMaximosReservaFutura}
                     onChange={(e) => set('diasMaximosReservaFutura', Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
                     className="w-20 px-2 py-1.5 bg-surface border border-border rounded-lg text-sm text-text-primary text-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
                   <span className="text-xs text-text-muted w-10">días</span>
@@ -727,6 +729,7 @@ export function Ajustes() {
                     max={120}
                     value={form.minutosBufferEntreTurnos}
                     onChange={(e) => set('minutosBufferEntreTurnos', Number(e.target.value))}
+                    onFocus={(e) => e.target.select()}
                     className="w-20 px-2 py-1.5 bg-surface border border-border rounded-lg text-sm text-text-primary text-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
                   <span className="text-xs text-text-muted w-10">min</span>
@@ -756,6 +759,7 @@ export function Ajustes() {
                       max={720}
                       value={form.horasMinimasCancelacion}
                       onChange={(e) => set('horasMinimasCancelacion', Number(e.target.value))}
+                      onFocus={(e) => e.target.select()}
                       className="w-20 px-2 py-1.5 bg-surface border border-border rounded-lg text-sm text-text-primary text-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     />
                     <span className="text-xs text-text-muted w-10">hs</span>

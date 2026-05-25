@@ -11,14 +11,25 @@ import {
   CheckIcon,
 } from 'lucide-react';
 import { serviciosApi } from '../../api/servicios';
+import { ajustesApi } from '../../api/ajustes';
 import { ToastContainer } from '../../components/ui/Toast';
 import { Pagination } from '../../components/ui/Pagination';
 import { useToast } from '../../hooks/useToast';
 import { useConfirmDialog } from '../../hooks/useConfirmDialog';
 import { usePagination } from '../../hooks/usePagination';
 import { formatMoneda, calcularMontoSena } from '../../types';
-import type { Servicio, CrearServicioDto, ModalidadPrestacion, TipoServicio, TipoSena } from '../../types';
+import type { Servicio, CrearServicioDto, ModalidadPrestacion, TipoServicio, TipoSena, DiaSemana } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
+
+const DIAS_SEMANA = [
+  { valor: 1, label: 'Lun', key: 'Lunes' },
+  { valor: 2, label: 'Mar', key: 'Martes' },
+  { valor: 3, label: 'Mié', key: 'Miercoles' },
+  { valor: 4, label: 'Jue', key: 'Jueves' },
+  { valor: 5, label: 'Vie', key: 'Viernes' },
+  { valor: 6, label: 'Sáb', key: 'Sabado' },
+  { valor: 0, label: 'Dom', key: 'Domingo' },
+];
 
 const EMPTY_FORM: CrearServicioDto = {
   sucursalId: '',
@@ -33,6 +44,7 @@ const EMPTY_FORM: CrearServicioDto = {
   valorSena: null,
   modalidadPrestacion: 'Presencial',
   tipoServicio: 'Regular',
+  diasDisponibles: [],
 };
 
 export function Servicios() {
@@ -48,6 +60,21 @@ export function Servicios() {
   const [saving, setSaving] = useState(false);
 
   const { page, setPage, totalPages, paginated, total, pageSize } = usePagination(servicios, 10);
+
+  // Días que la sucursal tiene abiertos según ajustes
+  const [diasAbiertos, setDiasAbiertos] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!sucursalId) return;
+    ajustesApi.obtener(sucursalId)
+      .then((ajustes) => {
+        const abiertos = DIAS_SEMANA
+          .filter((d) => ajustes.horariosAtencion?.[d.key as DiaSemana]?.abierto)
+          .map((d) => d.valor);
+        setDiasAbiertos(abiertos);
+      })
+      .catch(() => {}); // no-crítico: si falla se muestran todos
+  }, [sucursalId]);
 
   const cargar = () => {
     setLoading(true);
@@ -81,6 +108,7 @@ export function Servicios() {
       valorSena: s.valorSena,
       modalidadPrestacion: s.modalidadPrestacion,
       tipoServicio: s.tipoServicio,
+      diasDisponibles: s.diasDisponibles ?? [],
     });
     setModalOpen(true);
   };
@@ -200,6 +228,11 @@ export function Servicios() {
                   <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-medium">
                     {s.modalidadPrestacion}
                   </span>
+                  {s.diasDisponibles?.length > 0 && (
+                    <span className="text-xs text-text-muted bg-surface-background border border-border px-2 py-0.5 rounded-full">
+                      {DIAS_SEMANA.filter((d) => s.diasDisponibles.includes(d.valor)).map((d) => d.label).join(' · ')}
+                    </span>
+                  )}
                 </div>
                 {s.descripcion && <p className="text-sm text-text-secondary mb-2">{s.descripcion}</p>}
                 <div className="flex flex-wrap gap-4 text-sm text-text-secondary">
@@ -336,6 +369,40 @@ export function Servicios() {
                       className="w-full px-3 py-2 rounded-input border border-border bg-surface-background focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
                       min={5}
                     />
+                  </div>
+                </div>
+
+                {/* Días disponibles */}
+                <div className="pt-2 border-t border-border">
+                  <label className="block text-sm font-medium text-text-primary mb-1">
+                    Días disponibles
+                    <span className="text-text-muted font-normal ml-1">(vacío = todos los días)</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {(diasAbiertos.length > 0 ? DIAS_SEMANA.filter((d) => diasAbiertos.includes(d.valor)) : DIAS_SEMANA).map((d) => {
+                      const activo = form.diasDisponibles.includes(d.valor);
+                      return (
+                        <button
+                          key={d.valor}
+                          type="button"
+                          onClick={() =>
+                            setField(
+                              'diasDisponibles',
+                              activo
+                                ? form.diasDisponibles.filter((x) => x !== d.valor)
+                                : [...form.diasDisponibles, d.valor],
+                            )
+                          }
+                          className={`px-3 py-1.5 rounded-button text-sm font-medium border transition-colors ${
+                            activo
+                              ? 'bg-primary text-white border-primary'
+                              : 'bg-surface-background text-text-secondary border-border hover:border-primary hover:text-primary'
+                          }`}
+                        >
+                          {d.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 

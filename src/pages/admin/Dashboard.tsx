@@ -36,7 +36,7 @@ export function Dashboard() {
   const { user }   = useAuth();
   const sucursalId = user?.sucursalId ?? '';
   const navigate   = useNavigate();
-  const [turnos, setTurnos] = useState<Turno[]>([]);
+  const [allTurnos, setAllTurnos] = useState<Turno[]>([]);
   const [loading, setLoading] = useState(true);
 
   // ── Caja mini ─────────────────────────────────────────────────────────────
@@ -60,11 +60,8 @@ export function Dashboard() {
   useEffect(() => {
     turnosApi
       .listar(sucursalId)
-      .then((data) => {
-        const todayStr = new Date().toISOString().split('T')[0];
-        setTurnos(data.filter((t) => t.fechaHoraInicio.startsWith(todayStr)));
-      })
-      .catch(() => setTurnos([]))
+      .then((data) => setAllTurnos(data))
+      .catch(() => setAllTurnos([]))
       .finally(() => setLoading(false));
   }, []);
 
@@ -124,15 +121,17 @@ export function Dashboard() {
     0,
   );
 
-  const pendientes = turnos.filter((t) => t.estado === 'Pendiente');
-  const completados = turnos.filter((t) => t.estado === 'Completado');
-  const noShows = turnos.filter((t) => t.estado === 'NoShow');
-  const ingresosDia = turnos.reduce((sum, t) => sum + t.totalCobrado, 0);
+  const todayStr = new Date().toISOString().split('T')[0];
+  const turnosHoy = allTurnos.filter((t) => t.fechaHoraInicio.startsWith(todayStr));
+  const pendientesTodos = allTurnos.filter((t) => t.estado === 'Pendiente');
+  const completados = turnosHoy.filter((t) => t.estado === 'Completado');
+  const noShows = turnosHoy.filter((t) => t.estado === 'NoShow');
+  const ingresosDia = turnosHoy.reduce((sum, t) => sum + t.totalCobrado, 0);
 
   const confirmarTurno = async (turnoId: string) => {
     try {
       const updated = await turnosApi.actualizar(turnoId, { estado: 'Confirmado' });
-      setTurnos((prev) => prev.map((t) => (t.id === turnoId ? updated : t)));
+      setAllTurnos((prev) => prev.map((t) => (t.id === turnoId ? updated : t)));
     } catch {
       alert('No se pudo confirmar el turno.');
     }
@@ -164,7 +163,7 @@ export function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Turnos hoy"
-          value={loading ? '...' : turnos.length.toString()}
+          value={loading ? '...' : turnosHoy.length.toString()}
           icon={<CalendarIcon className="w-6 h-6" />}
         />
         <StatCard
@@ -174,9 +173,9 @@ export function Dashboard() {
         />
         <StatCard
           title="Por confirmar"
-          value={loading ? '...' : pendientes.length.toString()}
-          changeType={pendientes.length > 0 ? 'neutral' : 'up'}
-          change={pendientes.length > 0 ? 'Requiere atención' : 'Todo al día'}
+          value={loading ? '...' : pendientesTodos.length.toString()}
+          changeType={pendientesTodos.length > 0 ? 'neutral' : 'up'}
+          change={pendientesTodos.length > 0 ? 'Requiere atención' : 'Todo al día'}
           icon={<ClockIcon className="w-6 h-6" />}
         />
         <StatCard
@@ -203,11 +202,11 @@ export function Dashboard() {
                 <div className="flex justify-center py-8">
                   <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
-              ) : turnos.length === 0 ? (
+              ) : turnosHoy.length === 0 ? (
                 <p className="text-center text-text-muted py-8">No hay turnos para hoy.</p>
               ) : (
                 <div className="relative border-l-2 border-border/50 ml-4 space-y-8 pb-4">
-                  {turnos
+                  {turnosHoy
                     .filter((t) => !['PagoPendiente', 'PagoRechazado'].includes(t.estado))
                     .sort((a, b) => a.fechaHoraInicio.localeCompare(b.fechaHoraInicio))
                     .map((turno) => (
@@ -433,24 +432,45 @@ export function Dashboard() {
               </>
             )}
           </div>}
-      {/* Por confirmar + No-shows — fila horizontal si hay datos */}
-      {(pendientes.length > 0 || noShows.length > 0) && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {pendientes.length > 0 && (
-            <div className="bg-surface rounded-card border border-border shadow-sm p-6">
-              <h3 className="font-heading font-bold text-lg text-text-primary mb-4">Por confirmar</h3>
-              <div className="space-y-3">
-                {pendientes.map((turno) => (
-                  <div
-                    key={turno.id}
-                    className="flex items-start justify-between p-3 rounded-lg bg-warning/10 border border-warning/20"
-                  >
-                    <div>
-                      <p className="font-medium text-text-primary text-sm">{turno.clienteNombre}</p>
-                      <p className="text-xs text-text-secondary mt-0.5">
-                        {formatHora(turno.fechaHoraInicio)} — {turno.servicioNombre}
-                      </p>
-                    </div>
+      {/* Por confirmar — todos los pendientes (hoy y futuros) */}
+      {pendientesTodos.length > 0 && (
+        <div className="bg-surface rounded-card border border-border shadow-sm overflow-hidden">
+          <div className="px-6 py-5 border-b border-border flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <h3 className="font-heading font-bold text-lg text-text-primary">Por confirmar</h3>
+              <span className="min-w-[22px] h-[22px] px-1.5 bg-amber-500 rounded-full flex items-center justify-center text-[11px] text-white font-bold leading-none">
+                {pendientesTodos.length > 9 ? '9+' : pendientesTodos.length}
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('/admin/agenda')}
+              className="flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+            >
+              Ver agenda <ArrowRightIcon className="w-3.5 h-3.5" />
+            </button>
+          </div>
+          <div className="p-6 space-y-3">
+            {pendientesTodos
+              .sort((a, b) => a.fechaHoraInicio.localeCompare(b.fechaHoraInicio))
+              .map((turno) => (
+                <div
+                  key={turno.id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-amber-50 border border-amber-200"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-text-primary text-sm">{turno.clienteNombre}</p>
+                    <p className="text-xs text-text-secondary mt-0.5">
+                      {new Date(turno.fechaHoraInicio).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })} {formatHora(turno.fechaHoraInicio)} — {turno.servicioNombre}
+                    </p>
+                    <p className="text-xs text-text-muted mt-0.5">con {turno.profesionalNombre}</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                    <button
+                      onClick={() => navigate(`/admin/turno/${turno.id}`)}
+                      className="text-xs text-primary hover:text-primary-dark font-medium transition-colors"
+                    >
+                      Ver detalle
+                    </button>
                     <button
                       onClick={() => confirmarTurno(turno.id)}
                       className="p-1.5 text-success hover:bg-success/20 rounded-md transition-colors"
@@ -459,24 +479,24 @@ export function Dashboard() {
                       <CheckIcon className="w-4 h-4" />
                     </button>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
 
-          {noShows.length > 0 && (
-            <div className="bg-surface rounded-card border border-border shadow-sm p-6">
-              <h3 className="font-heading font-bold text-lg text-text-primary mb-3">No-shows hoy</h3>
-              <div className="space-y-2">
-                {noShows.map((t) => (
-                  <div key={t.id} className="flex justify-between text-sm">
-                    <span className="text-text-primary">{t.clienteNombre}</span>
-                    <span className="text-text-muted">{formatHora(t.fechaHoraInicio)}</span>
-                  </div>
-                ))}
+      {/* No-shows hoy */}
+      {noShows.length > 0 && (
+        <div className="bg-surface rounded-card border border-border shadow-sm p-6">
+          <h3 className="font-heading font-bold text-lg text-text-primary mb-3">No-shows hoy</h3>
+          <div className="space-y-2">
+            {noShows.map((t) => (
+              <div key={t.id} className="flex justify-between text-sm">
+                <span className="text-text-primary">{t.clienteNombre}</span>
+                <span className="text-text-muted">{formatHora(t.fechaHoraInicio)}</span>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       )}
     </div>
