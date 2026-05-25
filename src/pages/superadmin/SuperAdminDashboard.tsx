@@ -29,7 +29,7 @@ export function SuperAdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'Sucursales totales', value: sucursales.length, cls: 'bg-surface border-border' },
           { label: 'Activas',            value: activas,           cls: 'bg-green-50 border-green-100' },

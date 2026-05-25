@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, tienePermiso } from '../../contexts/AuthContext';
 import { publicoApi } from '../../api/publico';
+import { turnosApi } from '../../api/turnos';
 import { suscripcionApi } from '../../api/suscripcion';
 import { notificacionesApi } from '../../api/notificaciones';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -81,6 +82,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [sucursalNombre, setSucursalNombre] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [suscripcion, setSuscripcion] = useState<SuscripcionInfo | null>(null);
+  const [pendientesCount, setPendientesCount] = useState(0);
 
   // ── Notificaciones en tiempo real ────────────────────────────────────────
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
@@ -157,6 +159,18 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     }
   }, [user?.sucursalId]);
 
+  useEffect(() => {
+    const sucursalId = user?.sucursalId;
+    if (!sucursalId) return;
+    const fetchPendientes = () =>
+      turnosApi.listar(sucursalId)
+        .then((data) => setPendientesCount(data.filter((t) => t.estado === 'Pendiente').length))
+        .catch(() => {});
+    fetchPendientes();
+    const id = setInterval(fetchPendientes, 60_000);
+    return () => clearInterval(id);
+  }, [user?.sucursalId]);
+
   const currentPage =
     navSections.flatMap((s) => s.items).find((i) => location.pathname === i.path)?.name ?? 'Panel';
 
@@ -198,6 +212,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                     >
                       <Icon className="w-5 h-5 relative z-10" />
                       <span className="relative z-10">{item.name}</span>
+                      {item.path === '/admin/turnos' && pendientesCount > 0 && (
+                        <span className="ml-auto min-w-[18px] h-[18px] px-1 bg-amber-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold leading-none relative z-10">
+                          {pendientesCount > 9 ? '9+' : pendientesCount}
+                        </span>
+                      )}
                       {isActive && (
                         <motion.div
                           layoutId="activeNav"

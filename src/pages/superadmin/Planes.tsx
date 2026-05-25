@@ -179,7 +179,7 @@ export function Planes() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'Total',     value: planes.length, color: 'bg-blue-50 text-blue-700 border-blue-100'   },
           { label: 'Activos',   value: activos,       color: 'bg-green-50 text-green-700 border-green-100' },

@@ -133,19 +133,19 @@ export function DetalleSucursal() {
     <div className="max-w-4xl mx-auto space-y-6">
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
           <button
             onClick={() => navigate('/superadmin/sucursales')}
-            className="p-2 text-text-secondary hover:text-text-primary hover:bg-surface rounded-lg transition-colors"
+            className="p-2 text-text-secondary hover:text-text-primary hover:bg-surface rounded-lg transition-colors flex-shrink-0"
           >
             <ArrowLeftIcon className="w-5 h-5" />
           </button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-heading font-bold text-text-primary">{sucursal.nombre}</h2>
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-text-primary truncate">{sucursal.nombre}</h2>
               <span
-                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
                   sucursal.activa
                     ? 'bg-green-100 text-green-700'
                     : 'bg-surface-background text-text-muted border border-border'
@@ -155,18 +155,18 @@ export function DetalleSucursal() {
                 {sucursal.activa ? 'Activa' : 'Inactiva'}
               </span>
             </div>
-            <p className="text-text-secondary text-sm mt-1">{sucursal.direccion}</p>
+            <p className="text-text-secondary text-sm mt-1 truncate">{sucursal.direccion}</p>
           </div>
         </div>
 
         {/* Acciones rápidas */}
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0 pl-12 sm:pl-0">
           <button
             onClick={() => navigate('/superadmin/sucursales')}
             className="flex items-center gap-2 px-3 py-2 border border-border rounded-button text-sm text-text-secondary hover:bg-surface-background transition-colors"
           >
             <EditIcon className="w-4 h-4" />
-            Editar
+            <span className="hidden sm:inline">Editar</span>
           </button>
           <button
             onClick={toggleEstado}
@@ -177,7 +177,7 @@ export function DetalleSucursal() {
             }`}
           >
             <PowerIcon className="w-4 h-4" />
-            {sucursal.activa ? 'Desactivar' : 'Activar'}
+            <span className="hidden sm:inline">{sucursal.activa ? 'Desactivar' : 'Activar'}</span>
           </button>
         </div>
       </div>
