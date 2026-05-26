@@ -8,6 +8,7 @@ import {
   PlusIcon,
   WalletIcon,
   CheckIcon,
+  XIcon,
   TrendingUpIcon,
   TrendingDownIcon,
   ArrowRightIcon,
@@ -134,6 +135,15 @@ export function Dashboard() {
       setAllTurnos((prev) => prev.map((t) => (t.id === turnoId ? updated : t)));
     } catch {
       alert('No se pudo confirmar el turno.');
+    }
+  };
+
+  const cancelarTurno = async (turnoId: string) => {
+    try {
+      const updated = await turnosApi.actualizar(turnoId, { estado: 'CanceladoStaff' });
+      setAllTurnos((prev) => prev.map((t) => (t.id === turnoId ? updated : t)));
+    } catch {
+      alert('No se pudo cancelar el turno.');
     }
   };
 
@@ -477,6 +487,13 @@ export function Dashboard() {
                       title="Confirmar"
                     >
                       <CheckIcon className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => cancelarTurno(turno.id)}
+                      className="p-1.5 text-error hover:bg-error/10 rounded-md transition-colors"
+                      title="Cancelar turno"
+                    >
+                      <XIcon className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

@@ -89,7 +89,7 @@ export function Servicios() {
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ ...EMPTY_FORM, sucursalId: sucursalId });
+    setForm({ ...EMPTY_FORM, sucursalId: sucursalId, diasDisponibles: diasAbiertos });
     setModalOpen(true);
   };
 
@@ -376,7 +376,6 @@ export function Servicios() {
                 <div className="pt-2 border-t border-border">
                   <label className="block text-sm font-medium text-text-primary mb-1">
                     Días disponibles
-                    <span className="text-text-muted font-normal ml-1">(vacío = todos los días)</span>
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {(diasAbiertos.length > 0 ? DIAS_SEMANA.filter((d) => diasAbiertos.includes(d.valor)) : DIAS_SEMANA).map((d) => {
