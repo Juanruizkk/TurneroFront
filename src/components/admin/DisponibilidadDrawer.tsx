@@ -92,10 +92,11 @@ export function DisponibilidadDrawer({ usuario, sucursalId, onClose, onSaved }: 
           byDow.set(h.diaSemana, arr);
         });
 
-        // Mapa base con defaults; pisar con datos del profesional
+        // Si el profesional no tiene horarios guardados, pre-activar todos los días abiertos de la sucursal
+        const esNuevo = byDow.size === 0;
         const map = new Map<number, DiaHorario>();
         DIAS.forEach(({ dow }) => {
-          map.set(dow, { activo: false, franjas: [defaultFranja(dow, defaults)] });
+          map.set(dow, { activo: esNuevo && abiertos.has(dow), franjas: [defaultFranja(dow, defaults)] });
         });
         byDow.forEach((entries, dow) => {
           map.set(dow, {
@@ -250,7 +251,7 @@ export function DisponibilidadDrawer({ usuario, sucursalId, onClose, onSaved }: 
                       Servicios asignados
                     </h4>
                     <p className="text-xs text-text-muted mb-3">
-                      Sin selección = puede realizar todos los servicios.
+                      Seleccioná los servicios que puede realizar.
                     </p>
                     {serviciosDisponibles.length === 0 ? (
                       <p className="text-sm text-text-muted italic">No hay servicios activos.</p>
@@ -291,7 +292,7 @@ export function DisponibilidadDrawer({ usuario, sucursalId, onClose, onSaved }: 
                       Horario semanal
                     </h4>
                     <p className="text-xs text-text-muted mb-3">
-                      Sin horarios activos = sin restricción de horario.
+                      Activá los días en que trabaja el profesional.
                     </p>
                     {diasVisibles.length === 0 ? (
                       <p className="text-sm text-text-muted italic">

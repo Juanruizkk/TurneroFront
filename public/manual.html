@@ -1322,6 +1322,15 @@
           <li><strong>Detalle del turno:</strong> en la pestana <strong>Informacion</strong> del turno, la seccion "Observaciones" muestra el mensaje completo que dejo el cliente.</li>
         </ul>
 
+        <h3>Dias disponibles</h3>
+        <p>Al crear un servicio, el sistema pre-selecciona automaticamente los dias que tu negocio tiene configurados como abiertos en <strong>Ajustes &rarr; Horarios</strong>. Esos dias aparecen resaltados en el modal de creacion.</p>
+        <p>Si el servicio solo se ofrece ciertos dias, deselecciona los que no aplican antes de guardar. Para modificar los dias de un servicio ya existente, entra a editarlo y activa o desactiva los dias correspondientes.</p>
+
+        <div class="callout tip">
+          <span class="callout-icon">&#9998;</span>
+          <div>Cuando se crea un servicio nuevo, el sistema lo asigna automaticamente a <strong>todos los profesionales activos</strong> de la sucursal. Si queres que un profesional en particular no lo realice, entra a su disponibilidad (icono de calendario en Equipo) y deseleccionalo.</div>
+        </div>
+
         <h3>Desactivar y reactivar un servicio</h3>
         <p>Desactivar un servicio lo quita del booking publico y del selector de nuevos turnos. Los turnos ya agendados para ese servicio no se ven afectados. Para desactivarlo, haz clic en el icono de papelera. Para reactivarlo, haz clic en el icono de tilde verde que aparece en los servicios inactivos.</p>
       </section>
@@ -1457,15 +1466,20 @@
 
         <p>Cada profesional (y administrador) puede tener su propio horario semanal de trabajo, independientemente del horario general del negocio. El sistema solo ofrecera turnos en los slots donde el profesional este disponible.</p>
 
+        <p>Al agregar un nuevo profesional, el sistema <strong>pre-activa automaticamente</strong> todos los dias que el negocio tiene configurados como abiertos en Ajustes, con los horarios correspondientes. Si el profesional trabaja menos dias o en horarios distintos, simplemente desactiva o ajusta los dias que no aplican.</p>
+
         <h3>Como configurar la disponibilidad</h3>
         <div class="steps">
           <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Ve a Menu lateral &rarr; Equipo</strong><p>Busca al profesional en la lista.</p></div></div>
           <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Haz clic en el icono de calendario</strong><p>El icono de calendario aparece en la fila del profesional, a la derecha. Solo aparece para usuarios con rol Profesional o Administrativo.</p></div></div>
-          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Se abre el panel de disponibilidad</strong><p>Similar al horario del negocio, con dias de la semana y franjas horarias. Configura los dias y horarios en que ese profesional trabaja.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Se abre el panel de disponibilidad</strong><p>Los dias abiertos del negocio aparecen activados por defecto. Desactiva los dias en que el profesional no trabaja, y ajusta los horarios de cada dia si es necesario.</p></div></div>
           <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Guarda la disponibilidad</strong><p>Los cambios se aplican inmediatamente al booking publico.</p></div></div>
         </div>
 
         <img class="screenshot" src="capturas/disponibilidad_profecional.png" alt="Drawer de disponibilidad de un profesional">
+
+        <h3>Servicios asignados al profesional</h3>
+        <p>En el mismo panel de disponibilidad encontras la seccion <strong>Servicios asignados</strong>. Cuando se crea un servicio nuevo, se lo asigna automaticamente a todos los profesionales activos. Si necesitas que un profesional en particular no realice un servicio, deseleccionalo desde este panel y guarda.</p>
 
         <div class="callout tip">
           <span class="callout-icon">&#9998;</span>
