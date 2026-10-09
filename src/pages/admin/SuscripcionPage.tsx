@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -194,7 +194,7 @@ export function SuscripcionPage() {
         <ul className="space-y-3">
           {[
             `Hasta ${suscripcion.maxUsuarios < 999 ? suscripcion.maxUsuarios : '∞'} usuarios`,
-            suscripcion.maxTurnosMes
+            suscripcion.maxTurnosMes !== null
               ? `Hasta ${suscripcion.maxTurnosMes} turnos por mes`
               : 'Turnos ilimitados',
             'Reportes y estadísticas',
