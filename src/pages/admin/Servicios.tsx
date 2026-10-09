@@ -17,8 +17,8 @@ import { Pagination } from '../../components/ui/Pagination';
 import { useToast } from '../../hooks/useToast';
 import { useConfirmDialog } from '../../hooks/useConfirmDialog';
 import { usePagination } from '../../hooks/usePagination';
-import { formatMoneda, calcularMontoSena } from '../../types';
-import type { Servicio, CrearServicioDto, ModalidadPrestacion, TipoServicio, TipoSena, DiaSemana } from '../../types';
+import { formatMoneda } from '../../types';
+import type { Servicio, CrearServicioDto, ModalidadPrestacion, TipoServicio, DiaSemana } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 
 const DIAS_SEMANA = [
@@ -103,9 +103,9 @@ export function Servicios() {
       precio: s.precio,
       duracionClienteMin: s.duracionClienteMin,
       duracionAgendaMin: s.duracionAgendaMin,
-      requiereSena: s.requiereSena,
-      tipoSena: s.tipoSena,
-      valorSena: s.valorSena,
+      requiereSena: false,
+      tipoSena: null,
+      valorSena: null,
       modalidadPrestacion: s.modalidadPrestacion,
       tipoServicio: s.tipoServicio,
       diasDisponibles: s.diasDisponibles ?? [],
@@ -115,16 +115,6 @@ export function Servicios() {
 
   const handleSave = async () => {
     if (!form.nombre || form.precio <= 0) return;
-    if (form.requiereSena && form.valorSena !== null && form.valorSena !== undefined) {
-      if (form.tipoSena === 'Fija' && form.valorSena > form.precio) {
-        addToast('error', `La seña fija ($${form.valorSena}) no puede ser mayor al precio del servicio ($${form.precio}).`);
-        return;
-      }
-      if (form.tipoSena === 'Porcentaje' && form.valorSena > 100) {
-        addToast('error', 'El porcentaje de la seña no puede superar el 100%.');
-        return;
-      }
-    }
     setSaving(true);
     try {
       if (editing) {
@@ -243,11 +233,7 @@ export function Servicios() {
                   <span className="flex items-center gap-1 text-text-muted">
                     <ClockIcon className="w-3.5 h-3.5" /> {s.duracionAgendaMin} min (agenda)
                   </span>
-                  {s.requiereSena && (
-                    <span className="text-warning font-medium bg-warning/10 px-2 py-0.5 rounded text-xs border border-warning/20">
-                      Seña: {formatMoneda(calcularMontoSena(s))}
-                    </span>
-                  )}
+
                 </div>
               </div>
 
@@ -405,51 +391,6 @@ export function Servicios() {
                   </div>
                 </div>
 
-                {/* Seña */}
-                <div className="pt-2 border-t border-border">
-                  <label className="flex items-center gap-2 cursor-pointer mb-3">
-                    <input
-                      type="checkbox"
-                      checked={form.requiereSena}
-                      onChange={(e) => {
-                        setField('requiereSena', e.target.checked);
-                        if (!e.target.checked) { setField('tipoSena', null); setField('valorSena', null); }
-                        else if (form.tipoSena === null) { setField('tipoSena', 'Fija'); }
-                      }}
-                      className="rounded accent-primary w-4 h-4"
-                    />
-                    <span className="text-sm font-medium text-text-primary">Requiere seña</span>
-                  </label>
-
-                  {form.requiereSena && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-6">
-                      <div>
-                        <label className="block text-sm font-medium text-text-primary mb-1">Tipo de seña</label>
-                        <select
-                          value={form.tipoSena ?? 'Fija'}
-                          onChange={(e) => setField('tipoSena', e.target.value as TipoSena)}
-                          className="w-full px-3 py-2 rounded-input border border-border bg-surface-background focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
-                        >
-                          <option value="Fija">Fija ($)</option>
-                          <option value="Porcentaje">Porcentaje (%)</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-text-primary mb-1">
-                          {form.tipoSena === 'Porcentaje' ? 'Porcentaje (%)' : 'Monto ($)'}
-                        </label>
-                        <input
-                          type="number"
-                          value={form.valorSena ?? ''}
-                          onChange={(e) => setField('valorSena', e.target.value === '' ? null : Number(e.target.value))}
-                          className="w-full px-3 py-2 rounded-input border border-border bg-surface-background focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
-                          placeholder={form.tipoSena === 'Porcentaje' ? '30' : '2000'}
-                          min={0}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
 
               <div className="flex gap-3 mt-6">

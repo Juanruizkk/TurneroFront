@@ -6,13 +6,11 @@ import {
   CheckCircleIcon,
   ClockIcon,
   CalendarIcon,
-  CreditCardIcon,
   SparklesIcon,
 } from 'lucide-react';
-import { pagosApi } from '../../api/pagos';
 import { publicoApi } from '../../api/publico';
 import { ApiError } from '../../api/client';
-import { formatMoneda, calcularMontoSena, formatFechaLarga, formatHora, buildGoogleCalendarUrl } from '../../types';
+import { formatMoneda, formatFechaLarga, formatHora, buildGoogleCalendarUrl } from '../../types';
 import type { Servicio, Turno, SlotDisponible, ModalidadPrestacion } from '../../types';
 
 const MODALIDAD_CONFIG: Record<ModalidadPrestacion, { label: string; className: string }> = {
@@ -149,8 +147,7 @@ export function BookingFlow(props: BookingFlowProps = {}) {
   const filteredServicios =
     activeCategory === 'Todos' ? servicios : servicios.filter((s) => s.modalidadPrestacion === activeCategory);
 
-  const señaRequerida = selectedServicio?.requiereSena ?? false;
-  const totalSteps = señaRequerida ? 6 : 5;
+  const totalSteps = 5;
 
   const nextStep = () => { setErrorMsg(''); setStep((s) => Math.min(s + 1, totalSteps)); };
   const prevStep = () => { setErrorMsg(''); setStep((s) => Math.max(s - 1, 1)); };
@@ -221,31 +218,6 @@ export function BookingFlow(props: BookingFlowProps = {}) {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const handlePagarConMP = async () => {
-    if (!selectedServicio || !selectedDate || !selectedTime || !clientData.nombre || !clientData.telefono) return;
-    if (!SUCURSAL_ID) {
-      setErrorMsg('Configuración incompleta: falta el ID de sucursal.');
-      return;
-    }
-
-    setSubmitting(true);
-    setErrorMsg('');
-
-    try {
-      const turno = await crearTurno();
-      const { checkoutUrl } = await pagosApi.iniciarPago(turno.id);
-      window.location.href = checkoutUrl;
-    } catch (err: unknown) {
-      if (err instanceof ApiError && err.status === 409) {
-        handle409();
-      } else {
-        setErrorMsg(err instanceof Error ? err.message : 'Error al iniciar el pago.');
-      }
-      setSubmitting(false);
-    }
-    // No llamamos setSubmitting(false) en el happy path porque redirigimos fuera de la app
   };
 
   const today = new Date();
@@ -384,11 +356,7 @@ export function BookingFlow(props: BookingFlowProps = {}) {
                         <span className="flex items-center gap-1">
                           <ClockIcon className="w-4 h-4" /> {srv.duracionClienteMin} min
                         </span>
-                        {srv.requiereSena && (
-                          <span className="text-yellow-300 font-medium bg-yellow-400/15 px-2 py-0.5 rounded text-xs border border-yellow-400/25">
-                            Seña: {formatMoneda(calcularMontoSena(srv))}
-                          </span>
-                        )}
+
                       </div>
                       {srv.descripcion && (
                         <p className="text-sm text-white/45 mt-2 line-clamp-2">{srv.descripcion}</p>
@@ -652,75 +620,17 @@ export function BookingFlow(props: BookingFlowProps = {}) {
                 <button
                   disabled={!clientData.nombre || !clientData.telefono || submitting ||
                     (selectedServicio?.modalidadPrestacion === 'Domicilio' && !clientData.mensajeCliente.trim())}
-                  onClick={señaRequerida ? nextStep : handleConfirmar}
+                  onClick={handleConfirmar}
                   className="w-full sm:w-auto sm:ml-auto bg-primary hover:bg-primary-dark disabled:opacity-40 disabled:cursor-not-allowed text-white px-8 py-3.5 sm:py-3 rounded-button font-medium transition-colors shadow-lg shadow-primary/25"
                 >
-                  {submitting ? 'Procesando...' : señaRequerida ? 'Continuar al pago' : 'Confirmar turno'}
+                  {submitting ? 'Procesando...' : 'Confirmar turno'}
                 </button>
               </div>
-            </motion.div>
-          )}
-
-          {/* STEP 4 (conditional): Seña */}
-          {step === 4 && señaRequerida && selectedServicio && (
-            <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="text-xl sm:text-2xl font-heading font-bold text-white mb-1 sm:mb-2">
-                Abonar seña
-              </h2>
-              <p className="text-white/60 mb-5 sm:mb-6 text-sm sm:text-base">
-                Este servicio requiere una seña para confirmar el turno. El monto se descontará del total.
-              </p>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 p-5 sm:p-6 mb-5 sm:mb-6 text-center">
-                <p className="text-white/60 mb-2 text-sm sm:text-base">Monto a pagar ahora</p>
-                <p className="text-3xl sm:text-4xl font-bold text-primary-light mb-2">
-                  {formatMoneda(calcularMontoSena(selectedServicio))}
-                </p>
-                <p className="text-sm text-white/45">
-                  Total del servicio: {formatMoneda(selectedServicio.precio)}
-                </p>
-              </div>
-
-              <div className="space-y-3 mb-6 sm:mb-8">
-                <button
-                  onClick={handlePagarConMP}
-                  disabled={submitting}
-                  className="w-full flex items-center justify-between p-4 rounded-2xl border-2 border-[#009EE3] bg-[#009EE3]/10 hover:bg-[#009EE3]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors backdrop-blur-md"
-                >
-                  <div className="flex items-center gap-3 font-bold text-[#009EE3] text-sm sm:text-base">
-                    <CreditCardIcon className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
-                    {submitting ? 'Procesando...' : 'Mercado Pago'}
-                  </div>
-                  <span className="text-xs sm:text-sm font-medium text-[#009EE3]/80">Débito / Crédito / Cuenta</span>
-                </button>
-                <button
-                  onClick={handleConfirmar}
-                  className="w-full flex items-center justify-between p-4 rounded-2xl border border-white/15 bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-md"
-                >
-                  <div className="flex items-center gap-3 font-bold text-white text-sm sm:text-base">
-                    <CreditCardIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white/60 flex-shrink-0" />
-                    Transferencia Bancaria
-                  </div>
-                  <span className="text-xs sm:text-sm text-white/50">Ver datos</span>
-                </button>
-              </div>
-
-              {errorMsg && (
-                <p className="text-sm text-red-300 bg-red-500/15 border border-red-400/25 rounded-lg px-4 py-3 mb-4">{errorMsg}</p>
-              )}
-
-              <button
-                onClick={handleConfirmar}
-                disabled={submitting}
-                className="w-full text-center text-sm text-white/40 hover:text-white/70 underline disabled:opacity-50 py-2 transition-colors"
-              >
-                {submitting ? 'Procesando...' : '(Simular pago exitoso)'}
-              </button>
             </motion.div>
           )}
 
           {/* STEP FINAL: Confirmación */}
-          {((step === 4 && !señaRequerida) || (step === 5 && señaRequerida) || (step === totalSteps && turnoCreado)) && (
+          {(step === 4 || (step === totalSteps && turnoCreado)) && (
             <motion.div
               key="confirmacion"
               initial={{ opacity: 0, scale: 0.95 }}
