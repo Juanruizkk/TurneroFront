@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, tienePermiso } from '../../contexts/AuthContext';
 import { publicoApi } from '../../api/publico';
 import { turnosApi } from '../../api/turnos';
-import { suscripcionApi } from '../../api/suscripcion';
 import { notificacionesApi } from '../../api/notificaciones';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -21,13 +20,11 @@ import {
   LogOutIcon,
   MenuIcon,
   XIcon,
-  AlertTriangleIcon,
   CreditCardIcon,
   BookOpenIcon,
 } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import { useSignalR, type TurnoNotificacion } from '../../hooks/useSignalR';
-import type { SuscripcionInfo } from '../../types';
 
 interface Notificacion {
   id: string;
@@ -81,7 +78,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sucursalNombre, setSucursalNombre] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [suscripcion, setSuscripcion] = useState<SuscripcionInfo | null>(null);
   const [pendientesCount, setPendientesCount] = useState(0);
 
   // ── Notificaciones en tiempo real ────────────────────────────────────────
@@ -151,10 +147,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     if (user?.sucursalId) {
       publicoApi.perfil(user.sucursalId)
         .then((p) => setSucursalNombre(p.nombre))
-        .catch(() => {});
-
-      suscripcionApi.getSuscripcion(user.sucursalId)
-        .then(setSuscripcion)
         .catch(() => {});
     }
   }, [user?.sucursalId]);
@@ -405,40 +397,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </div>
           </div>
         </header>
-
-        {/* Subscription alert banner */}
-        {suscripcion && (suscripcion.estado === 'PruebActiva' || suscripcion.estado === 'PruebVencida' || suscripcion.estado === 'Vencida' || suscripcion.estado === 'Cancelada') && (
-          <div
-            className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium flex-shrink-0 ${
-              suscripcion.estado === 'Vencida' || suscripcion.estado === 'PruebVencida' || suscripcion.estado === 'Cancelada' || suscripcion.diasRestantes <= 3
-                ? 'bg-red-50 border-b border-red-200 text-red-800'
-                : 'bg-amber-50 border-b border-amber-200 text-amber-800'
-            }`}
-          >
-            <AlertTriangleIcon className="w-4 h-4 flex-shrink-0" />
-            <span className="flex-1">
-              {suscripcion.estado === 'Vencida'
-                ? 'Tu suscripción venció. Renovála para seguir usando el sistema.'
-                : suscripcion.estado === 'Cancelada'
-                  ? 'Tu suscripción fue cancelada.'
-                  : suscripcion.estado === 'PruebVencida'
-                    ? 'Tu período de prueba venció.'
-                    : suscripcion.diasRestantes <= 3
-                      ? `Tu período de prueba vence en ${suscripcion.diasRestantes} día${suscripcion.diasRestantes !== 1 ? 's' : ''}.`
-                      : `Estás en tu período de prueba gratuito. Te quedan ${suscripcion.diasRestantes} días.`}
-            </span>
-            <Link
-              to="/admin/suscripcion"
-              className={`flex-shrink-0 px-3 py-1 rounded-button text-xs font-semibold whitespace-nowrap transition-colors ${
-                suscripcion.estado === 'Vencida' || suscripcion.estado === 'PruebVencida' || suscripcion.estado === 'Cancelada' || suscripcion.diasRestantes <= 3
-                  ? 'bg-red-700 text-white hover:bg-red-800'
-                  : 'bg-amber-700 text-white hover:bg-amber-800'
-              }`}
-            >
-              Ver suscripción
-            </Link>
-          </div>
-        )}
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-safe-8 md:pb-8 relative">{children}</main>
