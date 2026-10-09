@@ -1,13 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   CheckIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon,
   CalendarDaysIcon, BellIcon, BarChart3Icon, UsersIcon,
   SmartphoneIcon, ShieldCheckIcon, ZapIcon, ClockIcon,
   StarIcon, TrendingUpIcon,
 } from 'lucide-react';
-import { planesPublicoApi } from '../../api/planes';
-import type { Plan } from '../../types';
 
 // ─── Demo calendar data ────────────────────────────────────────────────────────
 
@@ -45,10 +43,6 @@ const STATUS_STYLES: Record<TurnoStatus, { ribbon: string; bg: string; dot: stri
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function formatPrecio(precio: number): string {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(precio);
-}
-
 function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 }
@@ -68,7 +62,6 @@ function Navbar() {
   const navLinks = [
     { label: 'Características', id: 'caracteristicas' },
     { label: 'Capturas', id: 'capturas' },
-    { label: 'Planes', id: 'planes' },
     { label: 'Testimonios', id: 'testimonios' },
     { label: 'FAQ', id: 'faq' },
   ];
@@ -925,157 +918,6 @@ function Screenshots() {
   );
 }
 
-// ─── Plans ────────────────────────────────────────────────────────────────────
-
-function PlanCard({ plan, destacado }: { plan: Plan; destacado: boolean }) {
-  const navigate = useNavigate();
-  const esCustom = plan.precioMensual === 0;
-
-  const features: string[] = [
-    plan.maxTurnosMes == null ? 'Turnos ilimitados' : `Hasta ${plan.maxTurnosMes} turnos/mes`,
-    `Hasta ${plan.maxUsuarios} profesionale${plan.maxUsuarios === 1 ? '' : 's'}`,
-    ...(plan.tieneReportes ? ['Reportes avanzados'] : []),
-    ...(plan.descripcion ? [plan.descripcion] : []),
-    'Soporte por WhatsApp',
-    'Actualizaciones incluidas',
-  ];
-
-  return (
-    <div
-      className={`relative flex flex-col rounded-card p-7 transition-all duration-300 hover:-translate-y-1 ${
-        destacado
-          ? 'bg-gradient-to-b from-[#0A6B58] to-primary text-white shadow-[0_24px_60px_rgba(47,125,107,0.35)]'
-          : 'bg-white shadow-[0_8px_32px_rgba(13,28,46,0.06)] border border-border hover:border-primary/30'
-      }`}
-    >
-      {destacado && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-          <span className="px-4 py-1 rounded-badge text-[11px] font-bold text-primary bg-white shadow-sm uppercase tracking-wide">
-            Más popular
-          </span>
-        </div>
-      )}
-
-      {plan.duracionTrialDias > 0 && (
-        <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-badge text-[11px] font-semibold w-fit mb-4 ${
-          destacado ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'
-        }`}>
-          <ZapIcon size={10} />
-          {plan.duracionTrialDias} días gratis
-        </div>
-      )}
-
-      <h3 className={`font-heading text-xl font-bold ${destacado ? 'text-white' : 'text-text-primary'}`}>
-        {plan.nombre}
-      </h3>
-
-      <div className="mt-4 mb-7">
-        {esCustom ? (
-          <span className={`font-heading text-3xl font-bold ${destacado ? 'text-white' : 'text-text-primary'}`}>Custom</span>
-        ) : (
-          <>
-            <span className={`font-heading text-4xl font-bold ${destacado ? 'text-white' : 'text-text-primary'}`}>
-              {formatPrecio(plan.precioMensual)}
-            </span>
-            <span className={`font-body text-sm ml-1 ${destacado ? 'text-white/70' : 'text-text-muted'}`}>/mes</span>
-          </>
-        )}
-      </div>
-
-      <ul className="flex flex-col gap-3 mb-8 flex-1">
-        {features.map((f) => (
-          <li key={f} className={`flex items-start gap-2.5 font-body text-sm ${destacado ? 'text-white/90' : 'text-text-secondary'}`}>
-            <div className={`mt-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${destacado ? 'bg-white/25' : 'bg-primary/10'}`}>
-              <CheckIcon size={10} className={destacado ? 'text-white' : 'text-primary'} />
-            </div>
-            {f}
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-auto">
-        {esCustom ? (
-          <a
-            href="mailto:ventas@metaturnos.com"
-            className={`block w-full text-center px-4 py-3 rounded-button font-semibold font-body text-sm transition-colors ${
-              destacado
-                ? 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
-                : 'text-primary border-2 border-primary hover:bg-primary/5'
-            }`}
-          >
-            Contactar ventas
-          </a>
-        ) : (
-          <button
-            onClick={() => navigate(`/register?planId=${plan.id}`)}
-            className={`w-full px-4 py-3 rounded-button font-semibold font-body text-sm transition-all ${
-              destacado
-                ? 'bg-white text-primary hover:bg-white/90 shadow-md'
-                : 'text-white bg-gradient-to-r from-[#096453] to-primary hover:opacity-90 shadow-sm'
-            }`}
-          >
-            Elegir {plan.nombre}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function PlanSkeleton() {
-  return (
-    <div className="rounded-card p-7 bg-white border border-border animate-pulse">
-      <div className="h-5 w-24 bg-surface-soft rounded mb-5" />
-      <div className="h-7 w-36 bg-surface-soft rounded mb-4" />
-      <div className="h-10 w-28 bg-surface-soft rounded mb-7" />
-      {[1,2,3,4].map((i) => <div key={i} className="h-4 w-full bg-surface-soft rounded mb-3" />)}
-      <div className="h-11 w-full bg-surface-soft rounded mt-8" />
-    </div>
-  );
-}
-
-function Planes() {
-  const [planes, setPlanes] = useState<Plan[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    planesPublicoApi.listar().then((data) => {
-      setPlanes(data);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, []);
-
-  return (
-    <section id="planes" className="py-24 px-6 bg-surface-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-badge bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4 border border-primary/20">
-            Precios
-          </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-text-primary">
-            Planes diseñados para crecer
-          </h2>
-          <p className="font-body text-text-secondary mt-4 max-w-xl mx-auto text-lg">
-            Sin costos ocultos. Elegí el plan que mejor se adapta a tu volumen de pacientes.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-center">
-          {loading
-            ? [1,2,3].map((i) => <PlanSkeleton key={i} />)
-            : planes.map((plan, idx) => (
-                <PlanCard key={plan.id} plan={plan} destacado={idx === 1} />
-              ))}
-        </div>
-
-        <p className="text-center font-body text-xs text-text-muted mt-8">
-          * Precios en ARS. Podés cancelar en cualquier momento durante el período de prueba.
-        </p>
-      </div>
-    </section>
-  );
-}
-
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
 function Testimonials() {
@@ -1331,7 +1173,6 @@ function Footer() {
               {[
                 { label: 'Características', id: 'caracteristicas' },
                 { label: 'Capturas', id: 'capturas' },
-                { label: 'Planes', id: 'planes' },
                 { label: 'FAQ', id: 'faq' },
               ].map((l) => (
                 <button
@@ -1381,7 +1222,6 @@ export default function Landing() {
         <Stats />
         <Features />
         <Screenshots />
-        <Planes />
         <Testimonials />
         <FAQ />
         <CtaFinal />
