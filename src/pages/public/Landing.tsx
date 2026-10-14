@@ -1,13 +1,17 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  CheckIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon,
   CalendarDaysIcon, BellIcon, BarChart3Icon, UsersIcon,
   SmartphoneIcon, ShieldCheckIcon, ZapIcon, ClockIcon,
-  StarIcon, TrendingUpIcon,
+  StarIcon, TrendingUpIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon,
+  ChevronDownIcon, ScissorsIcon, StethoscopeIcon, SparklesIcon,
+  HeartPulseIcon, CreditCardIcon, MessageCircleIcon, Maximize2Icon,
+  XIcon, ExternalLinkIcon, LinkedinIcon, ArrowRightIcon, LayersIcon,
+  CheckCircle2Icon, AlertCircleIcon
 } from 'lucide-react';
+import Silk from '../../components/Silk';
 
-// ─── Demo calendar data ────────────────────────────────────────────────────────
+// ─── Demo calendar data (Hero) ──────────────────────────────────────────────────
 
 const DEMO_DAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'];
 const DEMO_DATES = ['14', '15', '16', '17', '18'];
@@ -20,19 +24,20 @@ interface DemoTurno {
   hora: string;
   servicio: string;
   cliente: string;
+  rubroTag: string;
   status: TurnoStatus;
   color: string;
 }
 
 const DEMO_TURNOS: DemoTurno[] = [
-  { id: 1, dia: 0, hora: '09:00', servicio: 'Consulta gral.', cliente: 'María López', status: 'confirmado', color: '#2F7D6B' },
-  { id: 2, dia: 0, hora: '11:30', servicio: 'Control anual', cliente: 'Juan García', status: 'pendiente', color: '#5B8DEF' },
-  { id: 3, dia: 1, hora: '10:00', servicio: 'Kinesiología', cliente: 'Ana Torres', status: 'confirmado', color: '#8B5CF6' },
-  { id: 4, dia: 1, hora: '14:00', servicio: 'Nutrición', cliente: 'Paula Soto', status: 'confirmado', color: '#EC4899' },
-  { id: 5, dia: 2, hora: '09:30', servicio: 'Nutrición', cliente: 'Carlos Ruiz', status: 'cancelado', color: '#EF4444' },
-  { id: 6, dia: 2, hora: '15:00', servicio: 'Fisioterapia', cliente: 'Marta Gil', status: 'confirmado', color: '#2F7D6B' },
-  { id: 7, dia: 3, hora: '14:00', servicio: 'Psicología', cliente: 'Laura Vidal', status: 'confirmado', color: '#F59E0B' },
-  { id: 8, dia: 4, hora: '16:30', servicio: 'Odontología', cliente: 'Diego Méndez', status: 'pendiente', color: '#5B8DEF' },
+  { id: 1, dia: 0, hora: '09:00', servicio: 'Corte + Barba', cliente: 'Mateo Rossi', rubroTag: 'Barbería', status: 'confirmado', color: '#2F7D6B' },
+  { id: 2, dia: 0, hora: '11:30', servicio: 'Consulta Gratuita', cliente: 'Lucas Giménez', rubroTag: 'Clínica', status: 'pendiente', color: '#5B8DEF' },
+  { id: 3, dia: 1, hora: '10:00', servicio: 'Kinesiología Deportiva', cliente: 'Ana Torres', rubroTag: 'Salud', status: 'confirmado', color: '#8B5CF6' },
+  { id: 4, dia: 1, hora: '14:00', servicio: 'Esmaltado Semipermanente', cliente: 'Paula Soto', rubroTag: 'Estética', status: 'confirmado', color: '#EC4899' },
+  { id: 5, dia: 2, hora: '09:30', servicio: 'Sesión Terapia Online', cliente: 'Carlos Ruiz', rubroTag: 'Psicología', status: 'cancelado', color: '#EF4444' },
+  { id: 6, dia: 2, hora: '15:00', servicio: 'Limpieza Facial Profunda', cliente: 'Marta Gil', rubroTag: 'Estética', status: 'confirmado', color: '#2F7D6B' },
+  { id: 7, dia: 3, hora: '14:00', servicio: 'Perfilado de Cejas', cliente: 'Laura Vidal', rubroTag: 'Belleza', status: 'confirmado', color: '#F59E0B' },
+  { id: 8, dia: 4, hora: '16:30', servicio: 'Control Odontológico', cliente: 'Diego Méndez', rubroTag: 'Salud', status: 'pendiente', color: '#5B8DEF' },
 ];
 
 const STATUS_STYLES: Record<TurnoStatus, { ribbon: string; bg: string; dot: string }> = {
@@ -61,8 +66,10 @@ function Navbar() {
 
   const navLinks = [
     { label: 'Características', id: 'caracteristicas' },
-    { label: 'Capturas', id: 'capturas' },
-    { label: 'Testimonios', id: 'testimonios' },
+    { label: 'Rubros', id: 'rubros' },
+    { label: 'Capturas Reales', id: 'capturas' },
+    { label: 'Cómo funciona', id: 'como-funciona' },
+    { label: 'Stack Técnico', id: 'tecnologia' },
     { label: 'FAQ', id: 'faq' },
   ];
 
@@ -70,61 +77,83 @@ function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'shadow-[0_2px_24px_rgba(13,28,46,0.10)] backdrop-blur-xl bg-white/90'
-          : 'backdrop-blur-md bg-white/70'
+          ? 'shadow-[0_4px_30px_rgba(13,28,46,0.08)] backdrop-blur-xl bg-white/90 border-b border-border/80'
+          : 'backdrop-blur-md bg-white/75 border-b border-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <img src="/logo.png" alt="MetaTurnos" className="h-8 w-auto" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2 group">
+            <img src="/logo.png" alt="MetaTurnos" className="h-8 w-auto object-contain transition-transform group-hover:scale-105" />
+          </Link>
+          <span className="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+            Open & Gratuito
+          </span>
+        </div>
 
-        <nav className="hidden md:flex items-center gap-7 text-sm font-body text-text-secondary">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-body text-text-secondary">
           {navLinks.map((l) => (
             <button
               key={l.id}
               onClick={() => scrollTo(l.id)}
-              className="hover:text-primary transition-colors font-medium"
+              className="hover:text-primary transition-colors font-medium text-xs lg:text-sm"
             >
               {l.label}
             </button>
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <a
+            href="https://www.linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-button text-xs font-semibold text-text-secondary hover:text-primary hover:bg-surface-soft transition-colors border border-border"
+          >
+            <LinkedinIcon size={14} className="text-[#0A66C2]" />
+            LinkedIn
+          </a>
           <Link
             to="/login"
-            className="hidden md:block px-4 py-2 rounded-button text-sm font-semibold font-body text-primary border border-primary/30 hover:bg-primary/5 transition-colors"
+            className="hidden md:inline-flex items-center justify-center px-3.5 py-2 rounded-button text-xs font-semibold font-body text-text-primary hover:text-primary transition-colors"
           >
             Iniciar sesión
           </Link>
           <Link
             to="/register"
-            className="px-4 py-2 rounded-button text-sm font-semibold font-body text-white bg-gradient-to-r from-[#096453] to-primary hover:opacity-90 transition-opacity shadow-sm"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-button text-xs sm:text-sm font-semibold font-body text-white bg-gradient-to-r from-[#1D6052] via-primary to-[#3DA38D] hover:opacity-95 transition-all shadow-[0_2px_12px_rgba(47,125,107,0.3)] hover:shadow-[0_4px_18px_rgba(47,125,107,0.45)]"
           >
-            Probar gratis
+            <ZapIcon size={14} className="text-yellow-300" />
+            Probar demo gratis
           </Link>
           <button
-            className="md:hidden p-2 text-text-secondary"
+            className="md:hidden p-2 text-text-secondary hover:text-text-primary"
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Abrir menú"
           >
-            <div className="w-5 h-0.5 bg-current mb-1 transition-all" />
-            <div className="w-5 h-0.5 bg-current mb-1" />
-            <div className="w-5 h-0.5 bg-current" />
+            {mobileOpen ? <XIcon size={22} /> : (
+              <div className="w-5 flex flex-col gap-1">
+                <span className="w-full h-0.5 bg-current rounded-full" />
+                <span className="w-full h-0.5 bg-current rounded-full" />
+                <span className="w-full h-0.5 bg-current rounded-full" />
+              </div>
+            )}
           </button>
         </div>
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-border px-6 py-4 flex flex-col gap-3">
+        <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-border px-6 py-5 flex flex-col gap-3 shadow-xl">
           {navLinks.map((l) => (
             <button
               key={l.id}
               onClick={() => { scrollTo(l.id); setMobileOpen(false); }}
-              className="text-left text-sm font-body text-text-secondary hover:text-primary py-1"
+              className="text-left text-sm font-body text-text-secondary hover:text-primary py-1.5 font-medium"
             >
               {l.label}
             </button>
           ))}
-          <div className="border-t border-border pt-3 mt-1">
+          <div className="border-t border-border pt-4 mt-2 flex flex-col gap-2.5">
             <Link
               to="/login"
               onClick={() => setMobileOpen(false)}
@@ -132,6 +161,15 @@ function Navbar() {
             >
               Iniciar sesión
             </Link>
+            <a
+              href="https://www.linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-button text-sm font-semibold text-text-secondary border border-border hover:bg-surface-soft"
+            >
+              <LinkedinIcon size={16} className="text-[#0A66C2]" />
+              Conectar en LinkedIn
+            </a>
           </div>
         </div>
       )}
@@ -139,7 +177,7 @@ function Navbar() {
   );
 }
 
-// ─── 3D Tilt Calendar (hero) ─────────────────────────────────────────────────
+// ─── 3D Tilt Calendar (hero interactive element) ──────────────────────────────
 
 function TiltCalendar() {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -160,7 +198,7 @@ function TiltCalendar() {
 
     cancelAnimationFrame(frameRef.current);
     frameRef.current = requestAnimationFrame(() => {
-      setTilt({ x: dy * -10, y: dx * 12 });
+      setTilt({ x: dy * -8, y: dx * 10 });
     });
   }, []);
 
@@ -178,40 +216,46 @@ function TiltCalendar() {
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center justify-center w-full h-full min-h-[480px]"
+      className="relative flex items-center justify-center w-full h-full min-h-[460px] sm:min-h-[500px]"
       style={{ perspective: '1200px' }}
     >
-      {/* Glow blobs */}
-      <div className="absolute top-10 right-10 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-36 h-36 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
+      {/* Decorative Glow Blobs */}
+      <div className="absolute top-6 right-6 w-56 h-56 bg-primary/25 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute bottom-6 left-6 w-48 h-48 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
 
       <div
         ref={cardRef}
-        className="relative w-full max-w-[520px] rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(13,28,46,0.18),0_0_0_1px_rgba(47,125,107,0.12)]"
+        className="relative w-full max-w-[530px] rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(13,28,46,0.18),0_0_0_1px_rgba(47,125,107,0.15)] bg-white/95 backdrop-blur-md transition-shadow duration-300"
         style={{
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${isHovered ? 1.02 : 1})`,
           transition: isHovered ? 'transform 0.08s linear' : 'transform 0.6s cubic-bezier(0.23,1,0.32,1)',
           transformStyle: 'preserve-3d',
-          background: 'rgba(255,255,255,0.97)',
         }}
       >
-        {/* Calendar header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-white">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-              <CalendarDaysIcon size={14} className="text-primary" />
+        {/* Calendar header with live pulse */}
+        <div className="flex items-center justify-between px-4 py-3.5 border-b border-border bg-gradient-to-r from-white via-surface-soft/40 to-white">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <CalendarDaysIcon size={16} className="text-primary" />
             </div>
-            <span className="font-heading font-bold text-text-primary text-sm">Agenda Semanal</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-heading font-bold text-text-primary text-sm">Agenda en Vivo</span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-100 text-emerald-800">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  Sincronizado
+                </span>
+              </div>
+              <p className="text-[10px] text-text-muted">Turnos de hoy · Varios profesionales</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="hidden sm:flex gap-0.5 text-xs font-body">
+          <div className="flex items-center gap-1.5">
+            <div className="hidden sm:flex gap-0.5 text-xs font-body bg-surface-background p-0.5 rounded-lg border border-border/60">
               {['Día', 'Semana', 'Mes'].map((tab, i) => (
                 <span
                   key={tab}
-                  className={`px-2.5 py-1 rounded-badge cursor-default text-[11px] font-medium ${
-                    i === 1
-                      ? 'bg-primary text-white'
-                      : 'text-text-muted'
+                  className={`px-2 py-0.5 rounded-md cursor-default text-[10px] font-semibold transition-colors ${
+                    i === 1 ? 'bg-primary text-white shadow-xs' : 'text-text-muted'
                   }`}
                 >
                   {tab}
@@ -219,10 +263,10 @@ function TiltCalendar() {
               ))}
             </div>
             <div className="flex gap-0.5">
-              <button className="p-1 rounded text-text-muted hover:bg-surface-soft">
+              <button className="p-1 rounded text-text-muted hover:bg-surface-soft transition-colors" aria-label="Semana anterior">
                 <ChevronLeftIcon size={14} />
               </button>
-              <button className="p-1 rounded text-text-muted hover:bg-surface-soft">
+              <button className="p-1 rounded text-text-muted hover:bg-surface-soft transition-colors" aria-label="Semana siguiente">
                 <ChevronRightIcon size={14} />
               </button>
             </div>
@@ -230,13 +274,13 @@ function TiltCalendar() {
         </div>
 
         {/* Day headers */}
-        <div className="grid grid-cols-5 border-b border-border bg-surface-background">
+        <div className="grid grid-cols-5 border-b border-border bg-surface-background/80">
           {DEMO_DAYS.map((day, i) => (
             <div key={day} className="py-2 flex flex-col items-center gap-0.5">
-              <span className="text-[9px] font-bold text-text-muted uppercase tracking-wide">{day}</span>
+              <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider">{day}</span>
               <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                  i === 1 ? 'bg-primary text-white' : 'text-text-secondary'
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-transform ${
+                  i === 1 ? 'bg-primary text-white shadow-xs scale-105' : 'text-text-secondary'
                 }`}
               >
                 {DEMO_DATES[i]}
@@ -246,29 +290,31 @@ function TiltCalendar() {
         </div>
 
         {/* Grid columns */}
-        <div className="grid grid-cols-5 divide-x divide-border" style={{ minHeight: 240 }}>
+        <div className="grid grid-cols-5 divide-x divide-border bg-white" style={{ minHeight: 250 }}>
           {DEMO_DAYS.map((day, i) => (
             <div key={day} className="p-1.5 flex flex-col gap-1.5">
-              {byDay[i].map((turno) => {
-                const s = STATUS_STYLES[turno.status];
-                return (
-                  <div
-                    key={turno.id}
-                    className={`flex overflow-hidden rounded-md shadow-sm`}
-                    style={{ background: `${turno.color}14` }}
-                  >
-                    <div className="w-1 shrink-0 rounded-l-md" style={{ background: turno.color }} />
-                    <div className="px-1.5 py-1.5 min-w-0">
-                      <p className="text-[9px] font-bold leading-tight text-text-primary truncate">{turno.hora}</p>
-                      <p className="text-[9px] leading-tight text-text-secondary truncate">{turno.servicio}</p>
-                      <p className="text-[9px] leading-none text-text-muted truncate">{turno.cliente.split(' ')[0]}</p>
-                    </div>
+              {byDay[i].map((turno) => (
+                <div
+                  key={turno.id}
+                  className="group/item flex flex-col overflow-hidden rounded-md shadow-xs border border-border/40 hover:border-primary/40 transition-all cursor-pointer p-1.5 relative"
+                  style={{ background: `${turno.color}10` }}
+                >
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className="text-[9px] font-bold leading-tight text-text-primary">{turno.hora}</span>
+                    <span className="text-[8px] font-medium px-1 rounded text-white" style={{ background: turno.color }}>
+                      {turno.rubroTag}
+                    </span>
                   </div>
-                );
-              })}
+                  <p className="text-[8.5px] font-medium leading-tight text-text-secondary truncate">{turno.servicio}</p>
+                  <div className="flex items-center gap-1 mt-1 pt-1 border-t border-black/5">
+                    <span className={`w-1.5 h-1.5 rounded-full ${STATUS_STYLES[turno.status].dot}`} />
+                    <span className="text-[8px] text-text-muted truncate">{turno.cliente}</span>
+                  </div>
+                </div>
+              ))}
               {byDay[i].length === 0 && (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="w-full h-px bg-border/40" />
+                  <div className="w-6 h-px bg-border/60" />
                 </div>
               )}
             </div>
@@ -276,640 +322,447 @@ function TiltCalendar() {
         </div>
 
         {/* Legend */}
-        <div className="flex gap-4 px-4 py-2.5 border-t border-border bg-surface-background/60">
-          {(Object.entries({ confirmado: 'Confirmado', pendiente: 'Pendiente', cancelado: 'Cancelado' }) as [TurnoStatus, string][]).map(
-            ([key, label]) => (
-              <div key={key} className="flex items-center gap-1">
-                <div className={`w-2 h-2 rounded-full ${STATUS_STYLES[key].dot}`} />
-                <span className="text-[9px] font-body text-text-muted">{label}</span>
-              </div>
-            )
-          )}
+        <div className="flex items-center justify-between px-4 py-2.5 border-t border-border bg-surface-background/70">
+          <div className="flex gap-3">
+            {(Object.entries({ confirmado: 'Confirmado', pendiente: 'Pendiente', cancelado: 'Cancelado' }) as [TurnoStatus, string][]).map(
+              ([key, label]) => (
+                <div key={key} className="flex items-center gap-1.5">
+                  <div className={`w-2 h-2 rounded-full ${STATUS_STYLES[key].dot}`} />
+                  <span className="text-[10px] font-body text-text-secondary font-medium">{label}</span>
+                </div>
+              )
+            )}
+          </div>
+          <span className="text-[10px] font-semibold text-primary">WebSockets en vivo</span>
         </div>
 
         {/* Reflection sheen */}
         <div
           className="absolute inset-0 pointer-events-none rounded-2xl"
           style={{
-            background: `linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, transparent 100%)`,
+            background: `linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 45%, transparent 100%)`,
           }}
         />
       </div>
 
-      {/* Floating badges */}
+      {/* Floating badge 1: Ausentes */}
       <div
-        className="absolute top-8 -left-4 bg-white rounded-xl px-3 py-2 shadow-[0_8px_24px_rgba(13,28,46,0.12)] flex items-center gap-2 border border-border"
-        style={{ transform: 'translateZ(20px)' }}
+        className="absolute top-6 -left-3 sm:-left-5 bg-white/95 backdrop-blur-md rounded-xl px-3.5 py-2.5 shadow-[0_12px_32px_rgba(13,28,46,0.14)] flex items-center gap-2.5 border border-border animate-bounce"
+        style={{ animationDuration: '6s', transform: 'translateZ(30px)' }}
       >
-        <div className="w-7 h-7 rounded-lg bg-success/10 flex items-center justify-center">
-          <TrendingUpIcon size={14} className="text-success" />
+        <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+          <TrendingUpIcon size={16} className="text-emerald-700" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-text-primary leading-none">+32%</p>
-          <p className="text-[9px] text-text-muted">menos ausentes</p>
+          <p className="text-[11px] font-bold text-text-primary leading-none">+35% Asistencia</p>
+          <p className="text-[9.5px] text-text-muted mt-0.5">Señas previas con Mercado Pago</p>
         </div>
       </div>
 
+      {/* Floating badge 2: WhatsApp */}
       <div
-        className="absolute bottom-10 -right-4 bg-white rounded-xl px-3 py-2 shadow-[0_8px_24px_rgba(13,28,46,0.12)] flex items-center gap-2 border border-border"
-        style={{ transform: 'translateZ(20px)' }}
+        className="absolute bottom-6 -right-3 sm:-right-5 bg-white/95 backdrop-blur-md rounded-xl px-3.5 py-2.5 shadow-[0_12px_32px_rgba(13,28,46,0.14)] flex items-center gap-2.5 border border-border"
+        style={{ transform: 'translateZ(30px)' }}
       >
-        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-          <BellIcon size={14} className="text-primary" />
+        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <MessageCircleIcon size={16} className="text-primary" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-text-primary leading-none">Recordatorio</p>
-          <p className="text-[9px] text-text-muted">enviado vía WhatsApp</p>
+          <p className="text-[11px] font-bold text-text-primary leading-none">Recordatorio WhatsApp</p>
+          <p className="text-[9.5px] text-text-muted mt-0.5">Enviado 24hs antes del turno</p>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
-
-// ─── Install Modal ────────────────────────────────────────────────────────────
-
-function InstallModal({ isIOS, onClose }: { isIOS: boolean; onClose: () => void }) {
-  return (
-    <div
-      className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4"
-      onClick={onClose}
-    >
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-      <div
-        className="relative w-full sm:max-w-sm bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl p-6 pb-8"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-10 h-1 bg-border rounded-full mx-auto mb-5 sm:hidden" />
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <SmartphoneIcon size={20} className="text-primary" />
-            </div>
-            <div>
-              <h3 className="font-heading font-bold text-text-primary text-base">Instalar MetaTurnos</h3>
-              <p className="text-xs font-body text-text-muted">Acceso rápido desde tu pantalla de inicio</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface text-text-muted text-xl leading-none">×</button>
-        </div>
-        {isIOS ? (
-          <>
-            <p className="text-sm font-body text-text-secondary mb-4">Seguí estos pasos en Safari:</p>
-            <ol className="flex flex-col gap-3">
-              {[
-                { step: '1', text: 'Tocá el botón Compartir', icon: '⬆️' },
-                { step: '2', text: 'Deslizá y elegí "Agregar a pantalla de inicio"', icon: '➕' },
-                { step: '3', text: 'Confirmá tocando "Agregar"', icon: '✅' },
-              ].map(({ step, text, icon }) => (
-                <li key={step} className="flex items-center gap-3 p-3 rounded-xl bg-surface">
-                  <span className="text-xl">{icon}</span>
-                  <div>
-                    <span className="text-[10px] font-bold font-body text-text-muted uppercase tracking-wider">Paso {step}</span>
-                    <p className="text-sm font-body text-text-primary">{text}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-            <p className="text-xs font-body text-text-muted mt-4 text-center">Asegurate de usar Safari para que funcione</p>
-          </>
-        ) : (
-          <>
-            <p className="text-sm font-body text-text-secondary mb-4">Seguí estos pasos en Chrome:</p>
-            <ol className="flex flex-col gap-3">
-              {[
-                { step: '1', text: 'Tocá el menú ⋮ arriba a la derecha', icon: '⋮' },
-                { step: '2', text: 'Elegí "Agregar a pantalla de inicio"', icon: '➕' },
-                { step: '3', text: 'Confirmá tocando "Agregar"', icon: '✅' },
-              ].map(({ step, text, icon }) => (
-                <li key={step} className="flex items-center gap-3 p-3 rounded-xl bg-surface">
-                  <span className="text-xl w-6 text-center">{icon}</span>
-                  <div>
-                    <span className="text-[10px] font-bold font-body text-text-muted uppercase tracking-wider">Paso {step}</span>
-                    <p className="text-sm font-body text-text-primary">{text}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
+// ─── Hero Section with Silk Background ────────────────────────────────────────
 
 function Hero() {
-  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
-  const [showInstallModal, setShowInstallModal] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
-  const isIOS = /iphone|ipad|ipod/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
-
-  useEffect(() => {
-    setIsStandalone(window.matchMedia('(display-mode: standalone)').matches);
-    const handler = (e: Event) => { e.preventDefault(); setDeferredPrompt(e); };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstall = async () => {
-    if (deferredPrompt) {
-      (deferredPrompt as any).prompt();
-      await (deferredPrompt as any).userChoice;
-      setDeferredPrompt(null);
-    } else {
-      setShowInstallModal(true);
-    }
-  };
-
   return (
-    <>
-    <section className="relative pt-28 pb-16 px-6 overflow-hidden bg-gradient-to-b from-[#F0F7F4] to-white">
-      {/* Background pattern */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-30"
-        style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #2F7D6B22 1px, transparent 0)`,
-          backgroundSize: '32px 32px',
-        }}
-      />
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+    <section className="relative pt-24 sm:pt-28 pb-16 sm:pb-24 px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-[#F2F8F5] via-[#EBF4F0]/60 to-white">
+      {/* ── React Bits Silk Animated Background ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-35 md:opacity-45 mix-blend-multiply">
+        <Silk
+          color="#2F7D6B"
+          speed={2.8}
+          scale={1.15}
+          noiseIntensity={1.1}
+          rotation={0.15}
+          lightMode={true}
+        />
+      </div>
 
-      <div className="relative max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      {/* Subtle radial gradients overlay for readability */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,255,255,0.7),rgba(255,255,255,0.92))]" />
+
+      <div className="relative max-w-7xl mx-auto z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-14 items-center">
 
           {/* Left column */}
-          <div className="flex flex-col gap-6 lg:gap-8">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-badge bg-primary/10 text-primary text-xs font-bold font-body tracking-wider uppercase w-fit border border-primary/20">
-              <ZapIcon size={12} />
-              Sin instalaciones · 100% en la nube
-            </span>
+          <div className="flex flex-col gap-6 lg:gap-7 text-left">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/15 text-primary text-xs font-bold font-body tracking-wide uppercase border border-primary/25 shadow-xs">
+                <SparklesIcon size={13} className="text-primary" />
+                Para Barberías, Médicos, Estética, Terapeutas y más
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-800 text-[11px] font-semibold border border-emerald-500/20">
+                100% Web · Sin instalar apps
+              </span>
+            </div>
 
             <div>
-              <h1 className="font-heading text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-text-primary leading-[1.15] tracking-tight">
-                La agenda online que tu clínica
-                {' '}
-                <span className="relative">
+              <h1 className="font-heading text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-text-primary leading-[1.12] tracking-tight">
+                La agenda online que tu negocio{' '}
+                <span className="relative whitespace-nowrap">
                   <span className="relative z-10 text-primary">necesitaba</span>
-                  <span
-                    className="absolute bottom-1 left-0 right-0 h-3 bg-primary/10 -z-0 rounded-sm"
-                  />
+                  <span className="absolute bottom-1.5 left-0 right-0 h-3.5 bg-primary/15 -z-0 rounded-sm" />
                 </span>
               </h1>
-              <p className="mt-5 font-body text-lg text-text-secondary leading-relaxed max-w-lg">
-                Gestioná turnos, enviá recordatorios automáticos y cobrá en línea — todo desde el navegador, sin instalar nada.
+              <p className="mt-5 font-body text-base sm:text-lg text-text-secondary leading-relaxed max-w-xl">
+                Automatizá tus turnos, cobrá señas con <strong className="text-text-primary font-semibold">Mercado Pago</strong> y enviá recordatorios automáticos.
+                Tus clientes reservan solos en <strong className="text-primary font-semibold">30 segundos</strong> desde el celular sin llamadas ni chats desordenados.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            {/* Main CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-button font-bold font-body text-white bg-gradient-to-r from-[#096453] to-primary hover:opacity-90 transition-opacity shadow-[0_4px_20px_rgba(47,125,107,0.35)] text-sm"
+                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-button font-bold font-body text-white bg-gradient-to-r from-[#1D6052] via-primary to-[#3DA38D] hover:opacity-95 transition-all shadow-[0_4px_24px_rgba(47,125,107,0.35)] text-sm sm:text-base group"
               >
-                Empezar gratis — 14 días
-                <ChevronRightIcon size={16} />
+                Probar sistema gratis
+                <ArrowRightIcon size={18} className="transition-transform group-hover:translate-x-1" />
               </Link>
               <button
                 onClick={() => scrollTo('capturas')}
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-button font-semibold font-body text-primary border-2 border-primary/30 bg-white hover:bg-primary/5 transition-colors text-sm"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-button font-semibold font-body text-primary border-2 border-primary/30 bg-white/90 hover:bg-primary/5 transition-all text-sm sm:text-base shadow-xs"
               >
-                Ver capturas
+                <LayersIcon size={17} />
+                Ver capturas reales
               </button>
             </div>
 
-            {/* Mobile-only: login + install app */}
-            {!isStandalone && (
-              <div className="flex sm:hidden gap-3">
-                <Link
-                  to="/login"
-                  className="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-button text-sm font-semibold font-body text-primary border border-primary/30 bg-white hover:bg-primary/5 transition-colors"
-                >
-                  Iniciar sesión
-                </Link>
-                <button
-                  onClick={handleInstall}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-button text-sm font-semibold font-body text-text-secondary border border-border bg-white hover:bg-surface transition-colors"
-                >
-                  <SmartphoneIcon size={15} />
-                  Instalar app
-                </button>
-              </div>
-            )}
-
-            <div className="flex items-center gap-6 pt-2">
-              <div className="flex -space-x-2">
-                {['#2F7D6B', '#5B8DEF', '#8B5CF6', '#EC4899'].map((c, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-[10px] font-bold"
-                    style={{ background: c }}
-                  >
-                    {['MR', 'JG', 'AT', 'PV'][i]}
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div className="flex items-center gap-1">
-                  {[1,2,3,4,5].map((i) => <StarIcon key={i} size={12} className="text-warning fill-warning" />)}
+            {/* Social proof & author note for LinkedIn */}
+            <div className="pt-3 border-t border-border/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {['#2F7D6B', '#5B8DEF', '#8B5CF6', '#EC4899', '#F59E0B'].map((c, i) => (
+                    <div
+                      key={i}
+                      className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-[10px] font-bold shadow-xs"
+                      style={{ background: c }}
+                    >
+                      {['💈', '🩺', '💅', '🧠', '🐾'][i]}
+                    </div>
+                  ))}
                 </div>
-                <p className="text-xs font-body text-text-muted mt-0.5">+500 profesionales de la salud</p>
+                <div>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <StarIcon key={i} size={13} className="text-warning fill-warning" />
+                    ))}
+                    <span className="text-xs font-bold text-text-primary ml-1">Multirubro</span>
+                  </div>
+                  <p className="text-[11px] font-body text-text-muted">Adaptable a cualquier profesional o comercio</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-border text-xs text-text-secondary">
+                <LinkedinIcon size={14} className="text-[#0A66C2]" />
+                <span>Desarrollado por <strong>Juan Ruiz</strong></span>
               </div>
             </div>
           </div>
 
-          {/* Right column — tilt calendar */}
-          <div className="relative">
+          {/* Right column — 3D Tilt Calendar */}
+          <div className="relative w-full">
             <TiltCalendar />
           </div>
         </div>
       </div>
     </section>
-
-    {showInstallModal && <InstallModal isIOS={isIOS} onClose={() => setShowInstallModal(false)} />}
-    </>
   );
 }
 
-// ─── Counters ─────────────────────────────────────────────────────────────────
+// ─── Metrics Strip (Inspo Pedi.bot) ───────────────────────────────────────────
 
-interface CounterProps { target: number; suffix?: string; prefix?: string; label: string; icon: React.ReactNode; }
-
-function Counter({ target, suffix = '', prefix = '', label, icon }: CounterProps) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const animated = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !animated.current) {
-          animated.current = true;
-          const duration = 1800;
-          const start = performance.now();
-          const step = (now: number) => {
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.floor(eased * target));
-            if (progress < 1) requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [target]);
-
-  return (
-    <div ref={ref} className="flex flex-col items-center gap-3 p-6">
-      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-        {icon}
-      </div>
-      <div className="text-center">
-        <p className="font-heading text-3xl md:text-4xl font-bold text-text-primary tabular-nums">
-          {prefix}{count.toLocaleString('es-AR')}{suffix}
-        </p>
-        <p className="font-body text-sm text-text-secondary mt-1">{label}</p>
-      </div>
-    </div>
-  );
-}
-
-function Stats() {
-  const stats = [
-    { target: 500, suffix: '+', label: 'Profesionales activos', icon: <UsersIcon size={22} /> },
-    { target: 100, suffix: '%', label: 'Web · sin instalar nada', icon: <SmartphoneIcon size={22} /> },
-    { target: 10000, suffix: '+', label: 'Turnos gestionados', icon: <CalendarDaysIcon size={22} /> },
-    { target: 14, suffix: ' días', prefix: '', label: 'Prueba gratuita completa', icon: <ClockIcon size={22} /> },
+function MetricsStrip() {
+  const metrics = [
+    { value: 'Multirubro', desc: 'Barberías, Salud, Estética, Más', icon: <LayersIcon size={20} /> },
+    { value: '< 30 seg', desc: 'Tiempo para sacar turno', icon: <ClockIcon size={20} /> },
+    { value: '24/7', desc: 'Autogestión sin llamadas', icon: <SmartphoneIcon size={20} /> },
+    { value: 'Tiempo Real', desc: 'WebSockets con SignalR', icon: <ZapIcon size={20} /> },
   ];
 
   return (
-    <section className="py-4 px-6 bg-white border-y border-border">
-      <div className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-border">
-          {stats.map((s) => (
-            <Counter key={s.label} {...s} />
-          ))}
-        </div>
+    <section className="border-y border-border bg-white/90 backdrop-blur-xs py-6 px-4">
+      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 sm:grid-cols-4">
+        {metrics.map((m) => (
+          <div key={m.value} className="text-center flex flex-col items-center">
+            <div className="text-primary mb-1">{m.icon}</div>
+            <p className="text-xl sm:text-2xl font-bold font-heading text-text-primary tracking-tight">{m.value}</p>
+            <p className="mt-0.5 text-xs text-text-muted">{m.desc}</p>
+          </div>
+        ))}
       </div>
     </section>
   );
 }
 
-// ─── Features ─────────────────────────────────────────────────────────────────
+// ─── Problem Section ("¿Te suena familiar?" - Inspo Pedi.bot) ─────────────────
 
-function Features() {
-  const items = [
+function ProblemsSection() {
+  const problems = [
     {
-      icon: <CalendarDaysIcon size={22} />,
-      title: 'Agenda inteligente',
-      desc: 'Vista diaria, semanal y mensual. Arrastrá, reagendá y confirmá turnos al instante desde cualquier dispositivo.',
-      color: '#2F7D6B',
+      title: 'Mensajes a las 11 de la noche',
+      desc: 'Clientes y pacientes escribiendo por WhatsApp a deshoras preguntando "¿te queda algún hueco mañana?" y esperando respuesta inmediata.',
+      icon: <ClockIcon size={20} className="text-destructive" />,
     },
     {
-      icon: <BellIcon size={22} />,
-      title: 'Recordatorios automáticos',
-      desc: 'Reducí el ausentismo con notificaciones por WhatsApp y email antes de cada turno.',
-      color: '#5B8DEF',
+      title: 'Cancelaciones y huecos vacíos',
+      desc: 'Clientes que no se presentan a su turno sin avisar, dejándote una hora muerta en la agenda y haciéndote perder ingresos.',
+      icon: <AlertCircleIcon size={20} className="text-destructive" />,
     },
     {
-      icon: <BarChart3Icon size={22} />,
-      title: 'Reportes y caja',
-      desc: 'Controlá ingresos, facturación y métricas clave desde el panel de administración en tiempo real.',
-      color: '#8B5CF6',
+      title: 'Cuadernos o notas desordenadas',
+      desc: 'Anotar turnos en papel, agendas físicas o notas de chat donde los sobreturnos y los solapamientos de horario son inevitables.',
+      icon: <CalendarDaysIcon size={20} className="text-destructive" />,
     },
     {
-      icon: <UsersIcon size={22} />,
-      title: 'Multi-profesional',
-      desc: 'Gestioná varios profesionales con colores, roles y permisos diferenciados dentro del mismo panel.',
-      color: '#EC4899',
-    },
-    {
-      icon: <SmartphoneIcon size={22} />,
-      title: 'Reservas online 24/7',
-      desc: 'Tus pacientes reservan desde el celular sin llamadas ni intermediarios, a cualquier hora del día.',
-      color: '#F59E0B',
-    },
-    {
-      icon: <ShieldCheckIcon size={22} />,
-      title: 'Seguro y privado',
-      desc: 'Datos cifrados, acceso por rol y cumplimiento de privacidad en cada consulta. Tu información protegida.',
-      color: '#10B981',
+      title: 'Horas respondiendo lo mismo',
+      desc: 'Pasar la mitad de tu jornada enviando listas de precios, horarios libres y datos de transferencia en lugar de enfocarte en atender.',
+      icon: <MessageCircleIcon size={20} className="text-destructive" />,
     },
   ];
 
   return (
-    <section id="caracteristicas" className="py-24 px-6 bg-surface-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-badge bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4 border border-primary/20">
-            Características
-          </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-text-primary">
-            Todo lo que tu clínica necesita
+    <section className="px-4 py-16 sm:py-20 bg-surface-background">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-12 text-center">
+          <p className="mb-3 text-xs sm:text-sm font-semibold uppercase tracking-widest text-primary">
+            ¿Te suena familiar?
+          </p>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-heading text-text-primary">
+            Coordinar turnos por WhatsApp o papel te hace perder tiempo y dinero
           </h2>
-          <p className="font-body text-text-secondary mt-4 max-w-2xl mx-auto text-lg">
-            Diseñado para equipos de salud que quieren enfocarse en sus pacientes, no en la administración.
+          <p className="mt-3 text-sm sm:text-base text-text-secondary max-w-2xl mx-auto">
+            La gestión manual desgasta tu energía y limita el crecimiento de tu negocio.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((item) => (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {problems.map((p, idx) => (
             <div
-              key={item.title}
-              className="group p-6 rounded-card bg-white border border-border hover:border-primary/30 shadow-[0_2px_12px_rgba(13,28,46,0.04)] hover:shadow-[0_8px_32px_rgba(47,125,107,0.10)] transition-all duration-300 flex flex-col gap-4"
+              key={idx}
+              className="p-5 sm:p-6 rounded-xl border border-red-200/80 bg-red-50/40 flex items-start gap-4 transition-all hover:bg-red-50/70"
             >
-              <div
-                className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
-                style={{ background: `${item.color}18`, color: item.color }}
-              >
-                {item.icon}
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-600">
+                {p.icon}
               </div>
               <div>
-                <h3 className="font-heading font-bold text-text-primary text-base mb-1.5">{item.title}</h3>
-                <p className="font-body text-text-secondary text-sm leading-relaxed">{item.desc}</p>
+                <h3 className="font-heading font-bold text-text-primary text-base mb-1">{p.title}</h3>
+                <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">{p.desc}</p>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center p-6 rounded-2xl bg-primary/10 border border-primary/20 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg font-medium text-text-primary">
+            <strong className="text-primary font-bold">MetaTurnos soluciona todo esto.</strong> Tus clientes reservan solos, pagan seña si lo deseás y reciben recordatorios automáticos.
+          </p>
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Screenshots ──────────────────────────────────────────────────────────────
+// ─── Multirubro Showcase Section ──────────────────────────────────────────────
 
-function Screenshots() {
-  const [active, setActive] = useState(0);
+interface RubroItem {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  tag: string;
+  headline: string;
+  description: string;
+  bullets: string[];
+  sampleDuration: string;
+  sampleDeposit: string;
+}
 
-  const screens = [
-    {
-      title: 'Panel de agenda',
-      desc: 'Vista semanal con todos los turnos por profesional, códigos de color y estados en tiempo real.',
-      mockup: (
-        <div className="w-full bg-white rounded-xl overflow-hidden border border-border shadow-inner">
-          {/* Toolbar mock */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface-background">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-error/60" />
-              <div className="w-3 h-3 rounded-full bg-warning/60" />
-              <div className="w-3 h-3 rounded-full bg-success/60" />
-            </div>
-            <div className="flex-1 h-6 bg-border/40 rounded-badge mx-4 flex items-center px-3">
-              <span className="text-[10px] text-text-muted">app.metaturnos.com/admin/agenda</span>
-            </div>
-          </div>
-          {/* Simulated agenda */}
-          <div className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <span className="font-heading font-bold text-xs text-text-primary">Semana del 14 al 18 de abril</span>
-              <div className="flex gap-1">
-                {['Día', 'Semana', 'Mes'].map((v, i) => (
-                  <span key={v} className={`px-2 py-0.5 rounded text-[9px] font-medium ${i===1?'bg-primary text-white':'text-text-muted'}`}>{v}</span>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-5 gap-1">
-              {DEMO_DAYS.map((day, di) => (
-                <div key={day} className="flex flex-col gap-1">
-                  <div className="text-center">
-                    <p className="text-[8px] font-bold text-text-muted uppercase">{day}</p>
-                    <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center text-[9px] font-bold mt-0.5 ${di===1?'bg-primary text-white':'text-text-secondary'}`}>
-                      {DEMO_DATES[di]}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1 min-h-[100px]">
-                    {DEMO_TURNOS.filter(t=>t.dia===di).map(t => (
-                      <div key={t.id} className="rounded overflow-hidden flex" style={{background:`${t.color}18`}}>
-                        <div className="w-0.5 shrink-0" style={{background:t.color}} />
-                        <div className="px-1 py-0.5">
-                          <p className="text-[7px] font-bold text-text-primary leading-none">{t.hora}</p>
-                          <p className="text-[7px] text-text-muted leading-tight truncate">{t.cliente.split(' ')[0]}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'Ficha del paciente',
-      desc: 'Historial completo de turnos, notas y datos de contacto de cada cliente en un solo lugar.',
-      mockup: (
-        <div className="w-full bg-white rounded-xl overflow-hidden border border-border shadow-inner">
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface-background">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-error/60" /><div className="w-3 h-3 rounded-full bg-warning/60" /><div className="w-3 h-3 rounded-full bg-success/60" />
-            </div>
-            <div className="flex-1 h-6 bg-border/40 rounded-badge mx-4 flex items-center px-3">
-              <span className="text-[10px] text-text-muted">app.metaturnos.com/admin/clientes</span>
-            </div>
-          </div>
-          <div className="p-4 flex gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">ML</div>
-                <div>
-                  <p className="font-heading font-bold text-sm text-text-primary">María López</p>
-                  <p className="text-[10px] text-text-muted">maria.lopez@email.com · +54 11 4567-8901</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <p className="text-[9px] font-bold text-text-muted uppercase tracking-wide">Últimos turnos</p>
-                {[
-                  { f: '14/04', s: 'Consulta gral.', st: 'confirmado' },
-                  { f: '28/03', s: 'Control anual', st: 'confirmado' },
-                  { f: '15/03', s: 'Kinesiología', st: 'cancelado' },
-                ].map((t, i) => (
-                  <div key={i} className="flex items-center justify-between py-1.5 border-b border-border/40">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-1.5 h-1.5 rounded-full ${t.st==='confirmado'?'bg-success':'bg-error'}`} />
-                      <p className="text-[9px] font-medium text-text-primary">{t.f} — {t.s}</p>
-                    </div>
-                    <span className={`text-[8px] px-1.5 py-0.5 rounded-badge ${t.st==='confirmado'?'bg-success/10 text-success':'bg-error/10 text-error'}`}>
-                      {t.st}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'Reportes y caja',
-      desc: 'Estadísticas claras de ingresos, turnos atendidos, cancelaciones y tendencias mensuales.',
-      mockup: (
-        <div className="w-full bg-white rounded-xl overflow-hidden border border-border shadow-inner">
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface-background">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-error/60" /><div className="w-3 h-3 rounded-full bg-warning/60" /><div className="w-3 h-3 rounded-full bg-success/60" />
-            </div>
-            <div className="flex-1 h-6 bg-border/40 rounded-badge mx-4 flex items-center px-3">
-              <span className="text-[10px] text-text-muted">app.metaturnos.com/admin/reportes</span>
-            </div>
-          </div>
-          <div className="p-4">
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {[
-                { label: 'Ingresos', value: '$284.500', color: '#2F7D6B', delta: '+12%' },
-                { label: 'Turnos', value: '147', color: '#5B8DEF', delta: '+8%' },
-                { label: 'Cancelados', value: '9', color: '#EF4444', delta: '-3%' },
-              ].map((c) => (
-                <div key={c.label} className="rounded-lg p-2 border border-border">
-                  <p className="text-[8px] text-text-muted font-medium uppercase">{c.label}</p>
-                  <p className="font-heading font-bold text-xs text-text-primary mt-0.5">{c.value}</p>
-                  <span className="text-[8px] font-bold" style={{color:c.color}}>{c.delta}</span>
-                </div>
-              ))}
-            </div>
-            {/* Bar chart mock */}
-            <p className="text-[8px] font-bold text-text-muted uppercase tracking-wide mb-1.5">Turnos por día</p>
-            <div className="flex items-end gap-1 h-16">
-              {[45, 80, 60, 95, 70, 55, 85, 40, 90, 75, 65, 88].map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-t-sm"
-                  style={{ height: `${h}%`, background: i === 9 ? '#2F7D6B' : '#2F7D6B22' }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'Reservas de pacientes',
-      desc: 'Tu link personalizado donde los pacientes eligen servicio, profesional, día y hora sin llamarte.',
-      mockup: (
-        <div className="w-full bg-white rounded-xl overflow-hidden border border-border shadow-inner">
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface-background">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-error/60" /><div className="w-3 h-3 rounded-full bg-warning/60" /><div className="w-3 h-3 rounded-full bg-success/60" />
-            </div>
-            <div className="flex-1 h-6 bg-border/40 rounded-badge mx-4 flex items-center px-3">
-              <span className="text-[10px] text-text-muted">metaturnos.com/r/clinica-bienestar</span>
-            </div>
-          </div>
-          <div className="p-4">
-            <div className="text-center mb-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-1.5">
-                <CalendarDaysIcon size={18} className="text-primary" />
-              </div>
-              <p className="font-heading font-bold text-xs text-text-primary">Clínica Bienestar</p>
-              <p className="text-[9px] text-text-muted">Elegí tu turno</p>
-            </div>
-            <div className="space-y-1.5">
-              <p className="text-[8px] font-bold text-text-muted uppercase tracking-wide">Servicios</p>
-              {['Consulta general', 'Kinesiología', 'Nutrición'].map((s, i) => (
-                <div key={s} className={`flex items-center justify-between p-2 rounded-lg border text-[9px] font-medium ${i===0?'border-primary/50 bg-primary/5 text-primary':'border-border text-text-secondary'}`}>
-                  {s}
-                  {i===0 && <div className="w-3 h-3 rounded-full bg-primary flex items-center justify-center"><CheckIcon size={7} className="text-white" /></div>}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      ),
-    },
-  ];
+const RUBROS: RubroItem[] = [
+  {
+    id: 'barberias',
+    name: 'Barberías & Peluquerías',
+    icon: <ScissorsIcon size={18} />,
+    tag: 'Cortes y Estilo',
+    headline: 'Agenda por barbero y servicios con duración exacta',
+    description: 'Tus clientes eligen su barbero preferido, ven los horarios libres en tiempo real y reservan en 10 segundos desde su celular.',
+    bullets: [
+      'Turnos sincronizados por cada sillón o estilista',
+      'Servicios combinados: Corte, Barba, Tintura, Lavado',
+      'Evitá filas y esperas eternas en tu local',
+      'Configurá descansos y horarios de almuerzo',
+    ],
+    sampleDuration: '30 a 60 min',
+    sampleDeposit: 'Seña opcional',
+  },
+  {
+    id: 'salud',
+    name: 'Médicos & Consultorios',
+    icon: <StethoscopeIcon size={18} />,
+    tag: 'Salud y Medicina',
+    headline: 'Atención profesional con ficha clínica y recordatorios',
+    description: 'Ideal para médicos clínicos, pediatras, odontólogos y consultorios. Organizá sobreturnos y adjuntá órdenes o estudios.',
+    bullets: [
+      'Recordatorios automáticos para reducir ausentismo',
+      'Adjuntos de estudios y notas privadas en cada turno',
+      'Múltiples especialidades en la misma clínica',
+      'Reserva sin que el paciente tenga que crear cuenta',
+    ],
+    sampleDuration: '20 a 45 min',
+    sampleDeposit: 'Cobro de consulta o libre',
+  },
+  {
+    id: 'estetica',
+    name: 'Estética & Uñas',
+    icon: <SparklesIcon size={18} />,
+    tag: 'Belleza y Cuidado',
+    headline: 'Congelá turnos cobrando seña previa por Mercado Pago',
+    description: 'Protegé tus horas de trabajo en manicuría, pedicuría, pestañas o depilación exigiendo una seña para confirmar el turno.',
+    bullets: [
+      'Cobro del 30%, 50% o 100% mediante Mercado Pago',
+      'Catálogo de servicios con fotos y tiempos de aplicación',
+      'Notificación inmediata al acreditarse el pago',
+      'Historial de visitas y preferencias de cada clienta',
+    ],
+    sampleDuration: '45 a 120 min',
+    sampleDeposit: 'Seña previa del 50%',
+  },
+  {
+    id: 'psicologia',
+    name: 'Psicólogos & Terapeutas',
+    icon: <HeartPulseIcon size={18} />,
+    tag: 'Terapia y Coaching',
+    headline: 'Sesiones presenciales o virtuales con máxima privacidad',
+    description: 'Gestión discreta de pacientes para psicólogos, terapeutas holísticos y coaches. Bloqueo de intervalos para descanso entre sesiones.',
+    bullets: [
+      'Intervalos automáticos de 10-15 min entre pacientes',
+      'Enlaces a videollamada incluidos en la confirmación',
+      'Manejo de sesiones recurrentes semanales o quincenales',
+      'Historial confidencial de cada paciente',
+    ],
+    sampleDuration: '50 a 60 min',
+    sampleDeposit: 'Pago adelantado integrado',
+  },
+];
+
+function RubrosSection() {
+  const [activeRubro, setActiveRubro] = useState(RUBROS[0].id);
+  const current = RUBROS.find((r) => r.id === activeRubro) || RUBROS[0];
 
   return (
-    <section id="capturas" className="py-24 px-6 bg-white">
+    <section id="rubros" className="py-20 px-4 sm:px-6 bg-white border-y border-border">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-badge bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4 border border-primary/20">
-            Capturas de pantalla
+        <div className="text-center mb-12">
+          <span className="inline-block px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-3 border border-primary/20">
+            Versatilidad Total
           </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-text-primary">
-            Mirá cómo se ve por dentro
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-text-primary">
+            Diseñado para cualquier rubro que necesite turnos
           </h2>
-          <p className="font-body text-text-secondary mt-4 max-w-xl mx-auto text-base">
-            Una interfaz limpia y moderna que hace que gestionar tu agenda sea un placer.
+          <p className="font-body text-text-secondary mt-3 max-w-2xl mx-auto text-base sm:text-lg">
+            No importa si atendés en un consultorio, tenés 4 sillones de barbería o hacés uñas a domicilio. MetaTurnos se adapta a tus reglas.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Tab list */}
-          <div className="flex flex-col gap-3">
-            {screens.map((s, i) => (
+        {/* Tab buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+          {RUBROS.map((r) => {
+            const isActive = r.id === activeRubro;
+            return (
               <button
-                key={s.title}
-                onClick={() => setActive(i)}
-                className={`flex items-start gap-4 p-4 rounded-card text-left transition-all duration-200 border ${
-                  active === i
-                    ? 'bg-primary/5 border-primary/30 shadow-sm'
-                    : 'bg-surface-background border-transparent hover:border-border'
+                key={r.id}
+                onClick={() => setActiveRubro(r.id)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                  isActive
+                    ? 'bg-primary text-white shadow-md shadow-primary/25 scale-102'
+                    : 'bg-surface-background text-text-secondary hover:bg-surface-soft hover:text-text-primary border border-border/80'
                 }`}
               >
-                <div
-                  className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
-                    active === i ? 'bg-primary text-white' : 'bg-border text-text-muted'
-                  }`}
-                >
-                  {i + 1}
-                </div>
-                <div>
-                  <p className={`font-heading font-bold text-sm ${active === i ? 'text-primary' : 'text-text-primary'}`}>
-                    {s.title}
-                  </p>
-                  <p className="font-body text-xs text-text-secondary mt-0.5 leading-relaxed">{s.desc}</p>
-                </div>
+                {r.icon}
+                <span>{r.name}</span>
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
 
-          {/* Preview */}
-          <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-br from-primary/5 to-accent/5 rounded-2xl blur-xl" />
-            <div className="relative bg-surface-background rounded-2xl p-4 border border-border shadow-[0_20px_60px_rgba(13,28,46,0.08)]">
-              {screens[active].mockup}
+        {/* Rubro content card */}
+        <div className="bg-surface-background rounded-2xl border border-border p-6 sm:p-10 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 flex flex-col gap-5">
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                  {current.tag}
+                </span>
+                <span className="text-xs text-text-muted">· Duración estimada: {current.sampleDuration}</span>
+              </div>
+              <h3 className="font-heading text-2xl sm:text-3xl font-bold text-text-primary">
+                {current.headline}
+              </h3>
+              <p className="font-body text-text-secondary text-base leading-relaxed">
+                {current.description}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {current.bullets.map((b, idx) => (
+                  <div key={idx} className="flex items-start gap-2.5">
+                    <CheckCircle2Icon size={18} className="text-primary shrink-0 mt-0.5" />
+                    <span className="text-sm font-medium text-text-primary">{b}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 bg-white rounded-xl p-6 border border-border shadow-md">
+              <div className="flex items-center justify-between pb-4 border-b border-border">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                    {current.icon}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-text-primary">{current.name}</p>
+                    <p className="text-xs text-text-muted">Configuración lista</p>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                  {current.sampleDeposit}
+                </span>
+              </div>
+
+              <div className="space-y-3 mt-4 text-xs font-body text-text-secondary">
+                <div className="p-3 rounded-lg bg-surface-soft/60 flex items-center justify-between">
+                  <span>Enlace de reservas directo:</span>
+                  <strong className="text-primary font-mono text-[11px]">metaturnos.com/r/tu-negocio</strong>
+                </div>
+                <div className="p-3 rounded-lg bg-surface-soft/60 flex items-center justify-between">
+                  <span>Duración de servicio:</span>
+                  <span className="font-semibold text-text-primary">{current.sampleDuration}</span>
+                </div>
+                <div className="p-3 rounded-lg bg-surface-soft/60 flex items-center justify-between">
+                  <span>Notificaciones:</span>
+                  <span className="font-semibold text-text-primary">WhatsApp & Email</span>
+                </div>
+              </div>
+
+              <Link
+                to="/register"
+                className="mt-6 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-button text-sm font-bold text-white bg-primary hover:bg-primary-dark transition-colors shadow-xs"
+              >
+                Crear agenda para {current.name.split('&')[0]}
+                <ArrowRightIcon size={15} />
+              </Link>
             </div>
           </div>
         </div>
@@ -918,103 +771,410 @@ function Screenshots() {
   );
 }
 
-// ─── Testimonials ─────────────────────────────────────────────────────────────
+// ─── Real App Screenshots Showcase (Inspo Pedi.bot "Así se ve por dentro") ────
 
-function Testimonials() {
-  const items = [
+interface ScreenshotItem {
+  id: string;
+  category: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  description: string;
+  highlights: string[];
+}
+
+const SCREENSHOTS: ScreenshotItem[] = [
+  {
+    id: 'turnos',
+    category: 'Agenda & Calendario',
+    title: 'Panel de Agenda en Tiempo Real',
+    subtitle: 'Visualización clara de turnos diarios y semanales con estados por color',
+    image: '/capturas/Vista_turnos.png',
+    description: 'Mirá en un solo vistazo toda la ocupación de la semana. Creá turnos manuales, cambiá estados (Confirmado, Pendiente, Cancelado) y recibí avisos en vivo cuando alguien reserve desde la web.',
+    highlights: ['Vistas diaria y semanal', 'Filtro por profesional o consultorio', 'Actualización en tiempo real vía WebSockets'],
+  },
+  {
+    id: 'reservas',
+    category: 'Experiencia del Cliente',
+    title: 'Página Pública de Reservas',
+    subtitle: 'Lo que ven tus clientes en su celular: eligen servicio, profesional, fecha y hora',
+    image: '/capturas/pagina_reservas.png',
+    description: 'Tu link exclusivo para compartir en Instagram o WhatsApp. El cliente elige su turno en tres toques sin necesidad de registrarse ni instalar aplicaciones pesadas.',
+    highlights: ['100% adaptado a móviles', 'Selección de profesional y servicio', 'Confirmación inmediata y comprobante digital'],
+  },
+  {
+    id: 'reportes',
+    category: 'Métricas & Finanzas',
+    title: 'Panel de Reportes y Facturación',
+    subtitle: 'Estadísticas de ingresos, volumen de turnos y tasa de ausentismo',
+    image: '/capturas/reportes.png',
+    description: 'Controlá cuánto factura tu negocio por día, semana y mes. Identificá qué servicios son los más solicitados y medí el rendimiento individual de cada profesional.',
+    highlights: ['Gráficos de facturación periódica', 'Turnos completados vs cancelados', 'Exportación de datos'],
+  },
+  {
+    id: 'equipo',
+    category: 'Equipo & Horarios',
+    title: 'Gestión de Profesionales y Disponibilidad',
+    subtitle: 'Horarios personalizados, días laborales y descansos por colaborador',
+    image: '/capturas/equipo.png',
+    description: 'Coordiná a todos los integrantes de tu equipo. Asignales horarios de atención específicos, descansos de almuerzo y servicios que cada uno puede atender.',
+    highlights: ['Permisos diferenciados por rol', 'Disponibilidad horaria por día', 'Colores distintivos en la agenda'],
+  },
+  {
+    id: 'pagos',
+    category: 'Mercado Pago',
+    title: 'Cobro de Señas e Integración MP',
+    subtitle: 'Asegurá tus turnos cobrando un anticipo mediante Mercado Pago',
+    image: '/capturas/Turno_pagos.png',
+    description: 'Conectá tu cuenta de Mercado Pago en dos clicks. Cuando un cliente solicita un turno, puede abonar la seña o el total antes de confirmar para garantizar su asistencia.',
+    highlights: ['Integración con SDK oficial MP', 'Acreditación instantánea de señas', 'Menor tasa de no-shows (ausentes)'],
+  },
+];
+
+function ScreenshotsGallery() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  const activeScreen = SCREENSHOTS[activeTab];
+
+  return (
+    <section id="capturas" className="py-24 px-4 sm:px-6 bg-surface-background">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <span className="inline-block px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-3 border border-primary/20">
+            Capturas Reales de la App
+          </span>
+          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary">
+            Así se ve por dentro
+          </h2>
+          <p className="font-body text-text-secondary mt-3 max-w-2xl mx-auto text-base sm:text-lg">
+            Imágenes reales del sistema en funcionamiento. Tocá cualquier captura para ampliarla en pantalla completa.
+          </p>
+        </div>
+
+        {/* Tab Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+          {SCREENSHOTS.map((s, idx) => (
+            <button
+              key={s.id}
+              onClick={() => setActiveTab(idx)}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                activeTab === idx
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'bg-white text-text-secondary hover:text-primary hover:bg-surface-soft border border-border'
+              }`}
+            >
+              {s.category}
+            </button>
+          ))}
+        </div>
+
+        {/* Featured Screenshot Container with Browser Mockup */}
+        <div className="bg-white rounded-2xl border border-border shadow-[0_20px_60px_rgba(13,28,46,0.08)] overflow-hidden">
+          {/* Browser Chrome Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-background">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-400" />
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <div className="w-3 h-3 rounded-full bg-green-400" />
+            </div>
+            <div className="flex-1 max-w-md mx-4 h-7 bg-white rounded-md border border-border flex items-center px-3 text-xs text-text-muted truncate">
+              <span className="text-primary font-medium mr-1">https://</span>
+              <span>app.metaturnos.com/admin/{activeScreen.id}</span>
+            </div>
+            <button
+              onClick={() => setLightboxImage(activeScreen.image)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-dark transition-colors px-2 py-1 rounded hover:bg-surface-soft"
+            >
+              <Maximize2Icon size={14} />
+              <span className="hidden sm:inline">Ampliar</span>
+            </button>
+          </div>
+
+          {/* Main Screenshot Image + Zoom Button */}
+          <div className="relative group cursor-zoom-in bg-zinc-900/5 p-2 sm:p-4" onClick={() => setLightboxImage(activeScreen.image)}>
+            <img
+              src={activeScreen.image}
+              alt={activeScreen.title}
+              className="w-full h-auto max-h-[640px] object-contain rounded-lg shadow-sm border border-border/60 mx-auto transition-transform duration-300 group-hover:scale-[1.008]"
+            />
+            <div className="absolute bottom-6 right-6 bg-black/75 backdrop-blur-md text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs font-medium shadow-lg pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+              <Maximize2Icon size={14} />
+              <span>Click para ver en tamaño completo</span>
+            </div>
+          </div>
+
+          {/* Screenshot details caption */}
+          <div className="p-6 sm:p-8 bg-white border-t border-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">{activeScreen.category}</span>
+              <h3 className="font-heading text-xl sm:text-2xl font-bold text-text-primary mt-1">
+                {activeScreen.title}
+              </h3>
+              <p className="font-body text-sm text-text-secondary mt-2 leading-relaxed">
+                {activeScreen.description}
+              </p>
+            </div>
+            <div className="flex flex-col gap-2 shrink-0">
+              {activeScreen.highlights.map((h, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs font-medium text-text-primary">
+                  <CheckIcon size={14} className="text-primary" />
+                  <span>{h}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Secondary thumbnails grid */}
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {[
+            { img: '/capturas/Turno_exitoso.png', label: 'Comprobante digital del turno', tag: 'Cliente' },
+            { img: '/capturas/disponibilidad_profecional.png', label: 'Configuración de horarios', tag: 'Admin' },
+            { img: '/capturas/Servicios.png', label: 'Catálogo de servicios y precios', tag: 'Servicios' },
+            { img: '/capturas/Vista_drawer_turno.png', label: 'Ficha y notas del turno', tag: 'Detalle' },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              onClick={() => setLightboxImage(item.img)}
+              className="group cursor-zoom-in rounded-xl border border-border bg-white overflow-hidden shadow-xs hover:shadow-md hover:border-primary/40 transition-all p-2 flex flex-col gap-2"
+            >
+              <div className="relative aspect-video rounded-lg overflow-hidden bg-zinc-100">
+                <img
+                  src={item.img}
+                  alt={item.label}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                />
+                <span className="absolute top-1.5 left-1.5 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                  {item.tag}
+                </span>
+              </div>
+              <p className="text-xs font-semibold text-text-primary line-clamp-1">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Lightbox Modal */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-[300] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => setLightboxImage(null)}
+        >
+          <div className="relative max-w-6xl w-full max-h-[92vh] flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setLightboxImage(null)}
+              className="absolute -top-10 right-0 text-white hover:text-primary transition-colors flex items-center gap-1.5 text-sm font-semibold bg-white/10 px-3 py-1 rounded-full"
+            >
+              <XIcon size={18} />
+              <span>Cerrar (Esc)</span>
+            </button>
+            <img
+              src={lightboxImage}
+              alt="Captura ampliada"
+              className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border border-white/10"
+            />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ─── Value Prop Pipeline ("No es solo un calendario" - Inspo Pedi.bot) ────────
+
+function WorkflowPipeline() {
+  const steps = [
+    { num: '01', title: 'Link Único', desc: 'Pegás tu enlace en la biografía de Instagram o enviás por WhatsApp.' },
+    { num: '02', title: 'Reserva sin Fricción', desc: 'Tu cliente elige profesional, servicio y fecha sin registrarse.' },
+    { num: '03', title: 'Seña con Mercado Pago', desc: 'Pago seguro para congelar el turno y asegurar asistencia.' },
+    { num: '04', title: 'Recordatorio Automático', desc: 'Notificación 24hs antes con detalles y opción de reagendar.' },
+    { num: '05', title: 'Control en Vivo', desc: 'Tu agenda se llena sola mientras vos atendés tu negocio.' },
+  ];
+
+  return (
+    <section className="py-20 px-4 sm:px-6 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <p className="mb-3 text-xs sm:text-sm font-semibold uppercase tracking-widest text-primary">
+            Ciclo Automatizado
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-bold font-heading text-text-primary">
+            Un calendario anota turnos. MetaTurnos los hace rendir.
+          </h2>
+          <p className="mt-3 text-base sm:text-lg text-text-secondary max-w-2xl mx-auto">
+            El sistema cubre el viaje completo: desde que el cliente descubre tu negocio hasta que asiste a su turno y queda en tu base de datos.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {steps.map((st, i) => (
+            <div
+              key={st.num}
+              className="relative p-6 rounded-2xl bg-surface-background border border-border hover:border-primary/30 transition-all flex flex-col justify-between"
+            >
+              <div>
+                <span className="font-heading text-2xl font-bold text-primary/40 mb-2 block">{st.num}</span>
+                <h3 className="font-heading font-bold text-base text-text-primary mb-1">{st.title}</h3>
+                <p className="font-body text-xs sm:text-sm text-text-secondary leading-relaxed">{st.desc}</p>
+              </div>
+              {i < steps.length - 1 && (
+                <div className="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 z-10 text-primary/40">
+                  <ArrowRightIcon size={16} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── How it Works (4 Steps) ───────────────────────────────────────────────────
+
+function HowItWorks() {
+  const steps = [
     {
-      quote: 'Desde que usamos MetaTurnos nuestros pacientes ya no llaman para sacar turno. Todo es automático y los recordatorios redujeron los ausentes a casi cero.',
-      name: 'Dra. Valentina Ríos',
-      role: 'Médica clínica · Córdoba',
-      avatar: 'VR',
-      color: '#2F7D6B',
-      stars: 5,
+      step: '1',
+      title: 'Creás tu cuenta gratis',
+      desc: 'En menos de 2 minutos tenés tu espacio listo con el nombre de tu marca o negocio.',
+      icon: <ZapIcon size={20} className="text-primary" />,
     },
     {
-      quote: 'La agenda semanal es exactamente lo que necesitábamos. Tres kinesiólogos coordinados, sin superposición de turnos y con vista de caja integrada.',
-      name: 'Lic. Matías Fernández',
-      role: 'Centro de Kinesiología · Rosario',
-      avatar: 'MF',
-      color: '#5B8DEF',
-      stars: 5,
+      step: '2',
+      title: 'Cargás servicios y horarios',
+      desc: 'Definís qué servicios ofrecés, cuánto duran, sus precios y los horarios de atención.',
+      icon: <CalendarDaysIcon size={20} className="text-primary" />,
     },
     {
-      quote: 'Probé muchas plataformas y esta es la única que funciona perfectamente desde el celular. Mis pacientes pueden reservar solos y yo manejo todo desde donde estoy.',
-      name: 'Lic. Camila Torres',
-      role: 'Psicóloga · Buenos Aires',
-      avatar: 'CT',
-      color: '#8B5CF6',
-      stars: 5,
+      step: '3',
+      title: 'Compartís tu link en redes',
+      desc: 'Pegás tu enlace en Instagram, envialo por WhatsApp o ponelo en tu web.',
+      icon: <SmartphoneIcon size={20} className="text-primary" />,
     },
     {
-      quote: 'El onboarding fue rapidísimo. En menos de una hora ya tenía el sistema funcionando con todos mis servicios cargados y el link para compartir con pacientes.',
-      name: 'Dr. Sebastián Morales',
-      role: 'Odontólogo · Mendoza',
-      avatar: 'SM',
-      color: '#EC4899',
-      stars: 5,
-    },
-    {
-      quote: 'Los reportes de caja me ahorraron horas de trabajo manual. Ahora sé exactamente cuánto facturó cada profesional por semana con un solo vistazo.',
-      name: 'Lic. Florencia Castro',
-      role: 'Directora de clínica · Santa Fe',
-      avatar: 'FC',
-      color: '#F59E0B',
-      stars: 5,
-    },
-    {
-      quote: 'Nunca imaginé que un sistema de turnos podría ser tan intuitivo. En dos días mi recepcionista ya lo manejaba sola sin necesitar capacitación extra.',
-      name: 'Dr. Nicolás Herrera',
-      role: 'Traumatólogo · La Plata',
-      avatar: 'NH',
-      color: '#10B981',
-      stars: 5,
+      step: '4',
+      title: 'Recibís turnos en vivo',
+      desc: 'Tus clientes reservan solos, el sistema valida solapamientos y les manda recordatorio.',
+      icon: <CheckCircle2Icon size={20} className="text-primary" />,
     },
   ];
 
   return (
-    <section id="testimonios" className="py-24 px-6 bg-white overflow-hidden">
+    <section id="como-funciona" className="py-20 px-4 sm:px-6 bg-surface-background border-t border-border">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-badge bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4 border border-primary/20">
-            Testimonios
+          <span className="inline-block px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-3 border border-primary/20">
+            Sin Complicaciones
           </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-text-primary">
-            Lo que dicen los profesionales
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-text-primary">
+            Empezá a recibir reservas en 4 pasos
           </h2>
-          <p className="font-body text-text-secondary mt-4 max-w-xl mx-auto text-base">
-            Más de 500 profesionales de la salud ya confían en MetaTurnos.
+          <p className="mt-3 text-base sm:text-lg text-text-secondary max-w-xl mx-auto">
+            Configuración intuitiva sin curva de aprendizaje.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((t) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((st) => (
             <div
-              key={t.name}
-              className="flex flex-col gap-4 p-6 rounded-card bg-surface-background border border-border hover:border-primary/20 hover:shadow-[0_8px_32px_rgba(47,125,107,0.08)] transition-all duration-300"
+              key={st.step}
+              className="relative p-6 rounded-2xl bg-white border border-border shadow-xs flex flex-col items-start gap-4"
             >
-              <div className="flex gap-0.5">
-                {Array.from({ length: t.stars }).map((_, i) => (
-                  <StarIcon key={i} size={14} className="text-warning fill-warning" />
-                ))}
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center font-heading font-bold text-primary text-base">
+                {st.step}
               </div>
-              <p className="font-body text-text-secondary text-sm leading-relaxed flex-1">
-                "{t.quote}"
-              </p>
-              <div className="flex items-center gap-3 pt-2 border-t border-border">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
-                  style={{ background: `linear-gradient(135deg, ${t.color}, ${t.color}bb)` }}
-                >
-                  {t.avatar}
-                </div>
-                <div>
-                  <p className="font-heading font-bold text-sm text-text-primary">{t.name}</p>
-                  <p className="font-body text-xs text-text-muted">{t.role}</p>
-                </div>
+              <div>
+                <h3 className="font-heading font-bold text-base text-text-primary mb-1.5">{st.title}</h3>
+                <p className="font-body text-xs sm:text-sm text-text-secondary leading-relaxed">{st.desc}</p>
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Technical Showcase (LinkedIn Post Hook) ──────────────────────────────────
+
+function TechShowcase() {
+  const techStack = [
+    { name: '.NET 8 C#', role: 'Backend REST API & Clean Architecture' },
+    { name: 'SignalR', role: 'WebSockets y sincronización en tiempo real' },
+    { name: 'Entity Framework Core', role: 'ORM con soporte PostgreSQL / SQL Server' },
+    { name: 'React 18 & TypeScript', role: 'Frontend modular, tipado estricto y Vite' },
+    { name: 'Tailwind CSS', role: 'Diseño accesible y tokens personalizados' },
+    { name: 'Mercado Pago SDK', role: 'Pasarela de pagos y cobro de señas' },
+    { name: 'PWA Ready', role: 'Instalable en iOS y Android sin App Store' },
+    { name: 'Docker & CI/CD', role: 'Contenedores listos para deploy en nube' },
+  ];
+
+  return (
+    <section id="tecnologia" className="py-20 px-4 sm:px-6 bg-[#0E1A16] text-white overflow-hidden relative">
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-6 flex flex-col gap-6">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-emerald-400 text-xs font-bold uppercase tracking-wider w-fit border border-white/15">
+              <SparklesIcon size={14} />
+              Ingeniería de Software
+            </span>
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+              Construido con tecnología moderna para resolver un problema real
+            </h2>
+            <p className="font-body text-white/75 text-base sm:text-lg leading-relaxed">
+              Diseñé este proyecto como una demostración integral de ingeniería de software:
+              rendimiento de alta concurrencia, sincronización de turnos en milisegundos mediante WebSockets,
+              arquitectura limpia y una experiencia de usuario que no requiere manuales.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-button font-bold text-sm bg-[#0A66C2] hover:bg-[#004182] text-white transition-all shadow-md"
+              >
+                <LinkedinIcon size={18} />
+                Conectar con Juan Ruiz en LinkedIn
+              </a>
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-button font-semibold text-sm bg-white/10 hover:bg-white/15 text-white transition-all border border-white/20"
+              >
+                Probar la app en vivo
+                <ArrowRightIcon size={15} />
+              </Link>
+            </div>
+          </div>
+
+          <div className="lg:col-span-6">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-md">
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-4">
+                Stack de Tecnologías & Arquitectura
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {techStack.map((tech) => (
+                  <div key={tech.name} className="p-3 rounded-xl bg-white/5 border border-white/5 flex flex-col gap-1">
+                    <span className="text-sm font-bold text-white flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      {tech.name}
+                    </span>
+                    <span className="text-xs text-white/60">{tech.role}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
+                <span>Totalmente funcional y desplegable</span>
+                <span className="text-emerald-400 font-semibold">100% Responsive</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1028,69 +1188,61 @@ function FAQ() {
 
   const items = [
     {
-      q: '¿Necesito instalar algo para usar MetaTurnos?',
-      a: 'No. MetaTurnos es 100% web. Accedés desde cualquier navegador, en computadora o celular, sin descargar ni instalar ninguna aplicación.',
+      q: '¿El sistema sirve para cualquier rubro o solo clínicas?',
+      a: 'Sirve para cualquier actividad que requiera turnos: barberías, peluquerías, centros de estética, pedicuras, consultorios médicos, psicólogos, kinesiólogos, veterinarias, clases particulares o consultoría. Podés configurar la duración de los servicios y reglas según tu necesidad.',
     },
     {
-      q: '¿Cómo funciona el período de prueba gratuito?',
-      a: 'Tenés 14 días de acceso completo a todas las funcionalidades del plan elegido, sin necesidad de tarjeta de crédito. Si no te convence, no se te cobra nada.',
+      q: '¿Mis clientes tienen que descargarse una app para sacar turno?',
+      a: 'No. No necesitan instalar ninguna app ni crearse cuenta. Entran directo a tu link (desde Instagram, WhatsApp o navegador), seleccionan el servicio y horario, completan su nombre y teléfono, y confirman en menos de 30 segundos.',
     },
     {
-      q: '¿Puedo tener múltiples profesionales en el mismo panel?',
-      a: 'Sí. Podés agregar tantos profesionales como permita tu plan, cada uno con sus propios turnos, disponibilidades y colores identificadores en la agenda.',
+      q: '¿Cómo funciona el cobro de señas con Mercado Pago?',
+      a: 'Podés vincular tu cuenta de Mercado Pago desde la sección de ajustes. Al crear un servicio, podés definir si requiere seña previa (ej. 30% o el total) para que el turno quede confirmado únicamente cuando el pago impacte.',
     },
     {
-      q: '¿Los pacientes pueden reservar solos?',
-      a: 'Exactamente. Tenés un link personalizado (metaturnos.com/r/tu-clinica) que podés compartir por WhatsApp, Instagram o tu sitio web. Tus pacientes eligen servicio, profesional y horario sin llamarte.',
+      q: '¿Puedo tener varios profesionales o empleados?',
+      a: 'Sí. Podés dar de alta a todo tu equipo. Cada profesional tiene sus propios horarios de atención, sus servicios asignados y un color distintivo en la agenda.',
     },
     {
-      q: '¿Cómo se envían los recordatorios automáticos?',
-      a: 'Los recordatorios se envían automáticamente por WhatsApp y/o email según configuración, con antelación configurable (24hs, 2hs antes, etc.). Ayudan a reducir significativamente los ausentes.',
+      q: '¿Cómo se evitan solapamientos y sobreturnos?',
+      a: 'El backend calcula automáticamente los bloques libres según la duración de cada servicio y la disponibilidad del profesional. Además, mediante SignalR, si dos clientes intentan reservar el mismo horario, se bloquea al instante para evitar duplicados.',
     },
     {
-      q: '¿Puedo cancelar el plan en cualquier momento?',
-      a: 'Sí. No hay contratos de permanencia. Podés cancelar tu suscripción cuando quieras desde el panel de ajustes, sin penalidades.',
-    },
-    {
-      q: '¿Los datos de mis pacientes están seguros?',
-      a: 'Totalmente. Usamos cifrado en tránsito y en reposo, acceso por roles con permisos granulares, y nuestros servidores cumplen con estándares de privacidad de datos médicos.',
-    },
-    {
-      q: '¿Puedo integrar pagos online?',
-      a: 'Sí. MetaTurnos se integra con Mercado Pago para cobrar turnos online al momento de la reserva, facilitando el cobro anticipado y reduciendo el ausentismo.',
+      q: '¿Puedo instalarlo como app en mi celular?',
+      a: 'Sí. MetaTurnos es una Progressive Web App (PWA). Podés agregarla a la pantalla de inicio de tu iPhone o Android y abrirla como cualquier aplicación nativa, rápida y sin ocupar espacio.',
     },
   ];
 
   return (
-    <section id="faq" className="py-24 px-6 bg-surface-background">
+    <section id="faq" className="py-24 px-4 sm:px-6 bg-surface-background">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-badge bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-4 border border-primary/20">
-            FAQ
+          <span className="inline-block px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase mb-3 border border-primary/20">
+            Preguntas Frecuentes
           </span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-text-primary">
-            Preguntas frecuentes
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-text-primary">
+            Todo lo que necesitás saber
           </h2>
-          <p className="font-body text-text-secondary mt-4 text-base">
-            ¿Tenés dudas? Acá respondemos las más comunes.
+          <p className="font-body text-text-secondary mt-3 text-base">
+            Respuestas directas sobre el funcionamiento y características de la plataforma.
           </p>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {items.map((item, i) => (
             <div
               key={i}
-              className={`rounded-card border transition-all duration-200 overflow-hidden ${
+              className={`rounded-xl border transition-all duration-200 overflow-hidden ${
                 open === i
-                  ? 'border-primary/30 bg-white shadow-[0_4px_20px_rgba(47,125,107,0.08)]'
-                  : 'border-border bg-white hover:border-primary/20'
+                  ? 'border-primary/40 bg-white shadow-md'
+                  : 'border-border bg-white hover:border-primary/25'
               }`}
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
               >
-                <span className={`font-heading font-semibold text-sm ${open === i ? 'text-primary' : 'text-text-primary'}`}>
+                <span className={`font-heading font-semibold text-sm sm:text-base ${open === i ? 'text-primary' : 'text-text-primary'}`}>
                   {item.q}
                 </span>
                 <ChevronDownIcon
@@ -1099,8 +1251,8 @@ function FAQ() {
                 />
               </button>
               {open === i && (
-                <div className="px-6 pb-5">
-                  <p className="font-body text-sm text-text-secondary leading-relaxed">{item.a}</p>
+                <div className="px-6 pb-5 pt-1 text-sm font-body text-text-secondary leading-relaxed border-t border-border/40">
+                  {item.a}
                 </div>
               )}
             </div>
@@ -1115,37 +1267,42 @@ function FAQ() {
 
 function CtaFinal() {
   return (
-    <section className="py-24 px-6 bg-gradient-to-br from-[#075E4E] via-[#096453] to-primary relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-            backgroundSize: '28px 28px',
-          }}
-        />
+    <section className="py-24 px-4 sm:px-6 bg-gradient-to-br from-[#164E43] via-[#1D6052] to-[#2F7D6B] relative overflow-hidden text-center text-white">
+      {/* Decorative Silk in Background */}
+      <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden mix-blend-overlay">
+        <Silk color="#ffffff" speed={2} scale={1.2} noiseIntensity={0.8} lightMode={false} />
       </div>
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative max-w-2xl mx-auto text-center flex flex-col items-center gap-6">
-        <span className="inline-block px-4 py-1.5 rounded-badge bg-white/15 text-white text-xs font-bold tracking-wider uppercase border border-white/20">
-          Empezá hoy mismo
+      <div className="relative max-w-3xl mx-auto z-10 flex flex-col items-center gap-6">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold tracking-wider uppercase border border-white/20">
+          Disponible para la comunidad
         </span>
-        <h2 className="font-heading text-3xl md:text-5xl font-bold text-white leading-tight">
-          ¿Listo para transformar tu clínica?
+        <h2 className="font-heading text-3xl sm:text-5xl font-bold leading-tight">
+          ¿Listo para automatizar los turnos de tu negocio?
         </h2>
-        <p className="font-body text-white/80 text-lg max-w-lg">
-          Uníte a los profesionales de la salud que ya simplifican su agenda con MetaTurnos. Sin instalaciones. Sin complicaciones.
+        <p className="font-body text-white/85 text-base sm:text-lg max-w-xl">
+          Probá el sistema ahora mismo sin costo o conectemos en LinkedIn para charlar sobre desarrollo, arquitectura o implementaciones.
         </p>
-        <Link
-          to="/register"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-button font-bold font-body text-primary bg-white hover:bg-white/90 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-sm"
-        >
-          Empezar gratis — 14 días
-          <ChevronRightIcon size={16} />
-        </Link>
-        <p className="font-body text-white/50 text-sm">Sin tarjeta de crédito. Cancelás cuando quieras.</p>
+
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <Link
+            to="/register"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-button font-bold text-primary bg-white hover:bg-white/95 transition-all shadow-xl text-base"
+          >
+            Crear mi agenda gratis
+            <ArrowRightIcon size={18} />
+          </Link>
+          <a
+            href="https://www.linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-button font-semibold text-white bg-white/15 hover:bg-white/25 border border-white/25 transition-all text-base"
+          >
+            <LinkedinIcon size={18} />
+            Conectar en LinkedIn
+          </a>
+        </div>
+        <p className="text-white/60 text-xs">Sin contratos ni tarjeta de crédito requerida.</p>
       </div>
     </section>
   );
@@ -1157,28 +1314,42 @@ function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="py-12 px-6 bg-[#0F1A14]">
+    <footer className="py-12 px-4 sm:px-6 bg-[#0B1411] text-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           <div className="md:col-span-2">
             <img src="/logo.png" alt="MetaTurnos" className="h-7 w-auto mb-3 brightness-0 invert opacity-90" />
-            <p className="font-body text-sm text-white/50 max-w-xs leading-relaxed">
-              La plataforma todo-en-uno para clínicas y consultorios. Gestioná turnos, recordatorios y cobros desde un solo lugar.
+            <p className="font-body text-sm text-white/60 max-w-sm leading-relaxed">
+              Sistema integral de gestión y autogestión de turnos para profesionales y comercios.
+              Desarrollado con arquitectura moderna .NET 8, SignalR y React.
             </p>
+            <div className="mt-4 flex items-center gap-3">
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-white/10 hover:bg-white/20 text-xs text-white transition-colors"
+              >
+                <LinkedinIcon size={14} className="text-[#0A66C2]" />
+                Juan Ruiz
+              </a>
+            </div>
           </div>
 
           <div>
-            <p className="font-heading font-semibold text-white/90 text-sm mb-3">Producto</p>
+            <p className="font-heading font-semibold text-white/90 text-sm mb-3">Navegación</p>
             <nav className="flex flex-col gap-2">
               {[
                 { label: 'Características', id: 'caracteristicas' },
-                { label: 'Capturas', id: 'capturas' },
+                { label: 'Rubros', id: 'rubros' },
+                { label: 'Capturas Reales', id: 'capturas' },
+                { label: 'Stack Técnico', id: 'tecnologia' },
                 { label: 'FAQ', id: 'faq' },
               ].map((l) => (
                 <button
                   key={l.id}
                   onClick={() => scrollTo(l.id)}
-                  className="text-left font-body text-sm text-white/50 hover:text-white/80 transition-colors"
+                  className="text-left font-body text-xs text-white/50 hover:text-white/80 transition-colors"
                 >
                   {l.label}
                 </button>
@@ -1187,42 +1358,45 @@ function Footer() {
           </div>
 
           <div>
-            <p className="font-heading font-semibold text-white/90 text-sm mb-3">Acceso</p>
+            <p className="font-heading font-semibold text-white/90 text-sm mb-3">Acceso al Sistema</p>
             <nav className="flex flex-col gap-2">
-              <Link to="/login" className="font-body text-sm text-white/50 hover:text-white/80 transition-colors">
+              <Link to="/login" className="font-body text-xs text-white/50 hover:text-white/80 transition-colors">
                 Iniciar sesión
               </Link>
-              <Link to="/register" className="font-body text-sm text-white/50 hover:text-white/80 transition-colors">
-                Crear cuenta gratis
+              <Link to="/register" className="font-body text-xs text-white/50 hover:text-white/80 transition-colors">
+                Registrarse gratis
               </Link>
-              <a href="mailto:ventas@metaturnos.com" className="font-body text-sm text-white/50 hover:text-white/80 transition-colors">
-                Contacto
-              </a>
+              <Link to="/r/demo" className="font-body text-xs text-white/50 hover:text-white/80 transition-colors">
+                Ver flujo de reserva cliente
+              </Link>
             </nav>
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="font-body text-xs text-white/30">© {year} MetaTurnos. Todos los derechos reservados.</p>
-          <p className="font-body text-xs text-white/30">Hecho con ♥ para profesionales de la salud</p>
+        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/40">
+          <p>© {year} MetaTurnos. Proyecto abierto desarrollado por Juan Ruiz.</p>
+          <p>Hecho con ♥ para barberos, médicos, estéticas y profesionales independientes.</p>
         </div>
       </div>
     </footer>
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Main Landing Page Component ──────────────────────────────────────────────
 
 export default function Landing() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main>
         <Hero />
-        <Stats />
-        <Features />
-        <Screenshots />
-        <Testimonials />
+        <MetricsStrip />
+        <ProblemsSection />
+        <WorkflowPipeline />
+        <RubrosSection />
+        <ScreenshotsGallery />
+        <HowItWorks />
+        <TechShowcase />
         <FAQ />
         <CtaFinal />
       </main>

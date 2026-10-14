@@ -109,6 +109,9 @@ export interface AjustesSucursal {
   modoConfirmacionTurnos: ModoConfirmacionTurnos;
   mensajeWhatsApp24h?: string;
   mensajeWhatsApp3h?: string;
+  // Integración bot de WhatsApp (add-on)
+  botWhatsappHabilitado: boolean;   // solo lectura: lo habilita la plataforma
+  chatwootInboxId?: number | null;  // editable si el add-on está habilitado
 }
 
 // ─── Públicos (booking online) ────────────────────────────────────────────────
