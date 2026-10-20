@@ -1,16 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BuildingIcon, TagIcon, MapPinIcon, ClockIcon,
   SettingsIcon, SaveIcon, CheckIcon, GlobeIcon, PhoneIcon,
-  MailIcon, Loader2Icon, AlertCircleIcon, LinkIcon, CreditCardIcon,
+  MailIcon, Loader2Icon, AlertCircleIcon, LinkIcon,
 } from 'lucide-react';
 import { useAuth, tienePermiso } from '../../contexts/AuthContext';
 import { ajustesApi } from '../../api/ajustes';
-import { mercadopagoApi } from '../../api/mercadopago';
 import { SlugEditor } from '../../components/admin/SlugEditor';
-import { ConectarMercadoPagoButton } from '../../components/admin/ConectarMercadoPagoButton';
 import { SucursalImageUploader } from '../../components/admin/SucursalImageUploader';
 import type { AjustesSucursal, DiaSemana, FranjaHoraria, ModoConfirmacionTurnos } from '../../types';
 import { DIAS_SEMANA, DIAS_LABELS, RUBROS_DISPONIBLES, MONEDAS } from '../../types';
@@ -56,6 +54,8 @@ const defaultForm = (): AjustesSucursal => ({
   modoConfirmacionTurnos: 'Automatico' as const,
   mensajeWhatsApp24h: 'Hola {{ClienteNombre}}! Te recordamos tu turno de {{Servicio}} mañana {{Fecha}} a las {{Hora}}. ¡Te esperamos!',
   mensajeWhatsApp3h: 'Hola {{ClienteNombre}}! Tu turno de {{Servicio}} es hoy a las {{Hora}}. ¡Te esperamos pronto!',
+  botWhatsappHabilitado: false,
+  chatwootInboxId: null,
 });
 
 // ─── Toggle switch component ──────────────────────────────────────────────────
@@ -150,22 +150,12 @@ const VARIABLES_WA = ['{{ClienteNombre}}', '{{Servicio}}', '{{Fecha}}', '{{Hora}
 export function Ajustes() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const tieneAcceso = user?.esOwner || user?.rol === 'Administrativo' || tienePermiso(user, 'GestionarAjustes');
 
   useEffect(() => {
     if (!tieneAcceso) navigate('/admin');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tieneAcceso]);
-
-  useEffect(() => {
-    if (mpConectado) {
-      setSearchParams({}, { replace: true });
-      const t = setTimeout(() => setMpConectado(false), 5000);
-      return () => clearTimeout(t);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const [form, setForm] = useState<AjustesSucursal>(defaultForm());
   const [loading, setLoading] = useState(true);
@@ -174,8 +164,6 @@ export function Ajustes() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [anticUnidad, setAnticUnidad] = useState<'minutos' | 'horas'>('minutos');
-  const [mpConectado, setMpConectado] = useState(searchParams.get('mp') === 'conectado');
-  const [mpYaConectado, setMpYaConectado] = useState(false);
 
   const textarea24hRef = useRef<HTMLTextAreaElement>(null);
   const textarea3hRef  = useRef<HTMLTextAreaElement>(null);
@@ -204,16 +192,14 @@ export function Ajustes() {
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
-    useRef<HTMLDivElement>(null),
   ];
 
   const tabs = [
-    { label: 'Perfil',        icon: BuildingIcon    },
-    { label: 'Contacto',      icon: MapPinIcon      },
-    { label: 'Horarios',      icon: ClockIcon       },
-    { label: 'Configuración', icon: SettingsIcon    },
-    { label: 'URL Pública',   icon: LinkIcon        },
-    { label: 'Pagos',         icon: CreditCardIcon  },
+    { label: 'Perfil',        icon: BuildingIcon },
+    { label: 'Contacto',      icon: MapPinIcon   },
+    { label: 'Horarios',      icon: ClockIcon    },
+    { label: 'Configuración', icon: SettingsIcon },
+    { label: 'URL Pública',   icon: LinkIcon     },
   ];
 
   // Load ajustes
@@ -233,14 +219,6 @@ export function Ajustes() {
       })
       .catch(() => setError('No se pudieron cargar los ajustes.'))
       .finally(() => setLoading(false));
-  }, [user?.sucursalId]);
-
-  // Load estado MP
-  useEffect(() => {
-    if (!user?.sucursalId) return;
-    mercadopagoApi.obtenerEstado(user.sucursalId)
-      .then((e) => setMpYaConectado(e.conectado))
-      .catch(() => {});
   }, [user?.sucursalId]);
 
   // Save
@@ -406,14 +384,6 @@ export function Ajustes() {
           <div className="flex items-center gap-2 mb-4 px-4 py-3 bg-error/10 border border-error/20 rounded-lg text-sm text-error">
             <AlertCircleIcon className="w-4 h-4 flex-shrink-0" />
             {error}
-          </div>
-        )}
-
-        {/* MP conectado banner */}
-        {mpConectado && (
-          <div className="flex items-center gap-2 mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
-            <CheckIcon className="w-4 h-4 flex-shrink-0" />
-            Mercado Pago conectado exitosamente.
           </div>
         )}
 
@@ -891,31 +861,6 @@ export function Ajustes() {
               ) : (
                 <p className="text-sm text-text-muted">No se encontró el ID de la sucursal.</p>
               )}
-            </SectionCard>
-
-            {/* ── SECCIÓN 6: PAGOS ───────────────────────────────────── */}
-            <SectionCard
-              sectionRef={refs[5]}
-              icon={CreditCardIcon}
-              title="Pagos"
-              description="Conectá tu cuenta de Mercado Pago para aceptar pagos online en tus turnos."
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm font-medium text-text-primary">Mercado Pago</p>
-                  <p className="text-xs text-text-muted mt-0.5">
-                    Tus clientes podrán pagar la seña al momento de reservar.
-                  </p>
-                </div>
-                {user?.sucursalId && (
-                  <ConectarMercadoPagoButton
-                    sucursalId={user.sucursalId}
-                    yaConectado={mpYaConectado || mpConectado}
-                    onConectado={() => setMpYaConectado(true)}
-                    onDesconectado={() => { setMpYaConectado(false); setMpConectado(false); }}
-                  />
-                )}
-              </div>
             </SectionCard>
 
           </div>

@@ -373,11 +373,6 @@
     .badge-noshow       { background: #F5F3FF; color: #6D28D9; border-color: #DDD6FE; }
     .badge-dot-noshow   { background: #8B5CF6; }
 
-    .badge-ppago        { background: #FFFBEB; color: #B45309; border-color: #FDE68A; }
-    .badge-dot-ppago    { background: #F59E0B; }
-
-    .badge-prechazado   { background: #FEF2F2; color: #9F1239; border-color: #FECDD3; }
-    .badge-dot-prechazado { background: #F43F5E; }
 
     /* ── Role badges ── */
     .role-admin { background: #F3E8FF; color: #7E22CE; }
@@ -647,7 +642,6 @@
       <a href="#ajustes-horarios">Horarios de atencion</a>
       <a href="#ajustes-reservas">Configuracion de reservas</a>
       <a href="#ajustes-url">URL publica</a>
-      <a href="#ajustes-mp">Mercado Pago</a>
 
       <div class="nav-section">Agenda</div>
       <a href="#agenda">Vista de turnos</a>
@@ -658,7 +652,7 @@
       <a href="#turno-adjuntos">Adjuntos</a>
 
       <div class="nav-section">Catalogo</div>
-      <a href="#servicios">Servicios y senas</a>
+      <a href="#servicios">Servicios</a>
 
       <div class="nav-section">Equipo</div>
       <a href="#equipo">Usuarios y roles</a>
@@ -670,7 +664,6 @@
 
       <div class="nav-section">Cuenta</div>
       <a href="#notificaciones">Notificaciones</a>
-      <a href="#suscripcion">Suscripcion</a>
 
       <div class="nav-section">Clientes</div>
       <a href="#booking">Booking flow</a>
@@ -718,8 +711,8 @@
             <p>Vista diaria, semanal y mensual con actualizacion en tiempo real.</p>
           </div>
           <div class="feature-card">
-            <strong>Pagos integrados</strong>
-            <p>Cobros presenciales y senas online via Mercado Pago.</p>
+            <strong>Cobros y caja</strong>
+            <p>Registra cobros presenciales y lleva el control de ingresos por turno.</p>
           </div>
           <div class="feature-card">
             <strong>Equipo y permisos</strong>
@@ -963,36 +956,6 @@
       </section>
 
       <!-- ══════════════════════════════════════════════════════════════════ -->
-      <!-- 7. AJUSTES — MERCADO PAGO -->
-      <!-- ══════════════════════════════════════════════════════════════════ -->
-      <section class="section" id="ajustes-mp">
-        <div class="section-header">
-          <div class="section-icon">
-            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          </div>
-          <h2>Ajustes — Conexion a Mercado Pago</h2>
-        </div>
-
-        <p>Conecta tu cuenta de Mercado Pago para habilitar el cobro de senas online. Cuando este activado, tus clientes podran pagar la sena al momento de confirmar una reserva desde el booking publico.</p>
-
-        <img class="screenshot" src="capturas/ConexionMP.png" alt="Seccion Pagos en Ajustes con boton de conexion Mercado Pago">
-
-        <h3>Como conectar tu cuenta</h3>
-        <div class="steps">
-          <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Haz clic en "Conectar con Mercado Pago"</strong><p>Seras redirigido al sitio oficial de Mercado Pago para autorizar la conexion.</p></div></div>
-          <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Inicia sesion en Mercado Pago</strong><p>Usa la cuenta del negocio (la asociada al email de metaturnos). Esta cuenta recibira los pagos de las senas.</p></div></div>
-          <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Autoriza los permisos</strong><p>Mercado Pago pedira permiso para que MetaTurnos cree cobros en nombre de tu cuenta.</p></div></div>
-          <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Volveras automaticamente a Ajustes</strong><p>Aparecera el mensaje "Mercado Pago conectado exitosamente" en verde.</p></div></div>
-        </div>
-
-        <img class="screenshot" src="capturas/AutorizacionMP.png" alt="Pantalla de autorizacion de Mercado Pago">
-
-        <div class="callout info">
-          <span class="callout-icon">&#8505;</span>
-          <div>Para desconectar la cuenta, haz clic en el boton "Desconectar" que aparece cuando ya esta conectado. Esto no cancela los pagos ya procesados.</div>
-        </div>
-      </section>
-
       <!-- ══════════════════════════════════════════════════════════════════ -->
       <!-- 8. AGENDA -->
       <!-- ══════════════════════════════════════════════════════════════════ -->
@@ -1074,7 +1037,6 @@
           <li>Estado actual con su etiqueta de color.</li>
           <li>Origen del turno (<em>Staff</em> si lo cargo el equipo, <em>Booking</em> si lo reservo el cliente online).</li>
           <li>Observaciones del turno.</li>
-          <li>Total cobrado y monto de la sena (si aplica).</li>
         </ul>
 
         <h3>Acciones principales</h3>
@@ -1104,12 +1066,10 @@
 
         <div class="badges">
           <span class="badge badge-pendiente"><span class="badge-dot badge-dot-pendiente"></span>Pendiente</span>
-          <span class="badge badge-ppago"><span class="badge-dot badge-dot-ppago"></span>Pendiente de pago</span>
           <span class="badge badge-confirmado"><span class="badge-dot badge-dot-confirmado"></span>Confirmado</span>
           <span class="badge badge-completado"><span class="badge-dot badge-dot-completado"></span>Completado</span>
           <span class="badge badge-cancelado"><span class="badge-dot badge-dot-cancelado"></span>Cancelado</span>
           <span class="badge badge-noshow"><span class="badge-dot badge-dot-noshow"></span>No Show</span>
-          <span class="badge badge-prechazado"><span class="badge-dot badge-dot-prechazado"></span>Pago rechazado</span>
         </div>
 
         <img class="screenshot" src="capturas/Vista_drawer_turno.png" alt="Etiquetas de estado en el detalle de un turno">
@@ -1121,11 +1081,6 @@
               <td>Pendiente</td>
               <td>El turno fue creado pero aun no fue confirmado. Sucede cuando el modo de confirmacion esta en Manual.</td>
               <td>El staff lo confirma o lo cancela.</td>
-            </tr>
-            <tr>
-              <td>Pendiente de pago</td>
-              <td>El cliente reservo online y necesita pagar la sena para confirmar el turno.</td>
-              <td>El sistema lo confirma automaticamente cuando se acredita el pago.</td>
             </tr>
             <tr>
               <td>Confirmado</td>
@@ -1152,11 +1107,6 @@
               <td>El cliente no se presento al turno.</td>
               <td>Estado final. Se registra para que aparezca en los reportes y en el historial del cliente.</td>
             </tr>
-            <tr>
-              <td>Pago rechazado</td>
-              <td>El cliente intento pagar la sena online pero el pago fue rechazado por Mercado Pago.</td>
-              <td>El turno se cancela automaticamente. El cliente puede intentar reservar nuevamente.</td>
-            </tr>
           </tbody>
         </table>
       </section>
@@ -1182,8 +1132,8 @@
           <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Haz clic en "Registrar pago"</strong><p>Se abre un modal con los campos del pago.</p></div></div>
           <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Completa los datos</strong><p>
             <ul>
-              <li><strong>Concepto:</strong> Pago total, Pago parcial, Sena o Ajuste.</li>
-              <li><strong>Medio de pago:</strong> Efectivo o Mercado Pago.</li>
+              <li><strong>Concepto:</strong> Pago total, Pago parcial o Ajuste.</li>
+              <li><strong>Medio de pago:</strong> Efectivo.</li>
               <li><strong>Monto:</strong> se pre-completa con el saldo pendiente del turno.</li>
               <li><strong>Observaciones:</strong> nota interna opcional.</li>
             </ul>
@@ -1191,10 +1141,6 @@
           <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Confirma el pago</strong><p>El movimiento queda registrado en la caja y el total cobrado del turno se actualiza inmediatamente.</p></div></div>
         </div>
 
-        <div class="callout info">
-          <span class="callout-icon">&#8505;</span>
-          <div>Los pagos online de senas via Mercado Pago se registran automaticamente. No es necesario cargarlos manualmente.</div>
-        </div>
       </section>
 
       <!-- ══════════════════════════════════════════════════════════════════ -->
@@ -1253,12 +1199,12 @@
           <div class="section-icon">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
           </div>
-          <h2>Servicios y senas</h2>
+          <h2>Servicios</h2>
         </div>
 
         <p>Los servicios son lo que tus clientes pueden reservar. Desde <strong>Menu lateral &rarr; Servicios</strong> podras crear, editar, activar y desactivar servicios.</p>
 
-        <img class="screenshot" src="capturas/Servicios.png" alt="Listado de servicios y senas">
+        <img class="screenshot" src="capturas/Servicios.png" alt="Listado de servicios">
 
         <h3>Crear o editar un servicio</h3>
         <p>Haz clic en <strong>+ Nuevo servicio</strong> o en el icono de lapiz de un servicio existente. Se abre un modal con los siguientes campos:</p>
@@ -1280,30 +1226,6 @@
             </tr>
           </tbody>
         </table>
-
-        <h3>Senas</h3>
-        <p>Si el servicio requiere un pago anticipado (sena) para confirmar la reserva, activa la opcion <strong>Requiere sena</strong> y configura:</p>
-
-        <table class="config-table">
-          <thead><tr><th>Tipo de sena</th><th>Descripcion</th><th>Ejemplo</th></tr></thead>
-          <tbody>
-            <tr>
-              <td>Fija ($)</td>
-              <td>El cliente paga un monto fijo sin importar el precio del servicio.</td>
-              <td>Sena de $2.000 para un servicio de $10.000.</td>
-            </tr>
-            <tr>
-              <td>Porcentaje (%)</td>
-              <td>El cliente paga un porcentaje del precio del servicio.</td>
-              <td>30% de sena = $3.000 para un servicio de $10.000.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="callout info">
-          <span class="callout-icon">&#8505;</span>
-          <div>Para que el cobro de senas funcione online, tu cuenta de Mercado Pago debe estar conectada en Ajustes. Si MP no esta conectado, el turno queda como Pendiente de pago y no se acepta el pago.</div>
-        </div>
 
         <h3>Servicios a domicilio — mensaje del cliente</h3>
         <p>Cuando un servicio tiene la modalidad <strong>A domicilio</strong>, el proceso de reserva cambia levemente para que el cliente pueda indicar donde debe ir el profesional.</p>
@@ -1446,7 +1368,6 @@
               <tr><td>Gestionar servicios</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
               <tr><td>Gestionar ajustes</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-opt">Permiso</td><td class="perm-no">&#8212;</td></tr>
               <tr><td>Ver reportes</td><td class="perm-yes">&#10003;</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
-              <tr><td>Gestionar suscripcion</td><td class="perm-yes">&#10003;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td><td class="perm-no">&#8212;</td></tr>
             </tbody>
           </table>
         </div>
@@ -1513,14 +1434,12 @@
           <div class="feature-card"><strong>Cancelados</strong><p>Cancelados por el cliente o el staff.</p></div>
           <div class="feature-card"><strong>No Show</strong><p>Clientes que no se presentaron.</p></div>
           <div class="feature-card"><strong>Pendientes</strong><p>Turnos confirmados a futuro.</p></div>
-          <div class="feature-card"><strong>Pendiente de pago</strong><p>Reservas sin sena pagada.</p></div>
         </div>
 
         <h3>Seccion Ingresos</h3>
         <ul>
           <li><strong>Total cobrado:</strong> suma de todos los pagos registrados en el periodo.</li>
           <li><strong>Grafico de barras:</strong> ingresos diarios de los ultimos 14 dias del rango seleccionado.</li>
-          <li><strong>Desglose por medio de pago:</strong> porcentaje y monto cobrado en Efectivo vs Mercado Pago.</li>
         </ul>
 
         <h3>Top servicios y top profesionales</h3>
@@ -1580,48 +1499,6 @@
       <!-- ══════════════════════════════════════════════════════════════════ -->
       <!-- 20. SUSCRIPCION -->
       <!-- ══════════════════════════════════════════════════════════════════ -->
-      <section class="section" id="suscripcion">
-        <div class="section-header">
-          <div class="section-icon">
-            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-          <h2>Suscripcion</h2>
-        </div>
-
-        <p>Desde <strong>Menu lateral &rarr; Suscripcion</strong> podras ver el estado de tu plan, cambiar de plan y consultar el historial de pagos. <strong>Solo el propietario (Owner) puede acceder a esta seccion.</strong></p>
-
-        <img class="screenshot" src="capturas/Suscripcion.png" alt="Pagina de suscripcion con plan actual y planes disponibles">
-
-        <h3>Estado actual</h3>
-        <p>La tarjeta principal muestra:</p>
-        <ul>
-          <li>Nombre del plan activo y su precio mensual.</li>
-          <li>Estado: <strong>Activa</strong>, <strong>Periodo de prueba</strong> o <strong>Vencida</strong>.</li>
-          <li>Fecha de vencimiento.</li>
-          <li>Barras de uso de <strong>usuarios</strong> y <strong>turnos del mes</strong> con colores que indican el nivel de ocupacion (verde, amarillo, rojo).</li>
-        </ul>
-
-        <h3>Alertas automaticas</h3>
-        <p>El sistema muestra alertas visibles en esta pantalla cuando:</p>
-        <ul>
-          <li>La suscripcion esta vencida.</li>
-          <li>El periodo de prueba vence en menos de 3 dias.</li>
-          <li>Se alcanzo el 90% del limite de usuarios o turnos.</li>
-          <li>Se supero el cupo del plan (se muestran los usuarios o turnos extras activos y se bloquean nuevos).</li>
-        </ul>
-
-        <h3>Cambiar de plan</h3>
-        <p>Debajo del estado actual se muestran todos los planes disponibles. El plan actual aparece marcado. Para cambiar, haz clic en <strong>Seleccionar este plan</strong> en la tarjeta deseada. Seras redirigido a Mercado Pago para completar el pago. Al volver, el nuevo plan se activa inmediatamente.</p>
-
-        <h3>Historial de pagos</h3>
-        <p>Al final de la pagina hay una tabla con todos los pagos de suscripcion: fecha, plan, monto e ID de pago de Mercado Pago.</p>
-
-        <div class="callout info">
-          <span class="callout-icon">&#8505;</span>
-          <div>Si tenes problemas de facturacion o necesitas asistencia tecnica, podes contactar a soporte desde el boton al pie de la pantalla de Suscripcion.</div>
-        </div>
-      </section>
-
       <!-- ══════════════════════════════════════════════════════════════════ -->
       <!-- 21. BOOKING FLOW -->
       <!-- ══════════════════════════════════════════════════════════════════ -->
@@ -1670,13 +1547,6 @@
           </div>
           <div class="step">
             <div class="step-num">5</div>
-            <div class="step-content">
-              <strong>Pago de la sena (si aplica)</strong>
-              <p>Si el servicio requiere sena y la cuenta de Mercado Pago esta conectada, se muestra el monto de la sena y el boton para pagar. El cliente es redirigido al checkout de Mercado Pago. Al completar el pago, el turno queda <strong>Confirmado</strong>. Si el pago falla, el turno queda cancelado con estado <em>Pago rechazado</em>.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num">6</div>
             <div class="step-content">
               <strong>Confirmacion</strong>
               <p>El cliente ve una pantalla de confirmacion con todos los detalles del turno. Tambien recibe un email con los datos y su link personal de gestion.</p>

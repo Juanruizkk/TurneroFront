@@ -60,6 +60,8 @@ const defaultForm = (): AjustesSucursal => ({
   modoConfirmacionTurnos: 'Automatico' as const,
   mensajeWhatsApp24h: 'Hola {{ClienteNombre}}! Te recordamos tu turno de {{Servicio}} mañana {{Fecha}} a las {{Hora}}. ¡Te esperamos!',
   mensajeWhatsApp3h: 'Hola {{ClienteNombre}}! Tu turno de {{Servicio}} es hoy a las {{Hora}}. ¡Te esperamos pronto!',
+  botWhatsappHabilitado: false,
+  chatwootInboxId: null,
 });
 
 // ─── Steps definition ─────────────────────────────────────────────────────────
