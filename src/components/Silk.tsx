@@ -175,7 +175,7 @@ export default function Silk({
     const uLightModeLoc = gl.getUniformLocation(program, 'uLightMode');
 
     let animationFrameId: number;
-    let startTime = performance.now();
+    const startTime = performance.now();
 
     const resize = () => {
       if (!canvas) return;
