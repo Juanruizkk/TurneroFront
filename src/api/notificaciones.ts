@@ -13,7 +13,7 @@ export const notificacionesApi = {
   getNoLeidas: () => api.get<NotificacionDto[]>('/notificaciones'),
 
   /** Marca todas las notificaciones de la sucursal como leídas. */
-  marcarLeidas: () => api.patch<void>('/notificaciones/leer'),
+  marcarLeidas: () => api.patch<void>('/notificaciones/leer', null),
 
   /** Elimina todas las notificaciones de la sucursal. */
   limpiar: () => api.delete<void>('/notificaciones'),
