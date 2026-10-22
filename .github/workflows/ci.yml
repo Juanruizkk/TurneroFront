@@ -102,7 +102,7 @@ jobs:
         run: npm ci
 
       - name: Snyk test — dependencias npm
-        uses: snyk/actions/node@master
+        uses: snyk/actions/node@11b673cfb4b0dc0d860a1323caa199d54950dcce
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -116,7 +116,7 @@ jobs:
             -t turnero-frontend:${{ github.sha }} .
 
       - name: Snyk test — imagen Docker
-        uses: snyk/actions/docker@master
+        uses: snyk/actions/docker@11b673cfb4b0dc0d860a1323caa199d54950dcce
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -133,5 +133,12 @@ jobs:
 
     steps:
       - name: Trigger Dokploy webhook
+        env:
+          DOKPLOY_WEBHOOK_URL: ${{ secrets.DOKPLOY_FRONTEND_WEBHOOK_URL }}
         run: |
-          curl -fsSL -X POST "${{ secrets.DOKPLOY_WEBHOOK_URL }}"
+          if [ -z "$DOKPLOY_WEBHOOK_URL" ]; then
+            echo "::error::El secret DOKPLOY_FRONTEND_WEBHOOK_URL no está configurado."
+            echo "Ir a: GitHub repo → Settings → Secrets and variables → Actions → New repository secret"
+            exit 1
+          fi
+          curl -fsSL -X POST "$DOKPLOY_WEBHOOK_URL"
