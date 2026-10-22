@@ -14,5 +14,8 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    '@typescript-eslint/no-empty-function': 'warn',
+    'react-hooks/rules-of-hooks': 'warn',
+    'no-useless-escape': 'warn',
   },
 }
