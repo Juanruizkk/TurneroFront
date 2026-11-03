@@ -12,8 +12,6 @@ import { AceptarInvitacion } from './pages/public/AceptarInvitacion';
 import  Landing  from './pages/public/Landing';
 import { BookingFlow } from './pages/public/BookingFlow';
 import { TurnoToken } from './pages/public/TurnoToken';
-import { PagoExitoso } from './pages/public/PagoExitoso';
-import { PagoFallido } from './pages/public/PagoFallido';
 import { ForgotPassword } from './pages/public/ForgotPassword';
 import { ResetPassword } from './pages/public/ResetPassword';
 import { SucursalPage } from './pages/public/SucursalPage';
@@ -62,9 +60,6 @@ export function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reservar" element={<BookingFlow />} />
-          <Route path="/reserva/pago/exitoso" element={<PagoExitoso />} />
-          <Route path="/reserva/pago/fallido" element={<PagoFallido />} />
-          <Route path="/reserva/pago/pendiente" element={<PagoExitoso />} />
           <Route path="/turno/:token" element={<TurnoToken />} />
           <Route path="/invitacion/:token" element={<AceptarInvitacion />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

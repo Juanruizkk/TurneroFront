@@ -354,8 +354,8 @@ function TiltCalendar() {
           <TrendingUpIcon size={16} className="text-emerald-700" />
         </div>
         <div>
-          <p className="text-[11px] font-bold text-text-primary leading-none">+35% Asistencia</p>
-          <p className="text-[9.5px] text-text-muted mt-0.5">Señas previas con Mercado Pago</p>
+          <p className="text-[11px] font-bold text-text-primary leading-none">Reservas 24/7</p>
+          <p className="text-[9.5px] text-text-muted mt-0.5">Tu agenda se llena sola</p>
         </div>
       </div>
 
@@ -368,8 +368,8 @@ function TiltCalendar() {
           <MessageCircleIcon size={16} className="text-primary" />
         </div>
         <div>
-          <p className="text-[11px] font-bold text-text-primary leading-none">Recordatorio WhatsApp</p>
-          <p className="text-[9.5px] text-text-muted mt-0.5">Enviado 24hs antes del turno</p>
+          <p className="text-[11px] font-bold text-text-primary leading-none">Confirmación al instante</p>
+          <p className="text-[9.5px] text-text-muted mt-0.5">El cliente recibe su enlace de turno</p>
         </div>
       </div>
     </div>
@@ -420,7 +420,7 @@ function Hero() {
                 </span>
               </h1>
               <p className="mt-5 font-body text-base sm:text-lg text-text-secondary leading-relaxed max-w-xl">
-                Automatizá tus turnos, cobrá señas con <strong className="text-text-primary font-semibold">Mercado Pago</strong> y enviá recordatorios automáticos.
+                Centralizá tu agenda, gestioná pagos y señas en caja y controlá todo tu negocio <strong className="text-text-primary font-semibold">en tiempo real</strong>.
                 Tus clientes reservan solos en <strong className="text-primary font-semibold">30 segundos</strong> desde el celular sin llamadas ni chats desordenados.
               </p>
             </div>
@@ -570,7 +570,7 @@ function ProblemsSection() {
 
         <div className="mt-12 text-center p-6 rounded-2xl bg-primary/10 border border-primary/20 max-w-3xl mx-auto">
           <p className="text-base sm:text-lg font-medium text-text-primary">
-            <strong className="text-primary font-bold">MetaTurnos soluciona todo esto.</strong> Tus clientes reservan solos, pagan seña si lo deseás y reciben recordatorios automáticos.
+            <strong className="text-primary font-bold">MetaTurnos soluciona todo esto.</strong> Tus clientes reservan solos, pedís seña si lo deseás y controlás pagos y caja en un solo lugar.
           </p>
         </div>
       </div>
@@ -614,10 +614,10 @@ const RUBROS: RubroItem[] = [
     name: 'Médicos & Consultorios',
     icon: <StethoscopeIcon size={18} />,
     tag: 'Salud y Medicina',
-    headline: 'Atención profesional con ficha clínica y recordatorios',
+    headline: 'Atención profesional con ficha clínica y adjuntos',
     description: 'Ideal para médicos clínicos, pediatras, odontólogos y consultorios. Organizá sobreturnos y adjuntá órdenes o estudios.',
     bullets: [
-      'Recordatorios automáticos para reducir ausentismo',
+      'Seguimiento de ausencias (no-show) en los reportes',
       'Adjuntos de estudios y notas privadas en cada turno',
       'Múltiples especialidades en la misma clínica',
       'Reserva sin que el paciente tenga que crear cuenta',
@@ -630,16 +630,16 @@ const RUBROS: RubroItem[] = [
     name: 'Estética & Uñas',
     icon: <SparklesIcon size={18} />,
     tag: 'Belleza y Cuidado',
-    headline: 'Congelá turnos cobrando seña previa por Mercado Pago',
+    headline: 'Congelá turnos pidiendo una seña para confirmar',
     description: 'Protegé tus horas de trabajo en manicuría, pedicuría, pestañas o depilación exigiendo una seña para confirmar el turno.',
     bullets: [
-      'Cobro del 30%, 50% o 100% mediante Mercado Pago',
+      'Seña fija o porcentual configurable por servicio',
       'Catálogo de servicios con fotos y tiempos de aplicación',
-      'Notificación inmediata al acreditarse el pago',
+      'Registro de seña y saldo en la caja del día',
       'Historial de visitas y preferencias de cada clienta',
     ],
     sampleDuration: '45 a 120 min',
-    sampleDeposit: 'Seña previa del 50%',
+    sampleDeposit: 'Seña previa configurable',
   },
   {
     id: 'psicologia',
@@ -649,13 +649,13 @@ const RUBROS: RubroItem[] = [
     headline: 'Sesiones presenciales o virtuales con máxima privacidad',
     description: 'Gestión discreta de pacientes para psicólogos, terapeutas holísticos y coaches. Bloqueo de intervalos para descanso entre sesiones.',
     bullets: [
-      'Intervalos automáticos de 10-15 min entre pacientes',
-      'Enlaces a videollamada incluidos en la confirmación',
+      'Intervalos configurables de 10-15 min entre pacientes',
+      'Modalidad presencial o virtual según el servicio',
       'Manejo de sesiones recurrentes semanales o quincenales',
       'Historial confidencial de cada paciente',
     ],
     sampleDuration: '50 a 60 min',
-    sampleDeposit: 'Pago adelantado integrado',
+    sampleDeposit: 'Seña o pago adelantado',
   },
 ];
 
@@ -751,8 +751,8 @@ function RubrosSection() {
                   <span className="font-semibold text-text-primary">{current.sampleDuration}</span>
                 </div>
                 <div className="p-3 rounded-lg bg-surface-soft/60 flex items-center justify-between">
-                  <span>Notificaciones:</span>
-                  <span className="font-semibold text-text-primary">WhatsApp & Email</span>
+                  <span>Confirmación:</span>
+                  <span className="font-semibold text-text-primary">Enlace de gestión al cliente</span>
                 </div>
               </div>
 
@@ -822,12 +822,12 @@ const SCREENSHOTS: ScreenshotItem[] = [
   },
   {
     id: 'pagos',
-    category: 'Mercado Pago',
-    title: 'Cobro de Señas e Integración MP',
-    subtitle: 'Asegurá tus turnos cobrando un anticipo mediante Mercado Pago',
+    category: 'Pagos & Señas',
+    title: 'Gestión de Pagos y Señas',
+    subtitle: 'Registrá seña, pagos parciales y saldo de cada turno',
     image: '/capturas/Turno_pagos.png',
-    description: 'Conectá tu cuenta de Mercado Pago en dos clicks. Cuando un cliente solicita un turno, puede abonar la seña o el total antes de confirmar para garantizar su asistencia.',
-    highlights: ['Integración con SDK oficial MP', 'Acreditación instantánea de señas', 'Menor tasa de no-shows (ausentes)'],
+    description: 'Definí si un servicio requiere seña (fija o porcentual) y registrá los pagos de cada turno con el saldo siempre actualizado. Todo queda reflejado en la caja del día.',
+    highlights: ['Seña fija o porcentual por servicio', 'Pagos parciales, totales y saldo', 'Reflejado en la caja diaria'],
   },
 ];
 
@@ -985,11 +985,11 @@ function ScreenshotsGallery() {
 
 function WorkflowPipeline() {
   const steps = [
-    { num: '01', title: 'Link Único', desc: 'Pegás tu enlace en la biografía de Instagram o enviás por WhatsApp.' },
-    { num: '02', title: 'Reserva sin Fricción', desc: 'Tu cliente elige profesional, servicio y fecha sin registrarse.' },
-    { num: '03', title: 'Seña con Mercado Pago', desc: 'Pago seguro para congelar el turno y asegurar asistencia.' },
-    { num: '04', title: 'Recordatorio Automático', desc: 'Notificación 24hs antes con detalles y opción de reagendar.' },
-    { num: '05', title: 'Control en Vivo', desc: 'Tu agenda se llena sola mientras vos atendés tu negocio.' },
+    { num: '01', title: 'Link Único', desc: 'Compartís tu enlace de reservas en la biografía de Instagram, por WhatsApp o donde quieras.' },
+    { num: '02', title: 'Reserva sin Fricción', desc: 'Tu cliente elige profesional, servicio y horario disponible sin tener que registrarse.' },
+    { num: '03', title: 'Confirmación con Enlace', desc: 'Recibe la confirmación del turno y un enlace propio para consultarlo o cancelarlo.' },
+    { num: '04', title: 'Pagos y Caja', desc: 'Registrás seña, pagos parciales y saldo de cada turno, con control de caja diario.' },
+    { num: '05', title: 'Control en Vivo', desc: 'Tu agenda se actualiza en tiempo real y medís todo el negocio con reportes.' },
   ];
 
   return (
@@ -1056,7 +1056,7 @@ function HowItWorks() {
     {
       step: '4',
       title: 'Recibís turnos en vivo',
-      desc: 'Tus clientes reservan solos, el sistema valida solapamientos y les manda recordatorio.',
+      desc: 'Tus clientes reservan solos, el sistema valida solapamientos y lo ves en tu agenda al instante.',
       icon: <CheckCircle2Icon size={20} className="text-primary" />,
     },
   ];
@@ -1106,7 +1106,7 @@ function TechShowcase() {
     { name: 'Entity Framework Core', role: 'ORM con soporte PostgreSQL / SQL Server' },
     { name: 'React 18 & TypeScript', role: 'Frontend modular, tipado estricto y Vite' },
     { name: 'Tailwind CSS', role: 'Diseño accesible y tokens personalizados' },
-    { name: 'Mercado Pago SDK', role: 'Pasarela de pagos y cobro de señas' },
+    { name: 'Cloudinary', role: 'Almacenamiento de adjuntos e imágenes' },
     { name: 'PWA Ready', role: 'Instalable en iOS y Android sin App Store' },
     { name: 'Docker & CI/CD', role: 'Contenedores listos para deploy en nube' },
   ];
@@ -1196,8 +1196,8 @@ function FAQ() {
       a: 'No. No necesitan instalar ninguna app ni crearse cuenta. Entran directo a tu link (desde Instagram, WhatsApp o navegador), seleccionan el servicio y horario, completan su nombre y teléfono, y confirman en menos de 30 segundos.',
     },
     {
-      q: '¿Cómo funciona el cobro de señas con Mercado Pago?',
-      a: 'Podés vincular tu cuenta de Mercado Pago desde la sección de ajustes. Al crear un servicio, podés definir si requiere seña previa (ej. 30% o el total) para que el turno quede confirmado únicamente cuando el pago impacte.',
+      q: '¿Puedo pedir una seña para confirmar los turnos?',
+      a: 'Sí. Al crear un servicio podés definir si requiere seña: un monto fijo o un porcentaje del precio. El sistema calcula la seña y el saldo de cada turno, y registrás los pagos (seña, parcial o total) desde la caja del negocio.',
     },
     {
       q: '¿Puedo tener varios profesionales o empleados?',

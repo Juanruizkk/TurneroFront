@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BuildingIcon, MapPinIcon, ClockIcon, SettingsIcon, TagIcon,
-  UsersIcon, CreditCardIcon, ChevronLeftIcon, ChevronRightIcon,
+  UsersIcon, ChevronLeftIcon, ChevronRightIcon,
   XIcon, CheckIcon, CheckCircle2Icon, PlusIcon, Loader2Icon,
   BookOpenIcon, PhoneIcon, MailIcon, AlertTriangleIcon, SparklesIcon,
 } from 'lucide-react';
@@ -11,7 +11,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { ajustesApi } from '../../api/ajustes';
 import { serviciosApi } from '../../api/servicios';
 import { usuariosApi } from '../../api/usuarios';
-import { ConectarMercadoPagoButton } from '../../components/admin/ConectarMercadoPagoButton';
 import type {
   AjustesSucursal, DiaSemana, ModoConfirmacionTurnos,
   CrearServicioDto, Servicio, RolUsuario, ModalidadPrestacion,
@@ -73,7 +72,6 @@ const STEPS = [
   { id: 'reservas',  title: 'Reservas',  icon: SettingsIcon,    optional: false },
   { id: 'servicios', title: 'Servicios', icon: TagIcon,         optional: false },
   { id: 'equipo',    title: 'Equipo',    icon: UsersIcon,       optional: true  },
-  { id: 'pagos',     title: 'Pagos',     icon: CreditCardIcon,  optional: true  },
 ];
 
 // ─── Small shared UI ──────────────────────────────────────────────────────────
@@ -139,9 +137,6 @@ export function OnboardingWizard() {
   });
   const [addingUser, setAddingUser] = useState(false);
   const [userError, setUserError]   = useState('');
-
-  // MP
-  const [mpConectado, setMpConectado] = useState(false);
 
   // ── Load existing ajustes ──────────────────────────────────────────────────
   useEffect(() => {
@@ -880,39 +875,6 @@ export function OnboardingWizard() {
           </div>
         );
 
-      // ── Paso 6: MercadoPago ─────────────────────────────────────────────
-      case 6:
-        return (
-          <div className="space-y-5">
-            <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-              <CreditCardIcon className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-blue-800">
-                Conectá tu cuenta de <strong>Mercado Pago</strong> para aceptar pagos online en tus turnos. Este paso es <strong>opcional</strong> y podés hacerlo más adelante desde <strong>Ajustes → Pagos</strong>.
-              </p>
-            </div>
-
-            <div className="flex flex-col items-center gap-4 py-6">
-              {mpConectado ? (
-                <div className="flex items-center gap-3 px-5 py-4 bg-green-50 border border-green-200 rounded-xl">
-                  <CheckCircle2Icon className="w-5 h-5 text-green-600" />
-                  <p className="text-sm font-medium text-green-700">Mercado Pago conectado exitosamente.</p>
-                </div>
-              ) : (
-                <ConectarMercadoPagoButton
-                  sucursalId={sucursalId}
-                  yaConectado={false}
-                  newTab
-                  onConectado={() => setMpConectado(true)}
-                  onDesconectado={() => setMpConectado(false)}
-                />
-              )}
-              <p className="text-xs text-slate-400 text-center max-w-xs">
-                Se abrirá Mercado Pago en una nueva pestaña. Una vez autorizado podés volver aquí y continuar.
-              </p>
-            </div>
-          </div>
-        );
-
       default:
         return null;
     }
@@ -1005,7 +967,6 @@ export function OnboardingWizard() {
               {step === 3 && 'Parámetros para la gestión de turnos.'}
               {step === 4 && 'Definí qué servicios ofrecés.'}
               {step === 5 && 'Invitá colaboradores a tu equipo.'}
-              {step === 6 && 'Aceptá pagos online con Mercado Pago.'}
             </p>
           </div>
 
