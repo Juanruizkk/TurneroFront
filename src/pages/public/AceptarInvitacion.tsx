@@ -14,6 +14,8 @@ import {
 import { api } from '../../api/client';
 import { useAuth, getHomeRoute } from '../../contexts/AuthContext';
 import type { LoginResponseDto } from '../../types';
+import { isPasswordStrong } from '../../utils/password';
+import PasswordRequirements from '../../components/auth/PasswordRequirements';
 
 interface InfoInvitacion {
   nombre: string;
@@ -57,7 +59,7 @@ export function AceptarInvitacion() {
   }, [token]);
 
   const passwordsMatch = password && confirm && password === confirm;
-  const canSubmit      = passwordsMatch && password.length >= 8 && !saving;
+  const canSubmit      = passwordsMatch && isPasswordStrong(password) && !saving;
 
   const handleSubmitConPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -268,7 +270,7 @@ export function AceptarInvitacion() {
                   type={showPass ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 8 caracteres"
+                  placeholder="Contraseña segura"
                   className="w-full pl-10 pr-10 py-2.5 rounded-input border border-border bg-surface-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)}
@@ -276,6 +278,7 @@ export function AceptarInvitacion() {
                   {showPass ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                 </button>
               </div>
+              <PasswordRequirements password={password} />
             </div>
 
             <div>

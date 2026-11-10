@@ -10,6 +10,7 @@ import {
   CheckCircle2Icon, AlertCircleIcon
 } from 'lucide-react';
 import Silk from '../../components/Silk';
+import ReportarProblema from '../../components/soporte/ReportarProblema';
 
 // ─── Demo calendar data (Hero) ──────────────────────────────────────────────────
 
@@ -105,7 +106,7 @@ function Navbar() {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <a
-            href="https://www.linkedin.com"
+            href="https://www.linkedin.com/in/juanruizkk/"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-button text-xs font-semibold text-text-secondary hover:text-primary hover:bg-surface-soft transition-colors border border-border"
@@ -120,7 +121,7 @@ function Navbar() {
             Iniciar sesión
           </Link>
           <Link
-            to="/register"
+            to="/probar-demo"
             className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-button text-xs sm:text-sm font-semibold font-body text-white bg-gradient-to-r from-[#1D6052] via-primary to-[#3DA38D] hover:opacity-95 transition-all shadow-[0_2px_12px_rgba(47,125,107,0.3)] hover:shadow-[0_4px_18px_rgba(47,125,107,0.45)]"
           >
             <ZapIcon size={14} className="text-yellow-300" />
@@ -162,7 +163,7 @@ function Navbar() {
               Iniciar sesión
             </Link>
             <a
-              href="https://www.linkedin.com"
+              href="https://www.linkedin.com/in/juanruizkk/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-button text-sm font-semibold text-text-secondary border border-border hover:bg-surface-soft"
@@ -428,7 +429,7 @@ function Hero() {
             {/* Main CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <Link
-                to="/register"
+                to="/probar-demo"
                 className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-button font-bold font-body text-white bg-gradient-to-r from-[#1D6052] via-primary to-[#3DA38D] hover:opacity-95 transition-all shadow-[0_4px_24px_rgba(47,125,107,0.35)] text-sm sm:text-base group"
               >
                 Probar sistema gratis
@@ -1134,7 +1135,7 @@ function TechShowcase() {
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a
-                href="https://www.linkedin.com"
+                href="https://www.linkedin.com/in/juanruizkk/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-button font-bold text-sm bg-[#0A66C2] hover:bg-[#004182] text-white transition-all shadow-md"
@@ -1293,7 +1294,7 @@ function CtaFinal() {
             <ArrowRightIcon size={18} />
           </Link>
           <a
-            href="https://www.linkedin.com"
+            href="https://www.linkedin.com/in/juanruizkk/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-button font-semibold text-white bg-white/15 hover:bg-white/25 border border-white/25 transition-all text-base"
@@ -1325,7 +1326,7 @@ function Footer() {
             </p>
             <div className="mt-4 flex items-center gap-3">
               <a
-                href="https://www.linkedin.com"
+                href="https://www.linkedin.com/in/juanruizkk/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-white/10 hover:bg-white/20 text-xs text-white transition-colors"
@@ -1375,7 +1376,10 @@ function Footer() {
 
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/40">
           <p>© {year} MetaTurnos. Proyecto abierto desarrollado por Juan Ruiz.</p>
-          <p>Hecho con ♥ para barberos, médicos, estéticas y profesionales independientes.</p>
+          <div className="flex flex-col sm:flex-row items-center gap-x-5 gap-y-2">
+            <ReportarProblema />
+            <p>Hecho con ♥ para barberos, médicos, estéticas y profesionales independientes.</p>
+          </div>
         </div>
       </div>
     </footer>

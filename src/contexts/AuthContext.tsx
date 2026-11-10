@@ -21,6 +21,10 @@ export interface SessionUser {
   userId?: string;
   sucursalId?: string;
   permisos: PermisoSistema[];
+  /** True si la sesión es una demo efímera. */
+  esDemo?: boolean;
+  /** ISO de expiración de la demo. */
+  demoExpiraEn?: string;
 }
 
 export type LoginResult =
@@ -74,6 +78,8 @@ function buildSession(response: {
   userId?: string;
   sucursalId?: string;
   permisos?: PermisoSistema[];
+  esDemo?: boolean;
+  demoExpiraEn?: string;
 }): SessionUser {
   return {
     token:        response.token!,
@@ -86,6 +92,8 @@ function buildSession(response: {
     userId:       response.userId,
     sucursalId:   response.sucursalId,
     permisos:     response.permisos ?? [],
+    esDemo:       response.esDemo ?? false,
+    demoExpiraEn: response.demoExpiraEn,
   };
 }
 
@@ -133,6 +141,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     userId?: string;
     sucursalId?: string;
     permisos?: string[];
+    esDemo?: boolean;
+    demoExpiraEn?: string;
   }): SessionUser => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const session = buildSession(response as any);
@@ -143,6 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('turnero_demo_sesion');
     setUser(null);
   }, []);
 
