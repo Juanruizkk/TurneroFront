@@ -27,6 +27,20 @@ Interfaz web del sistema de gestión de turnos **MetaTurnos**: reserva pública 
 - Actualizaciones en **tiempo real** vía SignalR.
 - Exportación a **PDF/Excel** de reportes.
 
+## Capturas
+
+| Reserva pública | Agenda de turnos |
+|---|---|
+| ![Reserva](public/capturas/pagina_reservas.png) | ![Agenda](public/capturas/Vista_turnos.png) |
+
+| Detalle del turno | Reportes |
+|---|---|
+| ![Detalle](public/capturas/Vista_drawer_turno.png) | ![Reportes](public/capturas/reportes.png) |
+
+| Servicios | Equipo y roles |
+|---|---|
+| ![Servicios](public/capturas/Servicios.png) | ![Equipo](public/capturas/equipo.png) |
+
 ## Stack
 
 | Área | Tecnología |
