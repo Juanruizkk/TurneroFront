@@ -287,6 +287,10 @@ export interface SucursalSuperAdmin {
   email: string;
   activa: boolean;
   fechaCreacion: string; // ISO 8601
+  /** True si es una demo efímera (se auto-destruye al vencer). */
+  esDemo: boolean;
+  /** Instante de expiración si es demo; null en caso contrario. */
+  demoExpiraEn?: string | null;
   owner?: OwnerInfo;
 }
 
@@ -315,6 +319,20 @@ export interface LoginResponseDto {
   requiereSeleccion?: boolean;
   seleccionToken?: string;
   opciones?: OpcionSucursal[];
+}
+
+// ─── Demo pública por visitante ──────────────────────────────────────────────
+export interface DemoUsuario {
+  rol: string;        // "Owner" | "Administrativo" | "Profesional" | "Caja"
+  nombre: string;
+  esOwner: boolean;
+  token: string;      // JWT
+}
+
+export interface DemoSesionResponse {
+  sucursalId: string;
+  expiraEn: string;   // ISO
+  usuarios: DemoUsuario[];
 }
 
 export interface CrearSucursalConOwnerDto {

@@ -9,9 +9,15 @@ import {
   LockIcon,
   AlertTriangleIcon,
   CheckIcon,
+  TrendingUpIcon,
+  XIcon,
+  CheckCircleIcon,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { suscripcionApi } from '../../api/suscripcion';
+import { soporteApi } from '../../api/soporte';
+import { ApiError } from '../../api/client';
+import { ModalPortal } from '../../components/ui/ModalPortal';
 import type { SuscripcionInfo } from '../../types';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -88,6 +94,40 @@ export function SuscripcionPage() {
   const [suscripcion, setSuscripcion] = useState<SuscripcionInfo | null>(null);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState<string | null>(null);
+
+  // Modal "Solicitar ampliación"
+  const [solicitando, setSolicitando] = useState(false);
+  const [mensaje, setMensaje]         = useState('');
+  const [estadoSolic, setEstadoSolic] = useState<'idle' | 'enviando' | 'ok'>('idle');
+  const [errSolic, setErrSolic]       = useState<string | null>(null);
+
+  function cerrarSolic() {
+    setSolicitando(false);
+    setTimeout(() => {
+      setMensaje('');
+      setEstadoSolic('idle');
+      setErrSolic(null);
+    }, 200);
+  }
+
+  async function enviarSolicitud() {
+    if (!suscripcion) return;
+    setEstadoSolic('enviando');
+    setErrSolic(null);
+    try {
+      await soporteApi.solicitarAmpliacion({
+        mensaje:          mensaje.trim() || undefined,
+        usuariosActuales: suscripcion.usuariosActuales,
+        maxUsuarios:      suscripcion.maxUsuarios,
+        turnosMesActual:  suscripcion.turnosMesActual,
+        maxTurnosMes:     suscripcion.maxTurnosMes,
+      });
+      setEstadoSolic('ok');
+    } catch (e) {
+      setEstadoSolic('idle');
+      setErrSolic(e instanceof ApiError ? e.message : 'No se pudo enviar. Intentá de nuevo.');
+    }
+  }
 
   useEffect(() => {
     if (!user?.sucursalId) return;
@@ -208,6 +248,95 @@ export function SuscripcionPage() {
           ))}
         </ul>
       </motion.div>
+
+      {/* ── Solicitar ampliación ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="bg-primary/5 rounded-2xl border border-primary/20 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <TrendingUpIcon className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-heading font-semibold text-text-primary">¿Necesitás más usuarios o turnos?</h3>
+            <p className="text-sm text-text-muted mt-0.5">
+              Solicitá extender tu suscripción y nos ponemos en contacto para ampliarte el plan.
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => setSolicitando(true)}
+          className="shrink-0 px-5 py-2.5 rounded-button bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors"
+        >
+          Solicitar ampliación
+        </button>
+      </motion.div>
+
+      {/* ── Modal: solicitar ampliación ── */}
+      {solicitando && (
+        <ModalPortal>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+            onClick={cerrarSolic}
+          >
+            <div
+              className="relative w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={cerrarSolic}
+                className="absolute right-4 top-4 text-text-muted hover:text-text-primary transition-colors"
+                aria-label="Cerrar"
+              >
+                <XIcon className="w-5 h-5" />
+              </button>
+
+              {estadoSolic === 'ok' ? (
+                <div className="text-center py-6 flex flex-col items-center gap-3">
+                  <CheckCircleIcon className="w-11 h-11 text-primary" />
+                  <h2 className="font-heading text-lg font-bold text-text-primary">¡Solicitud enviada!</h2>
+                  <p className="text-sm text-text-secondary">Nos pondremos en contacto para ampliarte el plan.</p>
+                  <button
+                    onClick={cerrarSolic}
+                    className="mt-2 px-5 py-2.5 rounded-button bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <TrendingUpIcon className="w-5 h-5 text-primary" />
+                    <h2 className="font-heading text-lg font-bold text-text-primary">Solicitar ampliación</h2>
+                  </div>
+                  <p className="text-sm text-text-secondary -mt-2">
+                    Contanos qué necesitás (más usuarios, más turnos, etc.). Es opcional.
+                  </p>
+                  <textarea
+                    value={mensaje}
+                    onChange={(e) => setMensaje(e.target.value)}
+                    rows={4}
+                    maxLength={1000}
+                    placeholder="Ej: necesito sumar 2 profesionales más y más turnos por mes…"
+                    className="w-full rounded-lg border border-border bg-surface-background px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                  />
+                  {errSolic && <p className="text-sm text-red-600">{errSolic}</p>}
+                  <button
+                    onClick={enviarSolicitud}
+                    disabled={estadoSolic === 'enviando'}
+                    className="px-5 py-2.5 rounded-button bg-primary text-white font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
+                  >
+                    {estadoSolic === 'enviando' ? 'Enviando…' : 'Enviar solicitud'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </ModalPortal>
+      )}
 
     </div>
   );

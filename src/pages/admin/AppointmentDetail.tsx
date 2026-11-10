@@ -281,7 +281,9 @@ export function AppointmentDetail() {
     if (estado === 'CanceladoStaff') {
       const ok = await confirm({
         title: '¿Cancelar este turno?',
-        description: 'Se notificará al cliente por email. Esta acción no se puede deshacer.',
+        description: user?.esDemo
+          ? 'En la demo no se envían emails al cliente. Esta acción no se puede deshacer.'
+          : 'Se notificará al cliente por email. Esta acción no se puede deshacer.',
         confirmLabel: 'Sí, cancelar',
       });
       if (!ok) return;
@@ -350,6 +352,11 @@ export function AppointmentDetail() {
             {/* Action Bar */}
             {(turno.estado === 'Confirmado' || turno.estado === 'Pendiente') && puedeEditarTurnos && (
               <div className="px-4 sm:px-8 py-4 border-b border-border flex gap-3 flex-wrap items-center">
+                {user?.esDemo && (
+                  <p className="w-full text-xs text-amber-700 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-1.5">
+                    En la demo no se envían emails al cliente.
+                  </p>
+                )}
                 {turno.estado === 'Pendiente' && (
                   <button
                     onClick={() => handleUpdateEstado('Confirmado')}

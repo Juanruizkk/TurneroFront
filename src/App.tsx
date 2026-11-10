@@ -15,6 +15,7 @@ import { TurnoToken } from './pages/public/TurnoToken';
 import { ForgotPassword } from './pages/public/ForgotPassword';
 import { ResetPassword } from './pages/public/ResetPassword';
 import { SucursalPage } from './pages/public/SucursalPage';
+import ProbarDemo from './pages/public/ProbarDemo';
 
 // Admin layout
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -59,6 +60,7 @@ export function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/probar-demo" element={<ProbarDemo />} />
           <Route path="/reservar" element={<BookingFlow />} />
           <Route path="/turno/:token" element={<TurnoToken />} />
           <Route path="/invitacion/:token" element={<AceptarInvitacion />} />

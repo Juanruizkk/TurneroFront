@@ -79,6 +79,7 @@ export function Sucursales() {
   // Filtros
   const [search, setSearch] = useState('');
   const [tab, setTab]       = useState<TabKey>('todas');
+  const [mostrarDemos, setMostrarDemos] = useState(false);
 
   // Modal edición sucursal
   const [editando, setEditando] = useState<SucursalSuperAdmin | null>(null);
@@ -120,7 +121,11 @@ export function Sucursales() {
 
   // ── Filtrado ─────────────────────────────────────────────────────────────────
 
+  const demosCount = sucursales.filter((s) => s.esDemo).length;
+
   const filtradas = sucursales.filter((s) => {
+    if (s.esDemo && !mostrarDemos) return false;
+
     const sub  = subMap.get(s.id);
     const q    = search.toLowerCase();
     const matchSearch =
@@ -231,7 +236,10 @@ export function Sucursales() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-heading font-bold text-text-primary">Sucursales</h2>
-          <p className="text-text-secondary text-sm mt-1">{sucursales.length} sucursales registradas</p>
+          <p className="text-text-secondary text-sm mt-1">
+            {sucursales.length - demosCount} sucursales registradas
+            {demosCount > 0 && ` · ${demosCount} demo${demosCount === 1 ? '' : 's'} activa${demosCount === 1 ? '' : 's'}`}
+          </p>
         </div>
         <button
           onClick={() => navigate('/superadmin/sucursales/nueva')}
@@ -257,16 +265,39 @@ export function Sucursales() {
         ))}
       </div>
 
-      {/* Barra de búsqueda */}
-      <div className="relative">
-        <SearchIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-        <input
-          type="text"
-          placeholder="Buscar por nombre, email, teléfono, owner o plan…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 bg-surface border border-border rounded-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-        />
+      {/* Barra de búsqueda + toggle demos */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+        <div className="relative flex-1">
+          <SearchIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+          <input
+            type="text"
+            placeholder="Buscar por nombre, email, teléfono, owner o plan…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2.5 bg-surface border border-border rounded-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+          />
+        </div>
+        <label
+          className={`flex items-center gap-2 px-3 py-2.5 rounded-input border text-sm cursor-pointer select-none transition-colors ${
+            mostrarDemos
+              ? 'bg-amber-50 border-amber-200 text-amber-800'
+              : 'bg-surface border-border text-text-secondary hover:bg-surface-background'
+          }`}
+          title="Las demos son sucursales efímeras que se borran solas al vencer"
+        >
+          <input
+            type="checkbox"
+            checked={mostrarDemos}
+            onChange={(e) => setMostrarDemos(e.target.checked)}
+            className="accent-amber-500"
+          />
+          Mostrar demos
+          {demosCount > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-amber-500 text-white text-[11px] font-bold">
+              {demosCount}
+            </span>
+          )}
+        </label>
       </div>
 
       {/* Tabs */}
@@ -340,7 +371,14 @@ export function Sucursales() {
                             <BuildingIcon className="w-4 h-4 text-primary" />
                           </div>
                           <div>
-                            <p className="font-medium text-text-primary">{s.nombre}</p>
+                            <p className="font-medium text-text-primary flex items-center gap-1.5">
+                              {s.nombre}
+                              {s.esDemo && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wide">
+                                  Demo
+                                </span>
+                              )}
+                            </p>
                             <p className="text-xs text-text-muted truncate max-w-[180px]">{s.direccion}</p>
                           </div>
                         </div>

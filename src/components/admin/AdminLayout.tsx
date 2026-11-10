@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import { useSignalR, type TurnoNotificacion } from '../../hooks/useSignalR';
+import DemoBanner from '../demo/DemoBanner';
+import ReportarProblema from '../soporte/ReportarProblema';
 
 interface Notificacion {
   id: string;
@@ -225,7 +227,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         ))}
       </div>
 
-      <div className="px-4 pb-3">
+      <div className="px-4 pb-3 space-y-1">
         <a
           href="/manual.html"
           target="_blank"
@@ -235,6 +237,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <BookOpenIcon className="w-5 h-5" />
           <span>Manual de usuario</span>
         </a>
+        <ReportarProblema
+          triggerClassName="w-full flex items-center gap-3 px-3 py-2 rounded-button text-text-secondary hover:bg-primary-light/10 hover:text-primary transition-colors text-sm"
+          triggerIconSize={20}
+        />
       </div>
 
       <div className="p-4 border-t border-border">
@@ -397,6 +403,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </div>
           </div>
         </header>
+
+        {/* Banner demo (solo en sesiones demo) */}
+        <DemoBanner />
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-safe-8 md:pb-8 relative">{children}</main>

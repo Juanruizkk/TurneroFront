@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LockIcon, EyeIcon, EyeOffIcon, SparklesIcon, AlertCircleIcon, CheckCircleIcon } from 'lucide-react';
 import { authApi } from '../../api/auth';
+import { isPasswordStrong } from '../../utils/password';
+import PasswordRequirements from '../../components/auth/PasswordRequirements';
 
 export function ResetPassword() {
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ export function ResetPassword() {
   const [exito, setExito]           = useState(false);
 
   const validar = (): string => {
-    if (password.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
+    if (!isPasswordStrong(password)) return 'La contraseña no cumple los requisitos de seguridad.';
     if (password !== confirmar) return 'Las contraseñas no coinciden.';
     return '';
   };
@@ -50,7 +52,7 @@ export function ResetPassword() {
   };
 
   const errorValidacion = password || confirmar ? validar() : '';
-  const puedeEnviar = !errorValidacion && password.length >= 8 && !loading;
+  const puedeEnviar = !errorValidacion && isPasswordStrong(password) && !loading;
 
   /* ── Token inexistente ── */
   if (!token) {
@@ -146,7 +148,7 @@ export function ResetPassword() {
               <div className="mb-8">
                 <h2 className="text-2xl font-heading font-bold text-text-primary">Nueva contraseña</h2>
                 <p className="text-text-secondary mt-1 text-sm">
-                  Elegí una contraseña segura de al menos 8 caracteres.
+                  Elegí una contraseña segura que cumpla los requisitos.
                 </p>
               </div>
 
@@ -176,6 +178,7 @@ export function ResetPassword() {
                       {showPass ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                     </button>
                   </div>
+                  <PasswordRequirements password={password} />
                 </div>
 
                 {/* Confirmar contraseña */}

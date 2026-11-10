@@ -9,6 +9,8 @@ import {
 import logo from '../../assets/logo.png';
 import { useAuth, getHomeRoute } from '../../contexts/AuthContext';
 import { authApi } from '../../api/auth';
+import { isPasswordStrong } from '../../utils/password';
+import PasswordRequirements from '../../components/auth/PasswordRequirements';
 
 export function Register() {
   const navigate      = useNavigate();
@@ -23,7 +25,7 @@ export function Register() {
   const [loading,       setLoading]       = useState(false);
   const [error,         setError]         = useState('');
 
-  const isValid = nombre && apellido && email && password.length >= 8 && nombreNegocio;
+  const isValid = nombre && apellido && email && isPasswordStrong(password) && nombreNegocio;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,7 +184,7 @@ export function Register() {
                   type={showPass ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 8 caracteres"
+                  placeholder="Contraseña segura"
                   autoComplete="new-password"
                   className="w-full pl-10 pr-10 py-3 rounded-input border border-border bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 />
@@ -194,9 +196,7 @@ export function Register() {
                   {showPass ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                 </button>
               </div>
-              {password.length > 0 && password.length < 8 && (
-                <p className="text-xs text-error mt-1">Mínimo 8 caracteres</p>
-              )}
+              <PasswordRequirements password={password} />
             </div>
 
             {/* Error */}
